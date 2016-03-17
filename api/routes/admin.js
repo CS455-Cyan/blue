@@ -16,7 +16,7 @@ var mongoClient = modules.mongodb.MongoClient;
 var ObjectId = modules.mongodb.ObjectID;
 
 // connect to mongoose
-modules.mongoose.connect('mongodb://cyan:8029df8b@ds035603.mongolab.com:35603/mongoose');
+modules.mongoose.connect('mongodb://cyan:8029df8b@ds035603.mongolab.com:35603/apps');
 var connection = modules.mongoose.connection;
 connection.on('error', console.error.bind(console, 'connection error:'));
 connection.once('open', function() {
@@ -38,6 +38,24 @@ mongoClient.connect
 );
 
 var router = modules.express.Router();
+
+router.get('/admin/mongoose', function(req, res){
+	console.log('asdf');
+connection.once('open', function() {
+        console.log('connected successfully');
+});
+var kittySchema = modules.mongoose.Schema({
+    name: String
+});
+var Kitten = modules.mongoose.model('Kitten', kittySchema);
+var silence = new Kitten({ name: 'Silence' });
+console.log(silence.name); // 'Silence'
+silence.save(function(err, silence) {
+	console.log('saved');
+});
+
+	res.send({});
+});
 
 /*--																					--*\
 								PUBLIC API ROUTES
