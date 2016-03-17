@@ -17,7 +17,8 @@ var modules =
 	'multer': require('multer'),
 	'xlsx': require('xlsx'),
 	'async': require('async'),
-	'mysql': require('mysql')
+	'mysql': require('mysql'),
+	'mongoose': require('mongoose')
 };
 
 var globals =

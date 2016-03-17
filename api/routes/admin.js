@@ -15,6 +15,14 @@ var isAuthenticated = globals.isAuthenticated;
 var mongoClient = modules.mongodb.MongoClient;
 var ObjectId = modules.mongodb.ObjectID;
 
+// connect to mongoose
+modules.mongoose.connect('mongodb://cyan:8029df8b@ds035603.mongolab.com:35603/mongoose');
+var connection = modules.mongoose.connection;
+connection.on('error', console.error.bind(console, 'connection error:'));
+connection.once('open', function() {
+	console.log('connected successfully');
+});
+
 var db = {};
 
 mongoClient.connect
