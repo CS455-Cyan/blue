@@ -12,7 +12,8 @@
     "multer": "1.0.x",
     "xlsx": "0.8.x",
     "async": "1.4.x",
-    "mysql": "2.9.x"
+    "mysql": "2.9.x",
+    "mongoose": "4.4.x"
   },
   "engine": "node >= 0.10.40"
 }
