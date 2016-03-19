@@ -1,5 +1,12 @@
+/***																					***\
+
+	Filename: scripts/initializeDatabase.js
+	Author: Tyler Yasaka
+
+\***																					***/
+
 var async = require('../api/node_modules/async');
-var db = require('../api/models/catalog');
+var db = require('../api/models/catalog.model');
 
 console.log("Alright. One sec...");
 

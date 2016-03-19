@@ -1,6 +1,6 @@
 /***																					***\
 
-	Filename: models/catalog.js
+	Filename: api/models/catalog.model.js
 	Authors: Tyler Yasaka
 
 \***																					***/

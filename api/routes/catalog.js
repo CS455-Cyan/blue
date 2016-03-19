@@ -1,16 +1,21 @@
 /***																					***\
 
-	Filename: routes/catalog.js
+	Filename: api/routes/catalog.js
 	Author: Tyler Yasaka
-
-	Copyright (c) 2015 University of North Alabama
 
 \***																					***/
 
+// housekeeping
 var globals = require('./global');
 var modules = globals.modules;
-var db = require('../models/catalog');
+var db = require('../models/catalog.model');
 var isAuthenticated = globals.isAuthenticated;
+var router = modules.express.Router();
+var appname = 'catalog';
+var privilege = {
+	primaryAdmin: 5,
+	secondaryAdmin: 2
+}
 
 // connect to mongoose
 db.mongoose.connect('mongodb://cyan:8029df8b@ds035603.mongolab.com:35603/apps');
@@ -20,76 +25,94 @@ connection.once('open', function() {
 	console.log('connected to mongodb');
 });
 
-var router = modules.express.Router();
+/*--																					--*\
+								SAMPLE ROUTES 							
+\*--																					--*/
+
+// A simple GET request
+router.get
+(
+	'/helloworld',
+	function(req, res)
+	{
+		res.send('Hello world');
+	}
+);
+
+// A GET request with a parameter
+router.get
+(
+	'/helloworld/:name',
+	function(req, res)
+	{
+		res.send('Hello world, and ' + req.params.name);
+	}
+);
+
+// A POST request with JSON data
+// The data sent could look like: {"firstName": "Tyler", "lastName": "Awesome"}
+router.post
+(
+	'/helloworld',
+	function(req, res)
+	{
+		res.send('Hello world, and ' + req.body.firstName + ' ' + req.body.lastName);
+	}
+);
+
 
 /*--																					--*\
-								ADMIN API ROUTES 							
+						PRIMARY ADMIN API ROUTES 							
 \*--																					--*/
 
 router.post
 (
-	'/admin/catalog/sample',
+	'/admin/catalog/textSections',
 	function(req, res)
 	{
-		var appname = 'catalog';
-		var privilege = 5;//keep this off-limits for lower-level users
-		if(isAuthenticated(appname, privilege, req.session, res))
+		// restrict this to primary admins
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			req.body.timestamp = globals.convertToLocalTime(new Date());
-			db.sampleCollection.insert
-			(
-				req.body,
-				function(err, records)
-				{
-					var success = false;
-					if(!err){
-						success = true;
-					}
-					res.send({'success':success});
-				}
-			);
+			new db.models.TextSection(req.body).save(function(err){
+				var success = err ? false : true;
+				res.send({success: success});
+			});
 		}
 	}
 );
 
 router.put
 (
-	'/admin/catalog/sample/:id',
+	'/admin/catalog/textSections/:id',
 	function(req, res)
 	{
-		var appname = 'homepage';
-		var privilege = 1;
-		if(isAuthenticated(appname, privilege, req.session, res))
+		// restrict this to primary admins
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			res.send({id: req.params.id});
+			db.models.TextSection.update(
+				{ _id: req.params.id },
+				{ $set: req.body}
+			).exec(
+				function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				}
+			);
 		}
 	}
 );
 
 router.delete
 (
-	'/admin/catalog/sample/:id',
+	'/admin/catalog/textSections/:id',
 	function(req, res)
 	{
-		var appname = 'homepage';
-		var privilege = 1;
-		if(isAuthenticated(appname, privilege, req.session, res))
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			res.send({check: "123"});
-		}
-	}
-);
-
-router.get
-(
-	'/admin/catalog/sample',
-	function(req, res)
-	{
-		var appname = 'homepage';
-		var privilege = 1;
-		if(isAuthenticated(appname, privilege, req.session, res))
-		{
-			res.send({check: "123"});
+			db.models.TextSection.remove({_id: req.params.id}).exec(function(err){
+				var success = err ? false : true;
+				res.send({success: success});
+			});
 		}
 	}
 );
@@ -103,8 +126,27 @@ router.get
 	'/catalog/textSections',
 	function(req, res)
 	{
-		db.models.TextSection.find( function(err, results) {
-			res.send(results);
+		db.models.TextSection.find().select('title').exec( function(err, results) {
+			var success = err ? false : true;
+			res.send({
+				success: success,
+				data: results
+			});
+		});
+	}
+);
+
+router.get
+(
+	'/catalog/textSections/:id',
+	function(req, res)
+	{
+		db.models.TextSection.findById(req.params.id).exec(function(err, results) {
+			var success = err ? false : true;
+			res.send({
+				success: success,
+				data: results
+			});
 		});
 	}
 );
