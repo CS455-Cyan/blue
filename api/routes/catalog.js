@@ -151,5 +151,21 @@ router.get
 	}
 );
 
+router.get
+(
+	'/catalog/programs',
+	function(req, res)
+	{
+		db.models.Program.find().select('name description').exec( function(err, results) {
+			var success = err ? false : true;
+			res.send({
+				success: success,
+				data: results
+			});
+		});
+	}
+);
+
+
 // export these routes to the main router
 module.exports = router;

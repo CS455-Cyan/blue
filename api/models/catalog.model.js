@@ -25,6 +25,14 @@ var textSectionSchema = mongoose.Schema({
 });
 models.TextSection = mongoose.model('TextSection', textSectionSchema);
 
+// program
+var programSchema = mongoose.Schema({
+    name: String,
+    description: String
+});
+models.Program = mongoose.model('Program', programSchema);
+
+
 // export the models object for inclusion in other scripts
 module.exports = {
 	mongoose: mongoose,

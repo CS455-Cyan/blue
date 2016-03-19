@@ -2,6 +2,7 @@
 
 	Filename: scripts/initializeDatabase.js
 	Author: Tyler Yasaka
+			Andrew Fisher
 
 \***																					***/
 
@@ -27,6 +28,9 @@ async.waterfall([
 		db.models.TextSection.remove({}, function(){
 			callback(); // we're done. go to the next function
 		});
+		db.models.Program.remove({}, function(){
+			callback(); // we're done. go to the next function
+		});	
 	},
 	function(callback){
 		// create some sample textSections
@@ -36,6 +40,14 @@ async.waterfall([
 		];
 		for(var i in sections){
 			db.models.TextSection(sections[i]).save();
+		}
+		var programs = [
+			{name: "University Information", description: "Mustache sapiente nulla adipisicing qui irure. Blue bottle cred venmo food truck, bitters tofu chicharrones gluten-free lumbersexual locavore."},
+			{name: "Academic Procedures", description: "Blah blah blah."}
+		];
+		for(var i in programs){
+			db.models.Program(programs[i]).save();
+			console.log('asdf');
 		}
 		callback(); // we're done. go to the next function
 	},
