@@ -41,6 +41,8 @@ The script will let you know once it's finished. After that you can kill it with
 
 The directions to clone the repository are mentioned above. When you're ready to make changes, execute the following commands to commit your changes and then push them to the repository:
 
+#### Making changes
+
 1. `git checkout dev`
   * This switches you from the `master` branch to the `dev` branch. We want to make all of our changes on the `dev` branch, and then occasionally merge our changes on `dev` to `master` after they have been tested and approved by our SQA.
   * You don't need to run this command if you're already on the `dev` branch (though it won't hurt). To check which branch you're on, you can run `git branch`. Your current branch is marked by an asterisk (*).
@@ -50,6 +52,12 @@ The directions to clone the repository are mentioned above. When you're ready to
   * This creates a checkpoint in your local repository. You will be prompted to enter a commit message (a message is already generated; all you have to do is uncomment it).
 4. `git push`
   * This shares your local changes to the remote repository hosted on github.
+
+#### Getting other people's changes
+
+`git pull`
+
+It doesn't hurt to run this command every time you start coding, to make sure you don't get left behind.
 
 ### Postman
 
