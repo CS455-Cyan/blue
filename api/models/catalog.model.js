@@ -2,6 +2,7 @@
 
 	Filename: api/models/catalog.model.js
 	Authors: Tyler Yasaka
+			 Andrew Fisher
 
 \***																					***/
 
@@ -25,12 +26,29 @@ var textSectionSchema = mongoose.Schema({
 });
 models.TextSection = mongoose.model('TextSection', textSectionSchema);
 
-// program
-var programSchema = mongoose.Schema({
-    name: String,
-    description: String
+
+// programSections
+var programSectionSchema = mongoose.Schema({
+    categories: [{
+		name: String,
+		description: String,
+		departments: [{
+			name: String,
+			description: String,
+			programs: [{
+				type: String,
+				name: String,
+				description: String
+			}],
+		}],
+		programs: [{
+			type: String,
+			name: String,
+			description: String
+		}],
+	}],
 });
-models.Program = mongoose.model('Program', programSchema);
+models.ProgramSection = mongoose.model('ProgramSection', programSectionSchema);
 
 
 // export the models object for inclusion in other scripts
