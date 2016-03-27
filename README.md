@@ -85,6 +85,10 @@ mlab is a freemium hosting service for MongoDB. We're using it so we don't each 
 
 If you ever feel the need to look at the database directly to see what the h*ll is going on, you can log in to [mlab.com](https://mlab.com) with credentials that have been posted in slack.
 
+## Coding Standards
+
+We will use [W3Schools' JavaScript Style Guide](http://www.w3schools.com/js/js_conventions.asp), with one exception: we will use *tabs* for indentation (not spaces).
+
 ## Resources
 
 Here are links to some resources which can help you get familiar with our tools & technology.
