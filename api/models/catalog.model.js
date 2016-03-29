@@ -75,7 +75,7 @@ models.ChangeRequests = mongoose.model('ChangeRequests', changeRequestsSchema);
 
 // adminSection
 var adminSectionSchema = mongoose.Schema({
-	privilege: Integer,
+	privilege: Number,
 	username: String,
 	password: String
 });
