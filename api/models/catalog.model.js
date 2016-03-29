@@ -66,8 +66,8 @@ models.CourseSection = mongoose.model('CourseSection', courseSectionSchema);
 
 // changeRequests
 var changeRequestsSchema = mongoose.Schema({
-    author: String,
-    timeOfRequest: String,
+	author: String,
+	timeOfRequest: String,
 	timeOfApproval: String,
 	status: String
 });
@@ -75,8 +75,8 @@ models.ChangeRequests = mongoose.model('ChangeRequests', ChangeRequestsSchema);
 
 // adminSection
 var adminSectionSchema = mongoose.Schema({
-    privilege: Integer,
-    username: String,
+	privilege: Integer,
+	username: String,
 	password: String
 });
 models.AdminSection = mongoose.model('AdminSection', adminSectionSchema);
