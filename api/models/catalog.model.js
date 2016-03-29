@@ -2,7 +2,7 @@
 
 	Filename: api/models/catalog.model.js
 	Authors: Tyler Yasaka
-			 Andrew Fisher
+	         Andrew Fisher
 
 \***																					***/
 
