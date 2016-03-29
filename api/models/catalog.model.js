@@ -50,6 +50,37 @@ var programSectionSchema = mongoose.Schema({
 });
 models.ProgramSection = mongoose.model('ProgramSection', programSectionSchema);
 
+// courseSections
+var courseSectionSchema = mongoose.Schema({
+    subjects: {
+		name: String,
+		abbreviation: String,
+		courses: {
+			title: String,
+			number: String,
+			description: String
+		}
+	}
+});
+models.CourseSection = mongoose.model('CourseSection', courseSectionSchema);
+
+// changeRequests
+var changeRequestsSchema = mongoose.Schema({
+    author: String,
+    timeOfRequest: String,
+	timeOfApproval: String,
+	status: String
+});
+models.ChangeRequests = mongoose.model('ChangeRequests', ChangeRequestsSchema);
+
+// adminSection
+var adminSectionSchema = mongoose.Schema({
+    privilege: Integer,
+    username: String,
+	password: String
+});
+models.AdminSection = mongoose.model('AdminSection', adminSectionSchema);
+
 
 // export the models object for inclusion in other scripts
 module.exports = {
