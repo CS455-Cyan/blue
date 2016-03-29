@@ -12,24 +12,24 @@ var models = {};
 
 // admins
 var adminSchema = mongoose.Schema({
-    username: String,
-    password: String,
-    privilege: Number,
-    apps: [String]
+	username: String,
+	password: String,
+	privilege: Number,
+	apps: [String]
 });
 models.Admin = mongoose.model('Admin', adminSchema);
 
 // textSections
 var textSectionSchema = mongoose.Schema({
-    title: String,
-    content: String
+	title: String,
+	content: String
 });
 models.TextSection = mongoose.model('TextSection', textSectionSchema);
 
 
 // programSections
 var programSectionSchema = mongoose.Schema({
-    categories: [{
+	categories: [{
 		name: String,
 		description: String,
 		departments: [{
@@ -52,7 +52,7 @@ models.ProgramSection = mongoose.model('ProgramSection', programSectionSchema);
 
 // courseSections
 var courseSectionSchema = mongoose.Schema({
-    subjects: {
+	subjects: {
 		name: String,
 		abbreviation: String,
 		courses: {
@@ -71,7 +71,7 @@ var changeRequestsSchema = mongoose.Schema({
 	timeOfApproval: String,
 	status: String
 });
-models.ChangeRequests = mongoose.model('ChangeRequests', ChangeRequestsSchema);
+models.ChangeRequests = mongoose.model('ChangeRequests', changeRequestsSchema);
 
 // adminSection
 var adminSectionSchema = mongoose.Schema({

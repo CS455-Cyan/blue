@@ -35,7 +35,7 @@ async.waterfall([
 	function(callback){
 		// create some sample textSections
 		var sections = [
-			{title: "University Information", content: "Mustache sapiente nulla adipisicing qui irure. Blue bottle cred venmo food truck, bitters tofu chicharrones gluten-free lumbersexual locavore."},
+			{title: "University Information", content: "Yolo."},
 			{title: "Academic Procedures", content: "Blah blah blah."}
 		];
 		for(var i in sections){
@@ -43,12 +43,58 @@ async.waterfall([
 		}
 		// create some sample programSections
 		var programs = [
-			{name: "University Information", description: "Mustache sapiente nulla adipisicing qui irure. Blue bottle cred venmo food truck, bitters tofu chicharrones gluten-free lumbersexual locavore."},
-			{name: "Academic Procedures", description: "Blah blah blah."}
+			categories: [{
+				name: "name",
+				description: "description",
+				departments: [{
+					name: "name",
+					description: "description",
+					programs: [{
+						type: "type",
+						name: "name",
+						description: "description"
+					}],
+				}],
+				programs: [{
+					type: "type",
+					name: "name",
+					description: "description"
+				}],
+			}],
 		];
 		for(var i in programs){
 			db.models.ProgramSection(programs[i]).save();
 			console.log('asdf');
+		}
+		// create some sample courseSections
+		var courses = [{
+			subjects: {
+				name: "University Information",
+				abbreviation: "Yolo.",
+				courses: {
+					title: "title",
+					number: "number",
+					description: "description"
+				},
+			},
+		}];
+		for(var i in courses){
+			db.models.CourseSection(courses[i]).save();
+			console.log('jkl;');
+		}
+		// create some sample changeRequests
+		var changes = [
+			{author: "Sean Connery", timeOfRequest: "Long time ago.", timeOfApproval: "Wouldn't you like to know", status: "incomplete"}
+		];
+		for(var i in changes){
+			db.models.ChangeRequests(changes[i]).save();
+		}
+		// create some sample adminSection
+		var admins = [
+			{privilege: "5", username: "Yolo598", password: "password"}
+		];
+		for(var i in admins){
+			db.models.AdminSection(admins[i]).save();
 		}
 		callback(); // we're done. go to the next function
 	},
