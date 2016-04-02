@@ -2,6 +2,7 @@
 
 	Filename: api/routes/catalog.js
 	Author: Tyler Yasaka
+			Andrew Fisher
 
 \***																					***/
 
@@ -153,10 +154,10 @@ router.get
 
 router.get
 (
-	'/catalog/programs',
+	'/catalog/generalRequirements',
 	function(req, res)
 	{
-		db.models.Program.find().select('name description').exec( function(err, results) {
+		db.models.GeneralRequirements.find().select('areaI areaII areaIII areaIV areaV').exec( function(err, results) {
 			var success = err ? false : true;
 			res.send({
 				success: success,
@@ -165,6 +166,67 @@ router.get
 		});
 	}
 );
+
+router.get
+(
+	'/catalog/programSections',
+	function(req, res)
+	{
+		db.models.ProgramSection.find().select('categories').exec( function(err, results) {
+			var success = err ? false : true;
+			res.send({
+				success: success,
+				data: results
+			});
+		});
+	}
+);
+
+router.get
+(
+	'/catalog/programSections/:id',
+	function(req, res)
+	{
+		db.models.ProgramSection.findById(req.params.id).exec(function(err, results) {
+			var success = err ? false : true;
+			res.send({
+				success: success,
+				data: results
+			});
+		});
+	}
+);
+
+router.get
+(
+	'/catalog/courseSections',
+	function(req, res)
+	{
+		db.models.CourseSection.find().select('subjects').exec( function(err, results) {
+			var success = err ? false : true;
+			res.send({
+				success: success,
+				data: results
+			});
+		});
+	}
+);
+
+router.get
+(
+	'/catalog/courseSections/:id',
+	function(req, res)
+	{
+		db.models.CourseSection.findById(req.params.id).exec(function(err, results) {
+			var success = err ? false : true;
+			res.send({
+				success: success,
+				data: results
+			});
+		});
+	}
+);
+
 
 
 // export these routes to the main router

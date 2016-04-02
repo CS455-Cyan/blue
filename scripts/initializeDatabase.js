@@ -40,9 +40,77 @@ async.waterfall([
 		];
 		for(var i in sections){
 			db.models.TextSection(sections[i]).save();
+			console.log('blah');
+		}
+		// create some sample generalRequirements
+		var requirements = [{
+			areaI: [{
+				requirement: [{
+					name: "Text Field",
+					courseList: {
+						items: {
+							separator: true,
+							courses: "courses",
+							write_in: "optional"
+						},
+					}
+				}]
+			}],
+			areaII: [{
+				requirement: [{
+					name: "Text Field",
+					courseList: {
+						items: {
+							separator: true,
+							courses: "courses",
+							write_in: "optional"
+						},
+					}
+				}]
+			}],
+			areaIII: [{
+				requirement: [{
+					name: "Text Field",
+					courseList: {
+						items: {
+							separator: true,
+							courses: "courses",
+							write_in: "optional"
+						},
+					}
+				}]
+			}],
+			areaIV: [{
+				requirement: [{
+					name: "Text Field",
+					courseList: {
+						items: {
+							separator: true,
+							courses: "courses",
+							write_in: "optional"
+						},
+					}
+				}]
+			}],
+			areaV: [{
+				requirement: [{
+					name: "Text Field",
+					courseList: {
+						items: {
+							separator: true,
+							courses: "courses",
+							write_in: "optional"
+						},
+					}
+				}]
+			}]
+		}];
+		for(var i in requirements){
+			db.models.GeneralRequirements(requirements[i]).save();
+			console.log('yada');
 		}
 		// create some sample programSections
-		var programs = [
+		var programs = [{
 			categories: [{
 				name: "name",
 				description: "description",
@@ -61,7 +129,7 @@ async.waterfall([
 					description: "description"
 				}],
 			}],
-		];
+		}];
 		for(var i in programs){
 			db.models.ProgramSection(programs[i]).save();
 			console.log('asdf');
@@ -88,6 +156,7 @@ async.waterfall([
 		];
 		for(var i in changes){
 			db.models.ChangeRequests(changes[i]).save();
+			console.log('123');
 		}
 		// create some sample adminSection
 		var admins = [
@@ -95,6 +164,7 @@ async.waterfall([
 		];
 		for(var i in admins){
 			db.models.AdminSection(admins[i]).save();
+			console.log('456');
 		}
 		callback(); // we're done. go to the next function
 	},

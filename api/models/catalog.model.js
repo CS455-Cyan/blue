@@ -27,6 +27,72 @@ var textSectionSchema = mongoose.Schema({
 models.TextSection = mongoose.model('TextSection', textSectionSchema);
 
 
+// generalRequirements
+var generalRequirementsSchema = mongoose.Schema({
+	areaI: [{
+		requirements: [{
+			name: String,
+			courseList: {
+				items: {
+					separator: Boolean,
+					courses: String,
+					write_in: String
+				},
+			}
+		}]
+	}],
+	areaII: [{
+		requirements: [{
+			name: String,
+			courseList: {
+				items: {
+					separator: Boolean,
+					courses: String,
+					write_in: String
+				},
+			}
+		}]
+	}],
+	areaIII: [{
+		requirements: [{
+			name: String,
+			courseList: {
+				items: {
+					separator: Boolean,
+					courses: String,
+					write_in: String
+				},
+			}
+		}]
+	}],
+	areaIV: [{
+		requirements: [{
+			name: String,
+			courseList: {
+				items: {
+					separator: Boolean,
+					courses: String,
+					write_in: String
+				},
+			}
+		}]
+	}],
+	areaV: [{
+		requirements: [{
+			name: String,
+			courseList: {
+				items: {
+					separator: Boolean,
+					courses: String,
+					write_in: String
+				},
+			}
+		}]
+	}]
+});
+models.GeneralRequirements = mongoose.model('GeneralRequirements', generalRequirementsSchema);
+
+
 // programSections
 var programSectionSchema = mongoose.Schema({
 	categories: [{
@@ -73,7 +139,7 @@ var changeRequestsSchema = mongoose.Schema({
 });
 models.ChangeRequests = mongoose.model('ChangeRequests', changeRequestsSchema);
 
-// adminSection
+// adminSections
 var adminSectionSchema = mongoose.Schema({
 	privilege: Number,
 	username: String,
