@@ -90,7 +90,7 @@ var generalRequirementsSchema = mongoose.Schema({
 		}]
 	}]
 });
-models.GeneralRequirements = mongoose.model('GeneralRequirements', generalRequirementsSchema);
+models.GeneralRequirement = mongoose.model('GeneralRequirement', generalRequirementsSchema);
 
 
 // programSections
@@ -112,21 +112,21 @@ var programSectionSchema = mongoose.Schema({
 			name: String,
 			description: String
 		}],
-	}],
-});
+	}]
+}, { typeKey: '$type' });
 models.ProgramSection = mongoose.model('ProgramSection', programSectionSchema);
 
 // courseSections
 var courseSectionSchema = mongoose.Schema({
-	subjects: {
+	subjects: [{
 		name: String,
 		abbreviation: String,
-		courses: {
+		courses: [{
 			title: String,
 			number: String,
 			description: String
-		}
-	}
+		}]
+	}]
 });
 models.CourseSection = mongoose.model('CourseSection', courseSectionSchema);
 
@@ -137,16 +137,7 @@ var changeRequestsSchema = mongoose.Schema({
 	timeOfApproval: String,
 	status: String
 });
-models.ChangeRequests = mongoose.model('ChangeRequests', changeRequestsSchema);
-
-// adminSections
-var adminSectionSchema = mongoose.Schema({
-	privilege: Number,
-	username: String,
-	password: String
-});
-models.AdminSection = mongoose.model('AdminSection', adminSectionSchema);
-
+models.ChangeRequest = mongoose.model('ChangeRequest', changeRequestsSchema);
 
 // export the models object for inclusion in other scripts
 module.exports = {

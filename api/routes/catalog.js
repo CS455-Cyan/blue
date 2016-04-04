@@ -72,6 +72,7 @@ router.post
 	function(req, res)
 	{
 		// restrict this to primary admins
+		console.log(req.session);
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
 			new db.models.TextSection(req.body).save(function(err){
@@ -157,7 +158,7 @@ router.get
 	'/catalog/generalRequirements',
 	function(req, res)
 	{
-		db.models.GeneralRequirements.find().select('areaI areaII areaIII areaIV areaV').exec( function(err, results) {
+		db.models.GeneralRequirement.find().select().exec( function(err, results) {
 			var success = err ? false : true;
 			res.send({
 				success: success,
@@ -169,7 +170,7 @@ router.get
 
 router.get
 (
-	'/catalog/programSections',
+	'/catalog/programs',
 	function(req, res)
 	{
 		db.models.ProgramSection.find().select('categories').exec( function(err, results) {
@@ -184,7 +185,7 @@ router.get
 
 router.get
 (
-	'/catalog/programSections/:id',
+	'/catalog/programs/:id',
 	function(req, res)
 	{
 		db.models.ProgramSection.findById(req.params.id).exec(function(err, results) {
@@ -199,7 +200,7 @@ router.get
 
 router.get
 (
-	'/catalog/courseSections',
+	'/catalog/courses',
 	function(req, res)
 	{
 		db.models.CourseSection.find().select('subjects').exec( function(err, results) {
@@ -214,7 +215,7 @@ router.get
 
 router.get
 (
-	'/catalog/courseSections/:id',
+	'/catalog/courses/:id',
 	function(req, res)
 	{
 		db.models.CourseSection.findById(req.params.id).exec(function(err, results) {
