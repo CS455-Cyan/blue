@@ -70,7 +70,7 @@ var globals =
 				{
 					for(var i = 0; i < session.apps.length; i++)
 					{
-						if(session.apps[i] == appname)
+						if(session.apps[i].name == appname)
 						{
 							appAuthenticated = true;
 						}
