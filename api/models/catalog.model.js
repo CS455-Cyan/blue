@@ -61,30 +61,27 @@ var generalRequirementsSchema = mongoose.Schema({
 });
 models.GeneralRequirement = mongoose.model('GeneralRequirement', generalRequirementsSchema);
 
-// programs
 var programSchema = mongoose.Schema({
+	type: String,
+	name: String,
+	description: String,
+	requirements: [requirementSchema]
+});
+
+// programs
+var programSectionSchema = mongoose.Schema({
 	categories: [{
 		name: String,
 		description: String,
 		departments: [{
 			name: String,
 			description: String,
-			programs: [{
-				type: String,
-				name: String,
-				description: String,
-				requirements: [requirementSchema]
-			}],
+			programs: [programSchema]
 		}],
-		programs: [{
-			type: String,
-			name: String,
-			description: String,
-			requirements: [requirementSchema]
-		}],
+		programs: [programSchema]
 	}]
 }, { typeKey: '$type' });
-models.Program = mongoose.model('ProgramSection', programSchema);
+models.Program = mongoose.model('Program', programSectionSchema);
 
 // courses
 var courseSchema = mongoose.Schema({
@@ -98,7 +95,7 @@ var courseSchema = mongoose.Schema({
 		}]
 	}]
 });
-models.Course = mongoose.model('CourseSection', courseSchema);
+models.Course = mongoose.model('Course', courseSchema);
 
 // changeRequests
 var changeRequestsSchema = mongoose.Schema({

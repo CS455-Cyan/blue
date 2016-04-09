@@ -126,23 +126,35 @@ async.waterfall([
 		var programs = [{
 			categories: [
         {
-          name: "name",
-          description: "description",
+          name: "College of Business",
+          description: "Hr Hm Business Hum",
           departments: [{
-            name: "name",
-            description: "description",
-            programs: [{
-              type: "type",
-              name: "name",
-              description: "description"
-            }]
+            name: "Computer Science and Information Systems",
+            description: "CS and CIS are not the same thing",
+            programs: [
+							{
+								type: "major",
+								name: "Computer Science",
+								description: "not for the faint of heart"
+							},
+							{
+								type: "minor",
+								name: "Human-Computer Interaction/User Experience",
+								description: "emotional impact cannot be designed - only experienced"
+							},
+            ]
           }],
           programs: [{
             type: "type",
             name: "name",
             description: "description"
           }]
-        }
+        },
+        {
+					name: "College of Arts and Sciences",
+					departments: [],
+					programs: []
+				}
       ]
 		}];
 		for(var i in programs){

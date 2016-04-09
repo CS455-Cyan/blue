@@ -120,14 +120,72 @@ router.delete
 
 router.post
 (
-	'/admin/catalog/departments',
+	'/admin/catalog/departments/:category',
 	function(req, res)
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			new db.models.TextSection(req.body).save(function(err){
-				var success = err ? false : true;
-				res.send({success: success});
+			db.models.Program.findOne(function(err, programs){
+				var category = programs.categories.id(req.params.category);
+				if(category) {
+					category.departments.push(req.body);
+				}
+				programs.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
+router.put
+(
+	'/admin/catalog/departments/:category/:department',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Program.findOne(function(err, programs){
+				var category = programs.categories.id(req.params.category);
+				var department;
+				if(category) {
+					department = category.departments.id(req.params.department);
+					if(department) {
+						for(var attribute in req.body) {
+							department[attribute] = req.body[attribute];
+						}
+					}
+				}
+				programs.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
+router.delete
+(
+	'/admin/catalog/departments/:category/:department',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Program.findOne(function(err, programs){
+				var category = programs.categories.id(req.params.category);
+				var department;
+				if(category) {
+					department = category.departments.id(req.params.department);
+					if(department) {
+						department.remove();
+					}
+				}
+				programs.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
 			});
 		}
 	}
@@ -199,21 +257,6 @@ router.get
 
 router.get
 (
-	'/catalog/programs/:id',
-	function(req, res)
-	{
-		db.models.Program.findById(req.params.id).exec(function(err, results) {
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: results
-			});
-		});
-	}
-);
-
-router.get
-(
 	'/catalog/courses',
 	function(req, res)
 	{
@@ -226,22 +269,6 @@ router.get
 		});
 	}
 );
-
-router.get
-(
-	'/catalog/courses/:id',
-	function(req, res)
-	{
-		db.models.Course.findById(req.params.id).exec(function(err, results) {
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: results
-			});
-		});
-	}
-);
-
 
 
 // export these routes to the main router
