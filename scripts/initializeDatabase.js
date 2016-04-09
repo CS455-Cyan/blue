@@ -31,12 +31,12 @@ async.waterfall([
 		});
 	},
 	function(callback){
-		db.models.ProgramSection.remove({}, function(){
+		db.models.Program.remove({}, function(){
 			callback(); // we're done. go to the next function
 		});	
 	},
 	function(callback){
-    db.models.CourseSection.remove({}, function(){
+    db.models.Course.remove({}, function(){
 			callback(); // we're done. go to the next function
 		});	
 	},
@@ -67,72 +67,63 @@ async.waterfall([
 		// create some sample generalRequirements
 		var requirements = [{
 			areaI: [{
+				name: "Written Composition",
 				requirements: [{
-					name: "Text Field",
-					courseList: {
-						items: {
-							separator: true,
-							courses: "courses",
-							write_in: "optional"
-						},
-					}
+					name: "requirement",
+					items: [{
+						separator: true,
+						courses: [],
+						write_in: "optional"
+					}]
 				}]
 			}],
 			areaII: [{
+				name: "Humanities and Fine Arts",
 				requirements: [{
-					name: "Text Field",
-					courseList: {
-						items: {
-							separator: true,
-							courses: "courses",
-							write_in: "optional"
-						},
-					}
+					name: "requirement",
+					items: [{
+						separator: false,
+						courses: []
+					}]
 				}]
 			}],
 			areaIII: [{
+				name: "Natural Sciences and Mathematics",
 				requirements: [{
-					name: "Text Field",
-					courseList: {
-						items: {
-							separator: true,
-							courses: "courses",
-							write_in: "optional"
-						},
-					}
+					name: "requirement",
+					items: [{
+						separator: false,
+						courses: []
+					}]
 				}]
 			}],
 			areaIV: [{
+				name: "History, Social and Behavioral Sciences",
 				requirements: [{
-					name: "Text Field",
-					courseList: {
-						items: {
-							separator: true,
-							courses: "courses",
-							write_in: "optional"
-						},
-					}
+					name: "requirement",
+					items: [{
+						separator: false,
+						courses: []
+					}]
 				}]
 			}],
-      areaV: [{
+			areaV: [{
+				name: "Additional Requirements",
 				requirements: [{
-					name: "Text Field",
-					courseList: {
-						items: {
-							separator: true,
-							courses: "courses",
-							write_in: "optional"
-						},
-					}
+					name: "requirement",
+					items: [{
+						separator: false,
+						courses: []
+					}]
 				}]
-			}]
+			}],
 		}];
 		for(var i in requirements){
 			db.models.GeneralRequirement(requirements[i]).save();
 			//console.log(requirements[i]);
 		}
 		// create some sample programSections
-		var programSections = [{
+		var programs = [{
 			categories: [
         {
           name: "name",
@@ -154,8 +145,8 @@ async.waterfall([
         }
       ]
 		}];
-		for(var i in programSections){
-			db.models.ProgramSection(programSections[i]).save(function(err, results){
+		for(var i in programs){
+			db.models.Program(programs[i]).save(function(err, results){
       });
 		}
 		// create some sample courseSections
@@ -178,7 +169,7 @@ async.waterfall([
 			}]
 		}];
 		for(var i in courses){
-			db.models.CourseSection(courses[i]).save();
+			db.models.Course(courses[i]).save();
 		}
 		// create some sample changeRequests
 		var changes = [

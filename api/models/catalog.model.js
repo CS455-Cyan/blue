@@ -26,75 +26,43 @@ var textSectionSchema = mongoose.Schema({
 });
 models.TextSection = mongoose.model('TextSection', textSectionSchema);
 
+// requirement schema
+var requirementSchema = mongoose.Schema({
+	name: String,
+	items: [{
+		separator: String,
+		courses: [],
+		write_in: String
+	}]
+});
 
 // generalRequirements
 var generalRequirementsSchema = mongoose.Schema({
 	areaI: [{
-		requirements: [{
-			name: String,
-			courseList: {
-				items: {
-					separator: Boolean,
-					courses: String,
-					write_in: String
-				},
-			}
-		}]
+		name: String,
+		requirements: [requirementSchema]
 	}],
 	areaII: [{
-		requirements: [{
-			name: String,
-			courseList: {
-				items: {
-					separator: Boolean,
-					courses: String,
-					write_in: String
-				},
-			}
-		}]
+		name: String,
+		requirements: [requirementSchema]
 	}],
 	areaIII: [{
-		requirements: [{
-			name: String,
-			courseList: {
-				items: {
-					separator: Boolean,
-					courses: String,
-					write_in: String
-				},
-			}
-		}]
+		name: String,
+		requirements: [requirementSchema]
 	}],
 	areaIV: [{
-		requirements: [{
-			name: String,
-			courseList: {
-				items: {
-					separator: Boolean,
-					courses: String,
-					write_in: String
-				},
-			}
-		}]
+		name: String,
+		requirements: [requirementSchema]
 	}],
 	areaV: [{
-		requirements: [{
-			name: String,
-			courseList: {
-				items: {
-					separator: Boolean,
-					courses: String,
-					write_in: String
-				},
-			}
-		}]
+		name: String,
+		requirements: [requirementSchema]
 	}]
 });
 models.GeneralRequirement = mongoose.model('GeneralRequirement', generalRequirementsSchema);
 
-
-// programSections
-var programSectionSchema = mongoose.Schema({
+// programs
+var programSchema = mongoose.Schema({
 	categories: [{
 		name: String,
 		description: String,
@@ -104,20 +72,22 @@ var programSectionSchema = mongoose.Schema({
 			programs: [{
 				type: String,
 				name: String,
-				description: String
+				description: String,
+				requirements: [requirementSchema]
 			}],
 		}],
 		programs: [{
 			type: String,
 			name: String,
-			description: String
+			description: String,
+			requirements: [requirementSchema]
 		}],
 	}]
 }, { typeKey: '$type' });
-models.ProgramSection = mongoose.model('ProgramSection', programSectionSchema);
+models.Program = mongoose.model('ProgramSection', programSchema);
 
-// courseSections
-var courseSectionSchema = mongoose.Schema({
+// courses
+var courseSchema = mongoose.Schema({
 	subjects: [{
 		name: String,
 		abbreviation: String,
@@ -128,7 +98,7 @@ var courseSectionSchema = mongoose.Schema({
 		}]
 	}]
 });
-models.CourseSection = mongoose.model('CourseSection', courseSectionSchema);
+models.Course = mongoose.model('CourseSection', courseSchema);
 
 // changeRequests
 var changeRequestsSchema = mongoose.Schema({

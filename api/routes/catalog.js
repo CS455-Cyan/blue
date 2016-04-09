@@ -72,7 +72,6 @@ router.post
 	function(req, res)
 	{
 		// restrict this to primary admins
-		console.log(req.session);
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
 			new db.models.TextSection(req.body).save(function(err){
@@ -112,6 +111,21 @@ router.delete
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
 			db.models.TextSection.remove({_id: req.params.id}).exec(function(err){
+				var success = err ? false : true;
+				res.send({success: success});
+			});
+		}
+	}
+);
+
+router.post
+(
+	'/admin/catalog/departments',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			new db.models.TextSection(req.body).save(function(err){
 				var success = err ? false : true;
 				res.send({success: success});
 			});
@@ -162,7 +176,7 @@ router.get
 			var success = err ? false : true;
 			res.send({
 				success: success,
-				data: results
+				data: results.sort()
 			});
 		});
 	}
@@ -173,7 +187,7 @@ router.get
 	'/catalog/programs',
 	function(req, res)
 	{
-		db.models.ProgramSection.find().select('categories').exec( function(err, results) {
+		db.models.Program.find().select('categories').exec( function(err, results) {
 			var success = err ? false : true;
 			res.send({
 				success: success,
@@ -188,7 +202,7 @@ router.get
 	'/catalog/programs/:id',
 	function(req, res)
 	{
-		db.models.ProgramSection.findById(req.params.id).exec(function(err, results) {
+		db.models.Program.findById(req.params.id).exec(function(err, results) {
 			var success = err ? false : true;
 			res.send({
 				success: success,
@@ -203,7 +217,7 @@ router.get
 	'/catalog/courses',
 	function(req, res)
 	{
-		db.models.CourseSection.find().select('subjects').exec( function(err, results) {
+		db.models.Course.find().select('subjects').exec( function(err, results) {
 			var success = err ? false : true;
 			res.send({
 				success: success,
@@ -218,7 +232,7 @@ router.get
 	'/catalog/courses/:id',
 	function(req, res)
 	{
-		db.models.CourseSection.findById(req.params.id).exec(function(err, results) {
+		db.models.Course.findById(req.params.id).exec(function(err, results) {
 			var success = err ? false : true;
 			res.send({
 				success: success,
