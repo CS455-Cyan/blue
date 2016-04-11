@@ -148,9 +148,8 @@ router.put
 		{
 			db.models.Program.findOne(function(err, programs){
 				var category = programs.categories.id(req.params.category);
-				var department;
 				if(category) {
-					department = category.departments.id(req.params.department);
+					var department = category.departments.id(req.params.department);
 					if(department) {
 						for(var attribute in req.body) {
 							department[attribute] = req.body[attribute];
@@ -175,11 +174,161 @@ router.delete
 		{
 			db.models.Program.findOne(function(err, programs){
 				var category = programs.categories.id(req.params.category);
-				var department;
 				if(category) {
-					department = category.departments.id(req.params.department);
+					var department = category.departments.id(req.params.department);
 					if(department) {
 						department.remove();
+					}
+				}
+				programs.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
+router.post
+(
+	'/admin/catalog/programs/:category',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Program.findOne(function(err, programs){
+				var category = programs.categories.id(req.params.category);
+				if(category) {
+					category.programs.push(req.body);
+				}
+				programs.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
+router.post
+(
+	'/admin/catalog/programs/:category/:department',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Program.findOne(function(err, programs){
+				var category = programs.categories.id(req.params.category);
+				if(category) {
+					var department = category.departments.id(req.params.department);
+					if(department){
+						department.programs.push(req.body);
+					}
+				}
+				programs.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
+router.put
+(
+	'/admin/catalog/programs/:category/:program',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Program.findOne(function(err, programs){
+				var category = programs.categories.id(req.params.category);
+				if(category) {
+					var program = category.programs.id(req.params.program);
+					if(program) {
+						for(var attribute in req.body) {
+							program[attribute] = req.body[attribute];
+						}
+					}
+				}
+				programs.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
+router.put
+(
+	'/admin/catalog/programs/:category/:department/:program',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Program.findOne(function(err, programs){
+				var category = programs.categories.id(req.params.category);
+				if(category) {
+					var department = category.departments.id(req.params.department);
+					if(department) {
+						var program = department.programs.id(req.params.program);
+						if(program) {
+							for(var attribute in req.body) {
+								program[attribute] = req.body[attribute];
+							}
+						}
+					}
+				}
+				programs.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
+router.delete
+(
+	'/admin/catalog/programs/:category/:program',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Program.findOne(function(err, programs){
+				var category = programs.categories.id(req.params.category);
+				if(category) {
+					var program = category.programs.id(req.params.program);
+					if(program) {
+						program.remove();
+					}
+				}
+				programs.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
+router.delete
+(
+	'/admin/catalog/programs/:category/:department/:program',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Program.findOne(function(err, programs){
+				var category = programs.categories.id(req.params.category);
+				if(category) {
+					var department = category.departments.id(req.params.department);
+					if(department) {
+						var program = department.programs.id(req.params.program);
+						if(program) {
+							program.remove();
+						}
 					}
 				}
 				programs.save(function(err){

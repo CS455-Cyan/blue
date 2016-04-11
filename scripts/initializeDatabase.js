@@ -122,7 +122,7 @@ async.waterfall([
 			db.models.GeneralRequirement(requirements[i]).save();
 			//console.log(requirements[i]);
 		}
-		// create some sample programSections
+		// create some sample programs
 		var programs = [{
 			categories: [
         {
