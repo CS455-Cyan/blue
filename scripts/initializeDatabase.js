@@ -56,6 +56,11 @@ async.waterfall([
 		});	
 	},
 	function(callback){
+    db.models.FacultyAndStaff.remove({}, function(){
+			callback(); // we're done. go to the next function
+		});	
+	},
+	function(callback){
 		// create some sample textSections
 		var sections = [
 			{title: "University Information", content: "Yolo."},
@@ -64,6 +69,7 @@ async.waterfall([
 		for(var i in sections){
 			db.models.TextSection(sections[i]).save();
 		}
+		
 		// create some sample generalRequirements
 		var requirements = [{
 			areaI: [{
@@ -122,6 +128,7 @@ async.waterfall([
 			db.models.GeneralRequirement(requirements[i]).save();
 			//console.log(requirements[i]);
 		}
+		
 		// create some sample programs
 		var programs = [{
 			categories: [
@@ -161,6 +168,9 @@ async.waterfall([
 			db.models.Program(programs[i]).save(function(err, results){
       });
 		}
+		
+		db.models.FacultyAndStaff({content: "Dr. Roden..."}).save();
+		
 		// create some sample courseSections
 		var courses = [{
 			subjects: [{
@@ -183,6 +193,7 @@ async.waterfall([
 		for(var i in courses){
 			db.models.Course(courses[i]).save();
 		}
+		
 		// create some sample changeRequests
 		var changes = [
 			{

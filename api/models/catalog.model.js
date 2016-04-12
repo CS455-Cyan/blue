@@ -90,21 +90,30 @@ var courseSchema = mongoose.Schema({
 		abbreviation: String,
 		courses: [{
 			title: String,
+			description: String,
 			number: String,
-			description: String
+			offerings: [String],
+			hours: String,
+			fee: Number
 		}]
 	}]
 });
 models.Course = mongoose.model('Course', courseSchema);
 
+// facultyAndStaff
+var facultyAndStaffSchema = mongoose.Schema({
+	content: String
+});
+models.FacultyAndStaff = mongoose.model('FacultyAndStaff', facultyAndStaffSchema);
+
 // changeRequests
-var changeRequestsSchema = mongoose.Schema({
+var changeRequestSchema = mongoose.Schema({
 	author: String,
-	timeOfRequest: String,
-	timeOfApproval: String,
+	timeOfRequest: Date,
+	timeOfApproval: Date,
 	status: String
 });
-models.ChangeRequest = mongoose.model('ChangeRequest', changeRequestsSchema);
+models.ChangeRequest = mongoose.model('ChangeRequest', changeRequestSchema);
 
 // export the models object for inclusion in other scripts
 module.exports = {
