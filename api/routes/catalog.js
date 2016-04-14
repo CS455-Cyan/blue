@@ -61,6 +61,172 @@ router.post
 	}
 );
 
+/*--																					--*\
+								PUBLIC API ROUTES 							
+\*--																					--*/
+
+/*
+ * Route: List textSections
+ * 
+ * Input
+ * Output
+ *   {"success": Boolean, data: ["_id": String, "title": String]}
+ */
+router.get
+(
+	'/catalog/textSections',
+	function(req, res)
+	{
+		db.models.TextSection.findOne().select('sections.title sections._id').exec( function(err, results) {
+			var success = err ? false : true;
+			res.send({
+				success: success,
+				data: results.sections
+			});
+		});
+	}
+);
+
+/*
+ * Route: Get textSection
+ * 
+ * Input
+ *   url parameters:
+ *     id: id of textSection
+ * Output
+ *   {"success": Boolean, data: {"_id": String, "title": String, "content": String}}
+ */
+router.get
+(
+	'/catalog/textSections/:id',
+	function(req, res)
+	{
+		db.models.TextSection.findOne().exec(function(err, results) {
+			var section = results.sections.id(req.params.id);
+			var success = err || !section ? false : true;
+			res.send({
+				success: success,
+				data: section
+			});
+		});
+	}
+);
+
+/*
+ * Route: List generalRequirements
+ * 
+ * Input
+ * Output
+ *   {"success": Boolean, data: {
+ *     "AreaI": {"_id": String, "name": String, "requirements": []},
+ *     "AreaII": {"_id": String, "name": String, "requirements": []},
+ *     "AreaIII": {"_id": String, "name": String, "requirements": []},
+ *     "AreaIV": {"_id": String, "name": String, "requirements": []},
+ *     "AreaV": {"_id": String, "name": String, "requirements": []},
+ *   }}
+ */
+router.get
+(
+	'/catalog/generalRequirements',
+	function(req, res)
+	{
+		db.models.GeneralRequirement.find().select().exec( function(err, results) {
+			var success = err ? false : true;
+			res.send({
+				success: success,
+				data: results.sort()
+			});
+		});
+	}
+);
+
+/*
+ * Route: List programs
+ * 
+ * Input
+ * Output
+ *   {"success": Boolean, data: {
+ *     "categories": [{
+ *       "_id": String,
+ *       "name": String,
+ *       "description": String,
+ *       "programs": [],
+ *       "departments": [{
+ *         "_id": String,
+ *         "name": String,
+ *         "description: String,
+ *         "programs": []
+ *       }]
+ *     }]
+ *   }}
+ */
+router.get
+(
+	'/catalog/programs',
+	function(req, res)
+	{
+		db.models.Program.find().select('categories').exec( function(err, results) {
+			var success = err ? false : true;
+			res.send({
+				success: success,
+				data: results
+			});
+		});
+	}
+);
+
+/*
+ * Route: List courses
+ * 
+ * Input
+ * Output
+ *   {"success": Boolean, data: {
+ *     "subjects": [
+ *       "_id": String,
+ *       "name": String,
+ *       "abbreviation": String,
+ *       "courses": []
+ *     ]
+ *   }}
+ */
+router.get
+(
+	'/catalog/courses',
+	function(req, res)
+	{
+		db.models.Course.find().select('subjects').exec( function(err, results) {
+			var success = err ? false : true;
+			res.send({
+				success: success,
+				data: results
+			});
+		});
+	}
+);
+
+/*
+ * Route: Get facultyAndStaff
+ * 
+ * Input
+ *   url parameters:
+ *     id: id of textSection
+ * Output
+ *   {"success": Boolean, data:  String}
+ */
+router.get
+(
+	'/catalog/facultyAndStaff',
+	function(req, res)
+	{
+		db.models.FacultyAndStaff.findOne().exec(function(err, result) {
+			var success = err ? false : true;
+			res.send({
+				success: success,
+				data: result.content
+			});
+		});
+	}
+);
 
 /*--																					--*\
 						PRIMARY ADMIN API ROUTES 							
@@ -82,9 +248,44 @@ router.post
 		// restrict this to primary admins
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			new db.models.TextSection(req.body).save(function(err){
-				var success = err ? false : true;
-				res.send({success: success});
+			db.models.TextSection.findOne(function(err, textSections){
+				textSections.sections.push(req.body);
+				textSections.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
+/*
+ * Route: Update all textSections (use to re-order them)
+ * 
+ * Input
+ *   payload: [{"title": String, "content": String}, {"title": String, "content": String}]
+ * Output
+ *   {"success": Boolean}
+ */
+router.put
+(
+	'/admin/catalog/textSections',
+	function(req, res)
+	{
+		// restrict this to primary admins
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.TextSection.findOne(function(err, textSections){
+				textSections.sections = [];
+				if(req.body.length) {
+					for(var i in req.body) {
+						textSections.sections.push(req.body[i]);
+					}
+				}
+				textSections.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
 			});
 		}
 	}
@@ -108,15 +309,18 @@ router.put
 		// restrict this to primary admins
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.TextSection.update(
-				{ _id: req.params.id },
-				{ $set: req.body}
-			).exec(
-				function(err){
+			db.models.TextSection.findOne(function(err, textSections){
+				var section = textSections.sections.id(req.params.id);
+				if(section) {
+					for(var attribute in req.body) {
+						section[attribute] = req.body[attribute];
+					}
+				}
+				textSections.save(function(err){
 					var success = err ? false : true;
 					res.send({success: success});
-				}
-			);
+				});
+			});
 		}
 	}
 );
@@ -137,9 +341,15 @@ router.delete
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.TextSection.remove({_id: req.params.id}).exec(function(err){
-				var success = err ? false : true;
-				res.send({success: success});
+			db.models.TextSection.findOne(function(err, textSections){
+				var section = textSections.sections.id(req.params.id);
+				if(section) {
+					section.remove();
+				}
+				textSections.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
 			});
 		}
 	}
@@ -489,172 +699,6 @@ router.put
 				}
 			);
 		}
-	}
-);
-
-/*--																					--*\
-								PUBLIC API ROUTES 							
-\*--																					--*/
-
-/*
- * Route: List textSections
- * 
- * Input
- * Output
- *   {"success": Boolean, data: ["_id": String, "title": String]}
- */
-router.get
-(
-	'/catalog/textSections',
-	function(req, res)
-	{
-		db.models.TextSection.find().select('title').exec( function(err, results) {
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: results
-			});
-		});
-	}
-);
-
-/*
- * Route: Get textSection
- * 
- * Input
- *   url parameters:
- *     id: id of textSection
- * Output
- *   {"success": Boolean, data: {"_id": String, "title": String, "content": String}}
- */
-router.get
-(
-	'/catalog/textSections/:id',
-	function(req, res)
-	{
-		db.models.TextSection.findById(req.params.id).exec(function(err, results) {
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: results
-			});
-		});
-	}
-);
-
-/*
- * Route: List generalRequirements
- * 
- * Input
- * Output
- *   {"success": Boolean, data: {
- *     "AreaI": {"_id": String, "name": String, "requirements": []},
- *     "AreaII": {"_id": String, "name": String, "requirements": []},
- *     "AreaIII": {"_id": String, "name": String, "requirements": []},
- *     "AreaIV": {"_id": String, "name": String, "requirements": []},
- *     "AreaV": {"_id": String, "name": String, "requirements": []},
- *   }}
- */
-router.get
-(
-	'/catalog/generalRequirements',
-	function(req, res)
-	{
-		db.models.GeneralRequirement.find().select().exec( function(err, results) {
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: results.sort()
-			});
-		});
-	}
-);
-
-/*
- * Route: List programs
- * 
- * Input
- * Output
- *   {"success": Boolean, data: {
- *     "categories": [{
- *       "_id": String,
- *       "name": String,
- *       "description": String,
- *       "programs": [],
- *       "departments": [{
- *         "_id": String,
- *         "name": String,
- *         "description: String,
- *         "programs": []
- *       }]
- *     }]
- *   }}
- */
-router.get
-(
-	'/catalog/programs',
-	function(req, res)
-	{
-		db.models.Program.find().select('categories').exec( function(err, results) {
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: results
-			});
-		});
-	}
-);
-
-/*
- * Route: List courses
- * 
- * Input
- * Output
- *   {"success": Boolean, data: {
- *     "subjects": [
- *       "_id": String,
- *       "name": String,
- *       "abbreviation": String,
- *       "courses": []
- *     ]
- *   }}
- */
-router.get
-(
-	'/catalog/courses',
-	function(req, res)
-	{
-		db.models.Course.find().select('subjects').exec( function(err, results) {
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: results
-			});
-		});
-	}
-);
-
-/*
- * Route: Get facultyAndStaff
- * 
- * Input
- *   url parameters:
- *     id: id of textSection
- * Output
- *   {"success": Boolean, data:  String}
- */
-router.get
-(
-	'/catalog/facultyAndStaff',
-	function(req, res)
-	{
-		db.models.FacultyAndStaff.findOne().exec(function(err, result) {
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: result.content
-			});
-		});
 	}
 );
 

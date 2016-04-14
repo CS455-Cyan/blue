@@ -62,13 +62,13 @@ async.waterfall([
 	},
 	function(callback){
 		// create some sample textSections
-		var sections = [
-			{title: "University Information", content: "Yolo."},
-			{title: "Academic Procedures", content: "Blah blah blah."}
-		];
-		for(var i in sections){
-			db.models.TextSection(sections[i]).save();
-		}
+		var textSections = {
+			sections: [
+				{title: "University Information", content: "Yolo."},
+				{title: "Academic Procedures", content: "Blah blah blah."}
+			]
+		};
+		db.models.TextSection(textSections).save();
 		
 		// create some sample generalRequirements
 		var requirements = [{
@@ -77,7 +77,7 @@ async.waterfall([
 				requirements: [{
 					name: "requirement",
 					items: [{
-						separator: true,
+						separator: 'AND',
 						courses: [],
 						write_in: "optional"
 					}]
@@ -88,7 +88,7 @@ async.waterfall([
 				requirements: [{
 					name: "requirement",
 					items: [{
-						separator: false,
+						separator: 'OR',
 						courses: []
 					}]
 				}]
@@ -98,7 +98,7 @@ async.waterfall([
 				requirements: [{
 					name: "requirement",
 					items: [{
-						separator: false,
+						separator: 'OR',
 						courses: []
 					}]
 				}]
@@ -108,7 +108,7 @@ async.waterfall([
 				requirements: [{
 					name: "requirement",
 					items: [{
-						separator: false,
+						separator: 'OR',
 						courses: []
 					}]
 				}]
@@ -118,7 +118,7 @@ async.waterfall([
 				requirements: [{
 					name: "requirement",
 					items: [{
-						separator: false,
+						separator: 'OR',
 						courses: []
 					}]
 				}]
@@ -142,7 +142,24 @@ async.waterfall([
 							{
 								type: "major",
 								name: "Computer Science",
-								description: "not for the faint of heart"
+								description: "not for the faint of heart",
+								requirements: [{
+									name: "Core Requirements",
+									items: [
+										{
+											separator: 'AND',
+											courses: [
+												'570efc799c1394fc21eb9f6b'
+											]
+										},
+										{
+											separator: 'AND',
+											courses: [
+												'570efc799c1394fc21eb9f6a'
+											]
+										}
+									]
+								}]
 							},
 							{
 								type: "minor",

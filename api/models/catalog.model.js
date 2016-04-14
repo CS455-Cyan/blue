@@ -21,8 +21,10 @@ models.Admin = mongoose.model('Admin', adminSchema);
 
 // textSections
 var textSectionSchema = mongoose.Schema({
-	title: String,
-	content: String
+	sections: [{
+		title: String,
+		content: String
+	}]
 });
 models.TextSection = mongoose.model('TextSection', textSectionSchema);
 
