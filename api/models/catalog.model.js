@@ -96,7 +96,7 @@ var courseSchema = mongoose.Schema({
 			number: String,
 			offerings: [String],
 			hours: String,
-			fee: Number
+			fee: String
 		}]
 	}]
 });
@@ -110,10 +110,39 @@ models.FacultyAndStaff = mongoose.model('FacultyAndStaff', facultyAndStaffSchema
 
 // changeRequests
 var changeRequestSchema = mongoose.Schema({
-	author: String,
+	author: String, // the admin that made the request; usually will be secondary admin
 	timeOfRequest: Date,
 	timeOfApproval: Date,
-	status: String
+	status: String, // "pending", "approved", or "denied"; can only be changed by primary admin
+	requestTypes: [],
+	newCourseInfo: {
+		syllabusFile: String, // will be name in filesystem of uploaded file
+		title: String,
+		name: String,
+		description: String,
+		number: String,
+		hours: String,
+		fee: String,
+		prerequisitesCorequisites: String,
+		offerings: []
+	},
+	revisedFacultyCredentials: {
+		needed: Boolean,
+		content: String
+	},
+	courseListChange: {
+		needed: Boolean,
+		content: String
+	},
+	effective: {
+		semester: String,
+		year: String
+	},
+	courseFeeChange: String,
+	affectedDepartmentsPrograms: String,
+	approvedBy: String, // this is for the requester to enter; not referring to the primary admin approval
+	description: String, // generic description field for requester to describe the change,
+	comment: String // comment made by primary admin on approval/denial
 });
 models.ChangeRequest = mongoose.model('ChangeRequest', changeRequestSchema);
 

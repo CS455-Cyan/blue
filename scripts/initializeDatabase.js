@@ -61,6 +61,11 @@ async.waterfall([
 		});	
 	},
 	function(callback){
+    db.models.ChangeRequest.remove({}, function(){
+			callback(); // we're done. go to the next function
+		});	
+	},
+	function(callback){
 		// create some sample textSections
 		var textSections = {
 			sections: [
@@ -215,15 +220,53 @@ async.waterfall([
 		var changes = [
 			{
 				author: "Sean Connery",
-			 	timeOfRequest: "Long time ago.",
-				timeOfApproval: "Wouldn't you like to know",
-				status: "pending"
+			 	timeOfRequest: Date.now(),
+				timeOfApproval: Date.now(),
+				status: "pending",
+				requestTypes: [
+					"Change in Course Description",
+				],
+				revisedFacultyCredentials: {
+					needed: false,
+					content: null
+				},
+				courseListChange: {
+					needed: false,
+					content: null
+				},
+				effective: {
+					semester: "Fall",
+					year: "2016"
+				},
+				courseFeeChange: null,
+				affectedDepartmentsPrograms: "Computer Science and Information Systems",
+				approvedBy: "Renee Vandiver",
+				description: "Change course description for CS310 to 'learning how to write assembly for a computer nobody uses any more'"
 			},
 			{
 				author: "Sean Connery",
 			 	timeOfRequest: Date.now(),
 				timeOfApproval: Date.now(),
-				status: "approved"
+				status: "approved",
+				requestTypes: [
+					"Addition of/Change in Course Fee",
+				],
+				revisedFacultyCredentials: {
+					needed: false,
+					content: null
+				},
+				courseListChange: {
+					needed: false,
+					content: null
+				},
+				effective: {
+					semester: "Fall",
+					year: "2016"
+				},
+				courseFeeChange: null,
+				affectedDepartmentsPrograms: "Computer Science and Information Systems",
+				approvedBy: "Renee Vandiver",
+				description: "Change course fee for CS455 to $3000 so nobody can graduate. hehe"
 			}
 		];
 		for(var i in changes){
