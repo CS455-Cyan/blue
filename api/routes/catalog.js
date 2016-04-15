@@ -68,6 +68,10 @@ router.post
 /*
  * Route: List textSections
  * 
+ * Created: 03/24/2016 Tyler Yasaka
+ * 
+ * Modified:
+ * 
  * Input
  * Output
  *   {"success": Boolean, data: ["_id": String, "title": String]}
@@ -89,6 +93,10 @@ router.get
 
 /*
  * Route: Get textSection
+ * 
+ * Created: 03/24/2016 Tyler Yasaka
+ * 
+ * Modified:
  * 
  * Input
  *   url parameters:
@@ -114,6 +122,10 @@ router.get
 
 /*
  * Route: List generalRequirements
+ * 
+ * Created: 04/02/2016 Andrew Fisher
+ * 
+ * Modified:
  * 
  * Input
  * Output
@@ -142,6 +154,11 @@ router.get
 
 /*
  * Route: List programs
+  * 
+ * Created: 04/02/2016 Andrew Fisher
+ * 
+ * Modified:
+ *   04/08/2016 Tyler Yasaka
  * 
  * Input
  * Output
@@ -177,6 +194,11 @@ router.get
 
 /*
  * Route: List courses
+  * 
+ * Created: 04/02/2016 Andrew Fisher
+ * 
+ * Modified:
+ *   04/08/2016 Tyler Yasaka
  * 
  * Input
  * Output
@@ -206,6 +228,10 @@ router.get
 
 /*
  * Route: Get facultyAndStaff
+  * 
+ * Created: 04/11/2016 Tyler Yasaka
+ * 
+ * Modified:
  * 
  * Input
  *   url parameters:
@@ -235,6 +261,10 @@ router.get
 /*
  * Route: Add textSection
  * 
+ * Created: 03/24/2016 Tyler Yasaka
+ * 
+ * Modified:
+ * 
  * Input
  *   payload: {"title": String, "content": String}
  * Output
@@ -261,6 +291,10 @@ router.post
 
 /*
  * Route: Update all textSections (use to re-order them)
+ * 
+ * Created: 04/14/2016 Tyler Yasaka
+ * 
+ * Modified:
  * 
  * Input
  *   payload: [{"title": String, "content": String}, {"title": String, "content": String}]
@@ -293,6 +327,10 @@ router.put
 
 /*
  * Route: Update textSection
+ * 
+ * Created: 03/24/2016 Tyler Yasaka
+ * 
+ * Modified:
  * 
  * Input
  *   url parameters:
@@ -328,6 +366,10 @@ router.put
 /*
  * Route: Remove textSection
  * 
+ * Created: 03/24/2016 Tyler Yasaka
+ * 
+ * Modified:
+ * 
  * Input
  *   url parameters:
  *     id: id of textSection
@@ -357,6 +399,10 @@ router.delete
 
 /*
  * Route: Add department
+ * 
+ * Created: 04/9/2016 Tyler Yasaka
+ * 
+ * Modified:
  * 
  * Input
  *   url parameters:
@@ -388,6 +434,10 @@ router.post
 
 /*
  * Route: Update department
+ * 
+ * Created: 04/9/2016 Tyler Yasaka
+ * 
+ * Modified:
  * 
  * Input
  *   url parameters:
@@ -426,6 +476,10 @@ router.put
 /*
  * Route: Remove department
  * 
+ * Created: 04/9/2016 Tyler Yasaka
+ * 
+ * Modified:
+ * 
  * Input
  *   url parameters:
  *     category: id of category that department is in
@@ -460,6 +514,10 @@ router.delete
 /*
  * Route: Add program to category
  * 
+ * Created: 04/11/2016 Tyler Yasaka
+ * 
+ * Modified:
+ * 
  * Input
  *   url parameters:
  *     category: id of category to add program to
@@ -490,6 +548,10 @@ router.post
 
 /*
  * Route: Add program to department
+ * 
+ * Created: 04/11/2016 Tyler Yasaka
+ * 
+ * Modified:
  * 
  * Input
  *   url parameters:
@@ -525,6 +587,10 @@ router.post
 
 /*
  * Route: Update program in category
+ * 
+ * Created: 04/11/2016 Tyler Yasaka
+ * 
+ * Modified:
  * 
  * Input
  *   url parameters:
@@ -562,6 +628,10 @@ router.put
 
 /*
  * Route: Update program in department
+ * 
+ * Created: 04/11/2016 Tyler Yasaka
+ * 
+ * Modified:
  * 
  * Input
  *   url parameters:
@@ -604,6 +674,10 @@ router.put
 /*
  * Route: Remove program from category
  * 
+ * Created: 04/11/2016 Tyler Yasaka
+ * 
+ * Modified:
+ * 
  * Input
  *   url parameters:
  *     category: id of category containing program
@@ -637,6 +711,10 @@ router.delete
 
 /*
  * Route: Remvoe program from department
+ * 
+ * Created: 04/11/2016 Tyler Yasaka
+ * 
+ * Modified:
  * 
  * Input
  *   url parameters:
@@ -675,6 +753,10 @@ router.delete
 
 /*
  * Route: Update facultyAndStaff
+ * 
+ * Created: 04/11/2016 Tyler Yasaka
+ * 
+ * Modified:
  * 
  * Input
  *   payload: {"content": String}
