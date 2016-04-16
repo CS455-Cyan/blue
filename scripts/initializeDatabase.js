@@ -77,7 +77,7 @@ async.waterfall([
 		
 		// create some sample generalRequirements
 		var requirements = [{
-			areaI: [{
+			areaI: {
 				name: "Written Composition",
 				requirements: [{
 					name: "requirement",
@@ -87,8 +87,8 @@ async.waterfall([
 						write_in: "optional"
 					}]
 				}]
-			}],
-			areaII: [{
+			},
+			areaII: {
 				name: "Humanities and Fine Arts",
 				requirements: [{
 					name: "requirement",
@@ -97,8 +97,8 @@ async.waterfall([
 						courses: []
 					}]
 				}]
-			}],
-			areaIII: [{
+			},
+			areaIII: {
 				name: "Natural Sciences and Mathematics",
 				requirements: [{
 					name: "requirement",
@@ -107,8 +107,8 @@ async.waterfall([
 						courses: []
 					}]
 				}]
-			}],
-			areaIV: [{
+			},
+			areaIV: {
 				name: "History, Social and Behavioral Sciences",
 				requirements: [{
 					name: "requirement",
@@ -117,8 +117,8 @@ async.waterfall([
 						courses: []
 					}]
 				}]
-			}],
-			areaV: [{
+			},
+			areaV: {
 				name: "Additional Requirements",
 				requirements: [{
 					name: "requirement",
@@ -127,7 +127,7 @@ async.waterfall([
 						courses: []
 					}]
 				}]
-			}],
+			}
 		}];
 		for(var i in requirements){
 			db.models.GeneralRequirement(requirements[i]).save();

@@ -40,26 +40,26 @@ var requirementSchema = mongoose.Schema({
 
 // generalRequirements
 var generalRequirementsSchema = mongoose.Schema({
-	areaI: [{
+	areaI: {
 		name: String,
 		requirements: [requirementSchema]
-	}],
-	areaII: [{
+	},
+	areaII: {
 		name: String,
 		requirements: [requirementSchema]
-	}],
-	areaIII: [{
+	},
+	areaIII: {
 		name: String,
 		requirements: [requirementSchema]
-	}],
-	areaIV: [{
+	},
+	areaIV: {
 		name: String,
 		requirements: [requirementSchema]
-	}],
-	areaV: [{
+	},
+	areaV: {
 		name: String,
 		requirements: [requirementSchema]
-	}]
+	}
 });
 models.GeneralRequirement = mongoose.model('GeneralRequirement', generalRequirementsSchema);
 

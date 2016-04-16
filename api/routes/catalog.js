@@ -398,6 +398,120 @@ router.delete
 );
 
 /*
+ * Route: Add requirement to area
+ * 
+ * Created: 04/16/2016 John Batson
+ * 
+ * Modified:
+ * 
+ * Input
+ *   url parameters:
+ *     area: id of area to add program to
+ *   payload: {"name": String, "items": []}
+ * Output
+ *   {"success": Boolean}
+ */
+router.post
+(
+	'/admin/catalog/generalRequirements/:area',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.GeneralRequirement.findOne(function(err, generalRequirements){
+				var area = generalRequirements[req.params.area];
+				if(area) {
+					area.requirements.push(req.body);
+				}
+				generalRequirements.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
+/*
+ * Route: Update requirement in area
+ * 
+ * Created: 04/16/2016 John Batson
+ * 
+ * Modified:
+ * 
+ * Input
+ *   url parameters:
+ *     area: id of area containing requirement
+ *     requirement: id of requirement
+ *   payload: {"name": String, "items": []}
+ * Output
+ *   {"success": Boolean}
+ */
+router.put
+(
+	'/admin/catalog/generalRequirements/:area/:requirement',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.GeneralRequirement.findOne(function(err, generalRequirements){
+				var area = generalRequirements[req.params.area];
+				if(area) {
+					var requirement = area.requirements.id(req.params.requirement);
+					if(requirement) {
+						for(var attribute in req.body) {
+							requirement[attribute] = req.body[attribute];
+						}
+					}
+				}
+				generalRequirements.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
+/*
+ * Route: Remove requirement from area
+ * 
+ * Created: 04/16/2016 John Batson
+ * 
+ * Modified:
+ * 
+ * Input
+ *   url parameters:
+ *     area: id of area containing requirement
+ *     requirement: id of requirement
+ * Output
+ *   {"success": Boolean}
+ */
+router.delete
+(
+	'/admin/catalog/generalRequirements/:area/:requirement',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.GeneralRequirement.findOne(function(err, generalRequirements){
+				var area = generalRequirements[req.params.area];
+				if(area) {
+					var requirement = area.requirements.id(req.params.requirement);
+					if(requirement) {
+						requirement.remove();
+					}
+				}
+				generalRequirements.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
+/*
  * Route: Add category
  * 
  * Created: 04/9/2016 Kaitlin Snyder
