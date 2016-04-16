@@ -407,7 +407,7 @@ router.delete
  * Input
  *   url parameters:
  *     category: id of category to add department to
- *   payload: {"name": String, "description": String, programs: []}
+ *   payload: {"name": String, "description": String, "programs": []}
  * Output
  *   {"success": Boolean}
  */
@@ -443,7 +443,7 @@ router.post
  *   url parameters:
  *     category: id of category that department is in
  *     department: id of department
- *   payload: {"name": String, "description": String, programs: []}
+ *   payload: {"name": String, "description": String, "programs": []}
  * Output
  *   {"success": Boolean}
  */
