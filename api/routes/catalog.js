@@ -192,6 +192,36 @@ router.get
 	}
 );
 
+router.post
+(
+	'/catalog/programs/search/',
+	function(req, res)
+	{
+		db.models.Program.findOne(function(err, programs) {
+			for(var c in programs.categories){
+				for(var p in programs.categories[c].programs){
+					var progName = programs.categories[c].programs[p].name.toLowerCase().indexOf(req.body.term.toLowerCase());
+					console.log(progName);
+					var progDesc = programs.categories[c].programs[p].description.toLowerCase().indexOf(req.body.term.toLowerCase());
+					console.log(progDesc);
+					}
+				for(var d in programs.categories[c].departments){
+					var deptName = programs.categories[c].departments[d].name.toLowerCase().indexOf(req.body.term.toLowerCase());
+					console.log(deptName);
+					var deptDesc = programs.categories[c].departments[d].description.toLowerCase().indexOf(req.body.term.toLowerCase());
+					console.log(deptDesc);
+				}
+			}
+			var programsArr = [];
+			if(progName == 0 || progDesc == 0 || deptName == 0 || deptDesc ==0){
+				programsArr.push(programs);
+			}
+				var success = err ? false : true;
+				res.send({success: success, data: programsArr});
+		});
+	}
+);
+
 /*
  * Route: List courses
   * 
@@ -222,6 +252,30 @@ router.get
 				success: success,
 				data: results
 			});
+		});
+	}
+);
+
+router.post
+(
+	'/catalog/courses/search/',
+	function(req, res)
+	{
+		db.models.Course.findOne(function(err, courses) {
+			for(var s in courses.subjects){
+				var courseName = courses.subjects[s].name.toLowerCase().indexOf(req.body.term.toLowerCase());
+				console.log(courseName);
+				for(var c in courses.subjects[s].courses){
+					var className = courses.subjects[s].courses[c].title.toLowerCase().indexOf(req.body.term.toLowerCase());
+					console.log(className);
+				}
+			}
+			var courseArr = [];
+			if(courseName == 0 || className == 0){
+				courseArr.push(courses);
+			}
+			var success = err ? false : true;
+			res.send({success: success, data: courseArr});
 		});
 	}
 );
@@ -815,7 +869,7 @@ router.delete
 );
 
 /*
- * Route: Remvoe program from department
+ * Route: Remove program from department
  * 
  * Created: 04/11/2016 Tyler Yasaka
  * 
