@@ -398,6 +398,111 @@ router.delete
 );
 
 /*
+ * Route: Add category
+ * 
+ * Created: 04/9/2016 Kaitlin Snyder
+ * 
+ * Modified:
+ * 
+ * Input
+ *   payload: {"name": String, "description": String, "departments": [], "programs": []}
+ * Output
+ *   {"success": Boolean}
+ */
+router.post
+(
+	'/admin/catalog/programCategories',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Program.findOne(function(err, programs){
+				programs.categories.push(req.body);
+				programs.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
+
+
+/*
+ * Route: Update category
+ * 
+ * Created: 04/15/2016 Kaitlin Snyder
+ * 
+ * Modified:
+ * 
+ * Input
+ *   url parameters:
+ *     id: id of category to update
+ *   payload: {"name": String, "description": String, "departments": [], "programs": []}
+ * Output
+ *   {"success": Boolean}
+ */
+router.put
+(
+	'/admin/catalog/programCategories/:id',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Program.findOne(function(err, programs){
+				var category = programs.categories.id(req.params.id);
+				if(category) {
+					for(var attribute in req.body) {
+						category[attribute] = req.body[attribute];
+					}
+				}
+				programs.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
+/*
+ * Route: Remove category
+ * 
+ * Created: 04/15/2016 Kaitlin Snyder
+ * 
+ * Modified:
+ * 
+ * Input
+ *   url parameters:
+ *     id: id of category to update
+ * Output
+ *   {"success": Boolean}
+ */
+router.delete
+(
+	'/admin/catalog/programCategories/:id',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Program.findOne(function(err, programs){
+				var category = programs.categories.id(req.params.id);
+				if(category) {
+					category.remove();
+				}
+				programs.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
+
+
+/*
  * Route: Add department
  * 
  * Created: 04/9/2016 Tyler Yasaka
