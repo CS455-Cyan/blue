@@ -1,8 +1,11 @@
 /***																					***\
 
 	Filename: api/routes/catalog.js
-	Author: Tyler Yasaka
+	Authors:
+			Tyler Yasaka
 			Andrew Fisher
+			Kaitlin Snyder
+			John Batson
 
 \***																					***/
 
@@ -25,41 +28,6 @@ connection.on('error', console.error.bind(console, 'connection error:'));
 connection.once('open', function() {
 	console.log('connected to mongodb');
 });
-
-/*--																					--*\
-								SAMPLE ROUTES 							
-\*--																					--*/
-
-// A simple GET request
-router.get
-(
-	'/helloworld',
-	function(req, res)
-	{
-		res.send('Hello world');
-	}
-);
-
-// A GET request with a parameter
-router.get
-(
-	'/helloworld/:name',
-	function(req, res)
-	{
-		res.send('Hello world, and ' + req.params.name);
-	}
-);
-
-// A POST request with JSON data
-// The data sent could look like: {"firstName": "Tyler", "lastName": "Awesome"}
-router.post
-(
-	'/helloworld',
-	function(req, res)
-	{
-		res.send('Hello world, and ' + req.body.firstName + ' ' + req.body.lastName);
-	}
-);
 
 /*--																					--*\
 								PUBLIC API ROUTES 							
@@ -126,44 +94,85 @@ router.get
  * Created: 04/02/2016 Andrew Fisher
  * 
  * Modified:
+ *   04/17/2016 Tyler Yasaka
  * 
  * Input
  * Output
- *   {"success": Boolean, data: {
- *     "AreaI": {"_id": String, "name": String, "requirements": []},
- *     "AreaII": {"_id": String, "name": String, "requirements": []},
- *     "AreaIII": {"_id": String, "name": String, "requirements": []},
- *     "AreaIV": {"_id": String, "name": String, "requirements": []},
- *     "AreaV": {"_id": String, "name": String, "requirements": []},
- *   }}
+ *   {"success": Boolean, data: [
+ *     {"_id": String, "area": String, name": String, "requirements": []},
+ *     {"_id": String, "area": String, "name": String, "requirements": []},
+ *     {"_id": String, "area": String, "name": String, "requirements": []},
+ *     {"_id": String, "area": String, "name": String, "requirements": []},
+ *     {"_id": String, "area": String, "name": String, "requirements": []},
+ *   ]}
  */
 router.get
 (
 	'/catalog/generalRequirements',
 	function(req, res)
 	{
-		db.models.GeneralRequirement.find().select().exec( function(err, results) {
+		db.models.GeneralRequirement.find()
+		.populate({
+			path: 'requirements.items.courses',
+			populate: {
+				path: 'subject'
+			}
+		}).exec( function(err, results) {
 			var success = err ? false : true;
 			res.send({
 				success: success,
-				data: results.sort()
+				data: results
 			});
 		});
 	}
 );
 
 /*
- * Route: List programs
-  * 
+ * Route: List program categories
+ * 
  * Created: 04/02/2016 Andrew Fisher
  * 
  * Modified:
  *   04/08/2016 Tyler Yasaka
+ *   04/17/2016 Tyler Yasaka
  * 
  * Input
  * Output
- *   {"success": Boolean, data: {
- *     "categories": [{
+ *   {"success": Boolean, data: [
+ *     {
+ *       "_id": String,
+ *       "name": String,
+ *     }
+ *   ]}
+ */
+router.get
+(
+	'/catalog/programCategories',
+	function(req, res)
+	{
+		db.models.Program.find().select('name').exec( function(err, results) {
+			var success = err ? false : true;
+			res.send({
+				success: success,
+				data: results
+			});
+		});
+	}
+);
+
+/*
+ * Route: View category details
+ * 
+ * Created: 04/02/2016 Andrew Fisher
+ * 
+ * Modified:
+ *   04/08/2016 Tyler Yasaka
+ *   04/17/2016 Tyler Yasaka
+ * 
+ * Input
+ * Output
+ *   {"success": Boolean, data: [
+ *     {
  *       "_id": String,
  *       "name": String,
  *       "description": String,
@@ -174,15 +183,26 @@ router.get
  *         "description: String,
  *         "programs": []
  *       }]
- *     }]
- *   }}
+ *     }
+ *   ]}
  */
 router.get
 (
-	'/catalog/programs',
+	'/catalog/programCategories/:id',
 	function(req, res)
 	{
-		db.models.Program.find().select('categories').exec( function(err, results) {
+		db.models.Program.find({_id: req.params.id})
+		.populate({
+			path: 'departments.programs.requirements.items.courses',
+			populate: {
+				path: 'subject'
+			}
+		}).populate({
+			path: 'programs.requirements.items.courses',
+			populate: {
+				path: 'subject'
+			}
+		}).exec( function(err, results) {
 			var success = err ? false : true;
 			res.send({
 				success: success,
@@ -194,29 +214,34 @@ router.get
 
 /*
  * Route: List courses
-  * 
+ * 
  * Created: 04/02/2016 Andrew Fisher
  * 
  * Modified:
  *   04/08/2016 Tyler Yasaka
+ *   04/17/2016 Tyler Yasaka
  * 
  * Input
  * Output
- *   {"success": Boolean, data: {
- *     "subjects": [
+ *   {"success": Boolean, data: [
+ *     "_id": String,
+ *     "title": String
+ *     "number": String,
+ *     "description": String,
+ *     "offerings": []
+ *     "subject": {
  *       "_id": String,
  *       "name": String,
- *       "abbreviation": String,
- *       "courses": []
- *     ]
- *   }}
+ *       "abbreviation": String
+ *     }
+ *   ]}
  */
 router.get
 (
 	'/catalog/courses',
 	function(req, res)
 	{
-		db.models.Course.find().select('subjects').exec( function(err, results) {
+		db.models.Course.find().populate('subject').exec( function(err, results) {
 			var success = err ? false : true;
 			res.send({
 				success: success,
@@ -403,6 +428,7 @@ router.delete
  * Created: 04/16/2016 John Batson
  * 
  * Modified:
+ *   04/17/2016 Tyler Yasaka
  * 
  * Input
  *   url parameters:
@@ -418,15 +444,19 @@ router.post
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.GeneralRequirement.findOne(function(err, generalRequirements){
-				var area = generalRequirements[req.params.area];
+			db.models.GeneralRequirement.findOne({area: req.params.area}).exec(function(err, area){
 				if(area) {
-					area.requirements.push(req.body);
+					if(area.requirements) {
+						area.requirements.push(req.body);
+					}
+					area.save(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
 				}
-				generalRequirements.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
+				else {
+					res.send({success: false, error: 'Area does not exist'});
+				}
 			});
 		}
 	}
@@ -438,6 +468,7 @@ router.post
  * Created: 04/16/2016 John Batson
  * 
  * Modified:
+ *   04/17/2016 Tyler Yasaka
  * 
  * Input
  *   url parameters:
@@ -454,20 +485,24 @@ router.put
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.GeneralRequirement.findOne(function(err, generalRequirements){
-				var area = generalRequirements[req.params.area];
+			db.models.GeneralRequirement.findOne({area: req.params.area}).exec(function(err, area){
 				if(area) {
-					var requirement = area.requirements.id(req.params.requirement);
-					if(requirement) {
-						for(var attribute in req.body) {
-							requirement[attribute] = req.body[attribute];
+					if(area.requirements) {
+						var requirement = area.requirements.id(req.params.requirement);
+						if(requirement) {
+							for(var attribute in req.body) {
+								requirement[attribute] = req.body[attribute];
+							}
 						}
 					}
+					area.save(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
 				}
-				generalRequirements.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
+				else {
+					res.send({success: false, error: 'Area does not exist'});
+				}
 			});
 		}
 	}
@@ -479,6 +514,7 @@ router.put
  * Created: 04/16/2016 John Batson
  * 
  * Modified:
+ *   04/17/2016 Tyler Yasaka
  * 
  * Input
  *   url parameters:
@@ -494,18 +530,22 @@ router.delete
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.GeneralRequirement.findOne(function(err, generalRequirements){
-				var area = generalRequirements[req.params.area];
+			db.models.GeneralRequirement.findOne({area: req.params.area}).exec(function(err, area){
 				if(area) {
-					var requirement = area.requirements.id(req.params.requirement);
-					if(requirement) {
-						requirement.remove();
+					if(area.requirements) {
+						var requirement = area.requirements.id(req.params.requirement);
+						if(requirement) {
+							requirement.remove();
+						}
 					}
+					area.save(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
 				}
-				generalRequirements.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
+				else {
+					res.send({success: false, error: 'Area does not exist'});
+				}
 			});
 		}
 	}
@@ -514,9 +554,10 @@ router.delete
 /*
  * Route: Add category
  * 
- * Created: 04/9/2016 Kaitlin Snyder
+ * Created: 04/15/2016 Kaitlin Snyder
  * 
  * Modified:
+ *   04/17/2016 Tyler Yasaka
  * 
  * Input
  *   payload: {"name": String, "description": String, "departments": [], "programs": []}
@@ -530,18 +571,13 @@ router.post
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.Program.findOne(function(err, programs){
-				programs.categories.push(req.body);
-				programs.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
+			db.models.Program(req.body).save(function(err){
+				var success = err ? false : true;
+				res.send({success: success});
 			});
 		}
 	}
 );
-
-
 
 /*
  * Route: Update category
@@ -549,6 +585,7 @@ router.post
  * Created: 04/15/2016 Kaitlin Snyder
  * 
  * Modified:
+ *   04/17/2016 Tyler Yasaka
  * 
  * Input
  *   url parameters:
@@ -564,17 +601,19 @@ router.put
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.Program.findOne(function(err, programs){
-				var category = programs.categories.id(req.params.id);
+			db.models.Program.findOne({_id: req.params.id}).exec(function(err, category){
 				if(category) {
 					for(var attribute in req.body) {
 						category[attribute] = req.body[attribute];
 					}
+					category.save(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
 				}
-				programs.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
+				else {
+					res.send({success: false, error: 'Category does not exist'});
+				}
 			});
 		}
 	}
@@ -586,6 +625,7 @@ router.put
  * Created: 04/15/2016 Kaitlin Snyder
  * 
  * Modified:
+ *   04/17/2016 Tyler Yasaka
  * 
  * Input
  *   url parameters:
@@ -600,15 +640,16 @@ router.delete
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.Program.findOne(function(err, programs){
-				var category = programs.categories.id(req.params.id);
+			db.models.Program.findOne({_id: req.params.id}).exec(function(err, category){
 				if(category) {
-					category.remove();
+					category.remove(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
 				}
-				programs.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
+				else {
+					res.send({success: false, error: 'Category does not exist'});
+				}
 			});
 		}
 	}
@@ -622,6 +663,7 @@ router.delete
  * Created: 04/9/2016 Tyler Yasaka
  * 
  * Modified:
+ *   04/17/2016 Tyler Yasaka
  * 
  * Input
  *   url parameters:
@@ -637,15 +679,17 @@ router.post
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.Program.findOne(function(err, programs){
-				var category = programs.categories.id(req.params.category);
+			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
 				if(category) {
 					category.departments.push(req.body);
+					category.save(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
 				}
-				programs.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
+				else {
+					res.send({success: false, error: 'Category does not exist'});
+				}
 			});
 		}
 	}
@@ -657,6 +701,7 @@ router.post
  * Created: 04/9/2016 Tyler Yasaka
  * 
  * Modified:
+ *   04/17/2016 Tyler Yasaka
  * 
  * Input
  *   url parameters:
@@ -673,8 +718,7 @@ router.put
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.Program.findOne(function(err, programs){
-				var category = programs.categories.id(req.params.category);
+			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
 				if(category) {
 					var department = category.departments.id(req.params.department);
 					if(department) {
@@ -682,11 +726,14 @@ router.put
 							department[attribute] = req.body[attribute];
 						}
 					}
+					category.save(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
 				}
-				programs.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
+				else {
+					res.send({success: false, error: 'Category does not exist'});
+				}
 			});
 		}
 	}
@@ -698,6 +745,7 @@ router.put
  * Created: 04/9/2016 Tyler Yasaka
  * 
  * Modified:
+ *   04/17/2016 Tyler Yasaka
  * 
  * Input
  *   url parameters:
@@ -713,18 +761,20 @@ router.delete
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.Program.findOne(function(err, programs){
-				var category = programs.categories.id(req.params.category);
+			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
 				if(category) {
 					var department = category.departments.id(req.params.department);
 					if(department) {
 						department.remove();
 					}
+					category.save(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
 				}
-				programs.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
+				else {
+					res.send({success: false, error: 'Category does not exist'});
+				}
 			});
 		}
 	}
@@ -736,6 +786,7 @@ router.delete
  * Created: 04/11/2016 Tyler Yasaka
  * 
  * Modified:
+ *   04/17/2016 Tyler Yasaka
  * 
  * Input
  *   url parameters:
@@ -751,15 +802,17 @@ router.post
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.Program.findOne(function(err, programs){
-				var category = programs.categories.id(req.params.category);
+			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
 				if(category) {
 					category.programs.push(req.body);
+					category.save(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
 				}
-				programs.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
+				else {
+					res.send({success: false, error: 'Category does not exist'});
+				}
 			});
 		}
 	}
@@ -771,6 +824,7 @@ router.post
  * Created: 04/11/2016 Tyler Yasaka
  * 
  * Modified:
+ *   04/17/2016 Tyler Yasaka
  * 
  * Input
  *   url parameters:
@@ -787,18 +841,20 @@ router.post
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.Program.findOne(function(err, programs){
-				var category = programs.categories.id(req.params.category);
+			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
 				if(category) {
 					var department = category.departments.id(req.params.department);
 					if(department){
 						department.programs.push(req.body);
 					}
+					category.save(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
 				}
-				programs.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
+				else {
+					res.send({success: false, error: 'Category does not exist'});
+				}
 			});
 		}
 	}
@@ -810,6 +866,7 @@ router.post
  * Created: 04/11/2016 Tyler Yasaka
  * 
  * Modified:
+ *   04/17/2016 Tyler Yasaka
  * 
  * Input
  *   url parameters:
@@ -826,8 +883,7 @@ router.put
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.Program.findOne(function(err, programs){
-				var category = programs.categories.id(req.params.category);
+			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
 				if(category) {
 					var program = category.programs.id(req.params.program);
 					if(program) {
@@ -835,11 +891,14 @@ router.put
 							program[attribute] = req.body[attribute];
 						}
 					}
+					category.save(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
 				}
-				programs.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
+				else {
+					res.send({success: false, error: 'Category does not exist'});
+				}
 			});
 		}
 	}
@@ -851,6 +910,7 @@ router.put
  * Created: 04/11/2016 Tyler Yasaka
  * 
  * Modified:
+ *   04/17/2016 Tyler Yasaka
  * 
  * Input
  *   url parameters:
@@ -868,8 +928,7 @@ router.put
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.Program.findOne(function(err, programs){
-				var category = programs.categories.id(req.params.category);
+			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
 				if(category) {
 					var department = category.departments.id(req.params.department);
 					if(department) {
@@ -880,11 +939,14 @@ router.put
 							}
 						}
 					}
+					category.save(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
 				}
-				programs.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
+				else {
+					res.send({success: false, error: 'Category does not exist'});
+				}
 			});
 		}
 	}
@@ -896,6 +958,7 @@ router.put
  * Created: 04/11/2016 Tyler Yasaka
  * 
  * Modified:
+ *   04/17/2016 Tyler Yasaka
  * 
  * Input
  *   url parameters:
@@ -911,18 +974,20 @@ router.delete
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.Program.findOne(function(err, programs){
-				var category = programs.categories.id(req.params.category);
+			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
 				if(category) {
 					var program = category.programs.id(req.params.program);
 					if(program) {
 						program.remove();
 					}
+					category.save(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
 				}
-				programs.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
+				else {
+					res.send({success: false, error: 'Category does not exist'});
+				}
 			});
 		}
 	}
@@ -934,6 +999,7 @@ router.delete
  * Created: 04/11/2016 Tyler Yasaka
  * 
  * Modified:
+ *   04/17/2016 Tyler Yasaka
  * 
  * Input
  *   url parameters:
@@ -950,8 +1016,7 @@ router.delete
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.Program.findOne(function(err, programs){
-				var category = programs.categories.id(req.params.category);
+			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
 				if(category) {
 					var department = category.departments.id(req.params.department);
 					if(department) {
@@ -960,11 +1025,14 @@ router.delete
 							program.remove();
 						}
 					}
+					category.save(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
 				}
-				programs.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
+				else {
+					res.send({success: false, error: 'Category does not exist'});
+				}
 			});
 		}
 	}

@@ -1,7 +1,8 @@
 /***																					***\
 
 	Filename: scripts/initializeDatabase.js
-	Authors: Tyler Yasaka
+	Authors:
+			Tyler Yasaka
 			Andrew Fisher
 
 \***																					***/
@@ -32,6 +33,11 @@ async.waterfall([
 	},
 	function(callback){
 		db.models.Program.remove({}, function(){
+			callback(); // we're done. go to the next function
+		});	
+	},
+	function(callback){
+    db.models.Subject.remove({}, function(){
 			callback(); // we're done. go to the next function
 		});	
 	},
@@ -76,8 +82,9 @@ async.waterfall([
 		db.models.TextSection(textSections).save();
 		
 		// create some sample generalRequirements
-		var requirements = [{
-			areaI: {
+		var requirements = [
+			{
+				area: 'I',
 				name: "Written Composition",
 				requirements: [{
 					name: "requirement",
@@ -88,7 +95,8 @@ async.waterfall([
 					}]
 				}]
 			},
-			areaII: {
+			{
+				area: 'II',
 				name: "Humanities and Fine Arts",
 				requirements: [{
 					name: "requirement",
@@ -98,7 +106,8 @@ async.waterfall([
 					}]
 				}]
 			},
-			areaIII: {
+			{
+				area: 'III',
 				name: "Natural Sciences and Mathematics",
 				requirements: [{
 					name: "requirement",
@@ -108,7 +117,8 @@ async.waterfall([
 					}]
 				}]
 			},
-			areaIV: {
+			{
+				area: 'IV',
 				name: "History, Social and Behavioral Sciences",
 				requirements: [{
 					name: "requirement",
@@ -118,7 +128,8 @@ async.waterfall([
 					}]
 				}]
 			},
-			areaV: {
+			{
+				area: 'V',
 				name: "Additional Requirements",
 				requirements: [{
 					name: "requirement",
@@ -128,93 +139,102 @@ async.waterfall([
 					}]
 				}]
 			}
-		}];
-		for(var i in requirements){
-			db.models.GeneralRequirement(requirements[i]).save();
-			//console.log(requirements[i]);
-		}
-		
-		// create some sample programs
-		var programs = [{
-			categories: [
-        {
-          name: "College of Business",
-          description: "Hr Hm Business Hum",
-          departments: [{
-            name: "Computer Science and Information Systems",
-            description: "CS and CIS are not the same thing",
-            programs: [
-							{
-								type: "major",
-								name: "Computer Science",
-								description: "not for the faint of heart",
-								requirements: [{
-									name: "Core Requirements",
-									items: [
-										{
-											separator: 'AND',
-											courses: [
-												'570efc799c1394fc21eb9f6b'
-											]
-										},
-										{
-											separator: 'AND',
-											courses: [
-												'570efc799c1394fc21eb9f6a'
-											]
-										}
-									]
-								}]
-							},
-							{
-								type: "minor",
-								name: "Human-Computer Interaction/User Experience",
-								description: "emotional impact cannot be designed - only experienced"
-							},
-            ]
-          }],
-          programs: [{
-            type: "type",
-            name: "name",
-            description: "description"
-          }]
-        },
-        {
-					name: "College of Arts and Sciences",
-					departments: [],
-					programs: []
-				}
-      ]
-		}];
-		for(var i in programs){
-			db.models.Program(programs[i]).save(function(err, results){
-      });
-		}
+		];
+		// Add the areas in order
+		async.eachSeries(requirements, function(requirement, callback) {
+			db.models.GeneralRequirement(requirement).save(function() {
+				callback();
+			});
+		});
 		
 		db.models.FacultyAndStaff({content: "Dr. Roden..."}).save();
 		
-		// create some sample courseSections
-		var courses = [{
-			subjects: [{
+		// create some sample subjects
+		var subjects = [
+			{
 				name: "Computer Science",
-				abbreviation: "CS",
-				courses: [
-					{
-						title: "Artificial Intelligence",
-						number: "470",
-						description: "Robots and stuff..."
-					},
-					{
-						title: "Programming Languages",
-						number: "410W",
-						description: "Fortran..."
+				abbreviation: "CS"
+			}
+		];
+		db.models.Subject(subjects[0]).save(function(err, result){
+			// create some sample courses
+			var courses = [
+				{
+					title: "Artificial Intelligence",
+					number: "470",
+					description: "Robots and stuff...",
+					subject: result._id
+				},
+				{
+					title: "Programming Languages",
+					number: "410W",
+					description: "Fortran...",
+					subject: result._id
+				}
+			];
+			async.map(courses, function(course, callback) {
+				db.models.Course(courses[i]).save(function(err, result) {
+					callback(null, result._id);
+				});
+			}, function(err, results) {
+				
+				// create some sample programs
+				var programs = [
+		      {
+		        name: "College of Business",
+		        description: "Hr Hm Business Hum",
+		        departments: [{
+		          name: "Computer Science and Information Systems",
+		          description: "CS and CIS are not the same thing",
+		          programs: [
+								{
+									type: "major",
+									name: "Computer Science",
+									description: "not for the faint of heart",
+									requirements: [{
+										name: "Core Requirements",
+										items: [
+											{
+												separator: 'AND',
+												courses: [
+													results[0]
+												]
+											},
+											{
+												separator: 'AND',
+												courses: [
+													results[1]
+												]
+											}
+										]
+									}]
+								},
+								{
+									type: "minor",
+									name: "Human-Computer Interaction/User Experience",
+									description: "emotional impact cannot be designed - only experienced"
+								},
+		          ]
+		        }],
+		        programs: [{
+		          type: "type",
+		          name: "name",
+		          description: "description"
+		        }]
+		      },
+		      {
+						name: "College of Arts and Sciences",
+						departments: [],
+						programs: []
 					}
-				]
-			}]
-		}];
-		for(var i in courses){
-			db.models.Course(courses[i]).save();
-		}
+		    ];
+				for(var i in programs){
+					db.models.Program(programs[i]).save(function(err, results){
+		      });
+				}
+
+			});
+		});
 		
 		// create some sample changeRequests
 		var changes = [
