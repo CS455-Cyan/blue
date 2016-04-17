@@ -173,7 +173,7 @@ async.waterfall([
 				}
 			];
 			async.map(courses, function(course, callback) {
-				db.models.Course(courses[i]).save(function(err, result) {
+				db.models.Course(course).save(function(err, result) {
 					callback(null, result._id);
 				});
 			}, function(err, results) {

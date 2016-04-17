@@ -212,32 +212,67 @@ router.get
 	}
 );
 
+/*
+ * Route: Search programs
+ * 
+ * Created: 04/16/2016 Andrew Fisher
+ * 
+ * Modified:
+ *   04/17/2016 Tyler Yasaka
+ * 
+ * Input
+ *   payload: {"term": String}
+ * Output
+ *   {"success": Boolean, data: [
+ *     {
+ *       "_id": String,
+ *       "type": String,
+ *       "name": String,
+ *       "description": String,
+ *       "requirements": []
+ *     }
+ *   ]}
+ */
 router.post
 (
 	'/catalog/programs/search/',
 	function(req, res)
 	{
-		db.models.Program.findOne(function(err, programs) {
-			for(var c in programs.categories){
-				for(var p in programs.categories[c].programs){
-					var progName = programs.categories[c].programs[p].name.toLowerCase().indexOf(req.body.term.toLowerCase());
-					console.log(progName);
-					var progDesc = programs.categories[c].programs[p].description.toLowerCase().indexOf(req.body.term.toLowerCase());
-					console.log(progDesc);
+		db.models.Program.find(function(err, categories) {
+			var term = req.body.term.toLowerCase();
+			var programsArr = [];
+			for(var c in categories){
+				for(var p in categories[c].programs){
+					var match = false;
+					var program = categories[c].programs[p];
+					if( program.name.toLowerCase().indexOf(term) > -1) {
+						match = true;
 					}
-				for(var d in programs.categories[c].departments){
-					var deptName = programs.categories[c].departments[d].name.toLowerCase().indexOf(req.body.term.toLowerCase());
-					console.log(deptName);
-					var deptDesc = programs.categories[c].departments[d].description.toLowerCase().indexOf(req.body.term.toLowerCase());
-					console.log(deptDesc);
+					if( program.description.toLowerCase().indexOf(term) > -1) {
+						match = true;
+					}
+					if(match) {
+						programsArr.push(program);
+					}
+				}
+				for(var d in categories[c].departments){
+					for(var p in categories[c].departments[d].programs){
+						var match = false;
+						var program = categories[c].departments[d].programs[p];
+						if( program.name.toLowerCase().indexOf(term) > -1) {
+							match = true;
+						}
+						if( program.description.toLowerCase().indexOf(term) > -1) {
+							match = true;
+						}
+						if(match) {
+							programsArr.push(program);
+						}
+					}
 				}
 			}
-			var programsArr = [];
-			if(progName == 0 || progDesc == 0 || deptName == 0 || deptDesc ==0){
-				programsArr.push(programs);
-			}
-				var success = err ? false : true;
-				res.send({success: success, data: programsArr});
+			var success = err ? false : true;
+			res.send({success: success, data: programsArr});
 		});
 	}
 );
@@ -281,23 +316,60 @@ router.get
 	}
 );
 
+/*
+ * Route: Search courses
+ * 
+ * Created: 04/16/2016 Andrew Fisher
+ * 
+ * Modified:
+ *   04/17/2016 Tyler Yasaka
+ * 
+ * Input
+ *   payload: {"term": String}
+ * Output
+ *   {"success": Boolean, data: [
+ *     {
+ *       "_id": String,
+ *       "type": String,
+ *       "name": String,
+ *       "description": String,
+ *       "requirements": []
+ *     }
+ *   ]}
+ */
 router.post
 (
 	'/catalog/courses/search/',
 	function(req, res)
 	{
-		db.models.Course.findOne(function(err, courses) {
-			for(var s in courses.subjects){
-				var courseName = courses.subjects[s].name.toLowerCase().indexOf(req.body.term.toLowerCase());
-				console.log(courseName);
-				for(var c in courses.subjects[s].courses){
-					var className = courses.subjects[s].courses[c].title.toLowerCase().indexOf(req.body.term.toLowerCase());
-					console.log(className);
-				}
-			}
+		db.models.Course.find().populate('subject').exec(function(err, courses) {
+			var term = req.body.term.toLowerCase();
 			var courseArr = [];
-			if(courseName == 0 || className == 0){
-				courseArr.push(courses);
+			for(var c in courses){
+				var match = false;
+				// match title
+				if( courses[c].title.toLowerCase().indexOf(term) > -1) {
+					match = true;
+				}
+				// match number
+				if( courses[c].number.toLowerCase().indexOf(term) > -1) {
+					match = true;
+				}
+				// match description
+				if( courses[c].description.toLowerCase().indexOf(term) > -1) {
+					match = true;
+				}
+				// match subject name
+				if( courses[c].subject.name.toLowerCase().indexOf(term) > -1) {
+					match = true;
+				}
+				// match subject abbreviation
+				if( courses[c].subject.abbreviation.toLowerCase().indexOf(term) > -1) {
+					match = true;
+				}
+				if(match) {
+					courseArr.push(courses[c]);
+				}
 			}
 			var success = err ? false : true;
 			res.send({success: success, data: courseArr});
