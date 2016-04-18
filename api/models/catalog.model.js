@@ -38,8 +38,16 @@ var requirementSchema = mongoose.Schema({
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Course'
 		}],
-		write_in: String
-	}]
+		writeIn: {
+			content: String,
+			hours: {
+				min: Number,
+				max: Number
+			}
+		},
+		credit: String
+	}],
+	credit: String
 });
 
 // generalRequirements

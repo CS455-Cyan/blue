@@ -30,20 +30,17 @@ connection.once('open', function() {
 });
 
 /*--																					--*\
-								PUBLIC API ROUTES 							
+								PUBLIC API ROUTES
 \*--																					--*/
 
 /*
- * Route: List textSections
- * 
- * Created: 03/24/2016 Tyler Yasaka
- * 
- * Modified:
- * 
- * Input
- * Output
- *   {"success": Boolean, data: ["_id": String, "title": String]}
- */
+	Route: List textSections
+	Input:
+	Output:
+		{"success": Boolean, data: ["_id": String, "title": String]}
+	Created: 03/24/2016 Tyler Yasaka
+	Modified:
+*/
 router.get
 (
 	'/catalog/textSections',
@@ -60,18 +57,15 @@ router.get
 );
 
 /*
- * Route: Get textSection
- * 
- * Created: 03/24/2016 Tyler Yasaka
- * 
- * Modified:
- * 
- * Input
- *   url parameters:
- *     id: id of textSection
- * Output
- *   {"success": Boolean, data: {"_id": String, "title": String, "content": String}}
- */
+	Route: Get textSection
+	Input:
+		url parameters:
+			id: id of textSection
+	Output:
+		{"success": Boolean, data: {"_id": String, "title": String, "content": String}}
+	Created: 03/24/2016 Tyler Yasaka
+	Modified:
+*/
 router.get
 (
 	'/catalog/textSections/:id',
@@ -89,23 +83,20 @@ router.get
 );
 
 /*
- * Route: List generalRequirements
- * 
- * Created: 04/02/2016 Andrew Fisher
- * 
- * Modified:
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- * Output
- *   {"success": Boolean, data: [
- *     {"_id": String, "area": String, name": String, "requirements": []},
- *     {"_id": String, "area": String, "name": String, "requirements": []},
- *     {"_id": String, "area": String, "name": String, "requirements": []},
- *     {"_id": String, "area": String, "name": String, "requirements": []},
- *     {"_id": String, "area": String, "name": String, "requirements": []},
- *   ]}
- */
+	Route: List generalRequirements
+	Input:
+	Output:
+		{"success": Boolean, data: [
+			{"_id": String, "area": String, name": String, "requirements": []},
+			{"_id": String, "area": String, "name": String, "requirements": []},
+			{"_id": String, "area": String, "name": String, "requirements": []},
+			{"_id": String, "area": String, "name": String, "requirements": []},
+			{"_id": String, "area": String, "name": String, "requirements": []},
+		]}
+	Created: 04/02/2016 Andrew Fisher
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 router.get
 (
 	'/catalog/generalRequirements',
@@ -128,23 +119,20 @@ router.get
 );
 
 /*
- * Route: List program categories
- * 
- * Created: 04/02/2016 Andrew Fisher
- * 
- * Modified:
- *   04/08/2016 Tyler Yasaka
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- * Output
- *   {"success": Boolean, data: [
- *     {
- *       "_id": String,
- *       "name": String,
- *     }
- *   ]}
- */
+	Route: List program categories
+	Input:
+	Output:
+		{"success": Boolean, data: [
+			{
+				"_id": String,
+				"name": String,
+			}
+		]}
+	Created: 04/02/2016 Andrew Fisher
+	Modified:
+		04/08/2016 Tyler Yasaka
+		04/17/2016 Tyler Yasaka
+*/
 router.get
 (
 	'/catalog/programCategories',
@@ -161,37 +149,34 @@ router.get
 );
 
 /*
- * Route: View category details
- * 
- * Created: 04/02/2016 Andrew Fisher
- * 
- * Modified:
- *   04/08/2016 Tyler Yasaka
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- * Output
- *   {"success": Boolean, data: [
- *     {
- *       "_id": String,
- *       "name": String,
- *       "description": String,
- *       "programs": [],
- *       "departments": [{
- *         "_id": String,
- *         "name": String,
- *         "description: String,
- *         "programs": []
- *       }]
- *     }
- *   ]}
- */
+	Route: View category details
+	Input:
+		url parameters:
+			id: id of category
+	Output:
+		{"success": Boolean, data: {
+			"_id": String,
+			"name": String,
+			"description": String,
+			"programs": [],
+			"departments": [{
+				"_id": String,
+				"name": String,
+				"description: String,
+				"programs": []
+			}]
+		}}
+	Created: 04/02/2016 Andrew Fisher
+	Modified:
+		04/08/2016 Tyler Yasaka
+		04/17/2016 Tyler Yasaka
+*/
 router.get
 (
 	'/catalog/programCategories/:id',
 	function(req, res)
 	{
-		db.models.Program.find({_id: req.params.id})
+		db.models.Program.findOne({_id: req.params.id})
 		.populate({
 			path: 'departments.programs.requirements.items.courses',
 			populate: {
@@ -202,37 +187,40 @@ router.get
 			populate: {
 				path: 'subject'
 			}
-		}).exec( function(err, results) {
+		}).exec( function(err, category) {
+			if(category) {
+				for(var d in category.departments) {
+					category.departments[d].programs = orderPrograms(category.departments[d].programs);
+				}
+				category.programs = orderPrograms(category.programs);
+			}
 			var success = err ? false : true;
 			res.send({
 				success: success,
-				data: results
+				data: category
 			});
 		});
 	}
 );
 
 /*
- * Route: Search programs
- * 
- * Created: 04/16/2016 Andrew Fisher
- * 
- * Modified:
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- *   payload: {"term": String}
- * Output
- *   {"success": Boolean, data: [
- *     {
- *       "_id": String,
- *       "type": String,
- *       "name": String,
- *       "description": String,
- *       "requirements": []
- *     }
- *   ]}
- */
+	Route: Search programs
+	Input:
+		payload: {"term": String}
+	Output:
+		{"success": Boolean, data: [
+			{
+				"_id": String,
+				"type": String,
+				"name": String,
+				"description": String,
+				"requirements": []
+			}
+		]}
+	Created: 04/16/2016 Andrew Fisher
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 router.post
 (
 	'/catalog/programs/search/',
@@ -278,29 +266,144 @@ router.post
 );
 
 /*
- * Route: List courses
- * 
- * Created: 04/02/2016 Andrew Fisher
- * 
- * Modified:
- *   04/08/2016 Tyler Yasaka
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- * Output
- *   {"success": Boolean, data: [
- *     "_id": String,
- *     "title": String
- *     "number": String,
- *     "description": String,
- *     "offerings": []
- *     "subject": {
- *       "_id": String,
- *       "name": String,
- *       "abbreviation": String
- *     }
- *   ]}
- */
+	Route: View program in category
+	Input:
+		url parameters:
+			category: id of category
+			program: id of program
+	Output:
+		{"success": Boolean, data: {
+			"program": {
+				"_id": String,
+				"type": String,
+				"name": String,
+				"description": String,
+				"requirements": []
+			},
+			"category": {
+				"_id": String,
+				"name": String
+			}
+		}}
+	Created: 04/17/2016 Tyler Yasaka
+	Modified:
+*/
+router.get
+(
+	'/catalog/programs/:category/:program',
+	function(req, res)
+	{
+		db.models.Program.findOne({_id: req.params.category}).select('name programs')
+		.populate({
+			path: 'programs.requirements.items.courses',
+			populate: {
+				path: 'subject'
+			}
+		}).exec( function(err, result) {
+			var program, category;
+			if(result) {
+				program = result.programs.id(req.params.program);
+				calculateCredit(program.requirements);
+				category = {
+					_id: result._id,
+					name: result.name
+				};
+			}
+			var success = err ? false : true;
+			res.send({
+				success: success,
+				data: {program: program, category: category}
+			});
+		});
+	}
+);
+
+/*
+	Route: View program in department
+	Input:
+		url parameters:
+			category: id of categoryt
+			department: id of departmen
+			program: id of program
+	Output:
+		{"success": Boolean, data: {
+			"program": {
+				"_id": String,
+				"type": String,
+				"name": String,
+				"description": String,
+				"requirements": []
+			},
+			"category": {
+				"_id": String,
+				"name": String
+			},
+			"department": {
+				"_id": String,
+				"name": String
+			}
+		}}
+	Created: 04/17/2016 Tyler Yasaka
+	Modified:
+*/
+router.get
+(
+	'/catalog/programs/:category/:department/:program',
+	function(req, res)
+	{
+		db.models.Program.findOne({_id: req.params.category}).select('name departments')
+		.populate({
+			path: 'departments.programs.requirements.items.courses',
+			populate: {
+				path: 'subject'
+			}
+		}).exec( function(err, result) {
+			var program, department, category;
+			if(result) {
+				var dept = result.departments.id(req.params.department);
+				if(dept) {
+					program = dept.programs.id(req.params.program);
+					calculateCredit(program.requirements);
+					department = {
+						_id: dept._id,
+						name: dept.name
+					}
+				}
+				category = {
+					_id: result._id,
+					name: result.name
+				};
+			}
+			var success = err ? false : true;
+			res.send({
+				success: success,
+				data: {program: program, department: department, category: category}
+			});
+		});
+	}
+);
+
+/*
+	Route: List courses
+	Input:
+	Output:
+		{"success": Boolean, data: [{
+			"_id": String,
+			"title": String
+			"number": String,
+			"description": String,
+			"offerings": [],
+			"subject": {
+				"_id": String,
+				"name": String,
+				"abbreviation": String
+			}
+		}]}
+	Created: 04/02/2016 Andrew Fisher
+	Modified:
+		04/08/2016 Tyler Yasaka
+		04/17/2016 Tyler Yasaka
+*/
 router.get
 (
 	'/catalog/courses',
@@ -317,26 +420,59 @@ router.get
 );
 
 /*
- * Route: Search courses
- * 
- * Created: 04/16/2016 Andrew Fisher
- * 
- * Modified:
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- *   payload: {"term": String}
- * Output
- *   {"success": Boolean, data: [
- *     {
- *       "_id": String,
- *       "type": String,
- *       "name": String,
- *       "description": String,
- *       "requirements": []
- *     }
- *   ]}
- */
+	Route: view course
+	Input:
+		url parameters:
+			id: id of course
+	Output:
+		{"success": Boolean, data: {
+			"_id": String,
+			"title": String
+			"number": String,
+			"description": String,
+			"offerings": [],
+			"subject": {
+				"_id": String,
+				"name": String,
+				"abbreviation": String
+			}
+		}}
+	Created: 04/17/2016 Tyler Yasaka
+	Modified:
+*/
+router.get
+(
+	'/catalog/courses/:id',
+	function(req, res)
+	{
+		db.models.Course.findOne({_id: req.params.id}).populate('subject').exec( function(err, result) {
+			var success = err ? false : true;
+			res.send({
+				success: success,
+				data: result
+			});
+		});
+	}
+);
+
+/*
+	Route: Search courses
+	Input:
+		payload: {"term": String}
+	Output:
+		{"success": Boolean, data: [
+			{
+				"_id": String,
+				"type": String,
+				"name": String,
+				"description": String,
+				"requirements": []
+			}
+		]}
+	Created: 04/16/2016 Andrew Fisher
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 router.post
 (
 	'/catalog/courses/search/',
@@ -378,18 +514,80 @@ router.post
 );
 
 /*
- * Route: Get facultyAndStaff
-  * 
- * Created: 04/11/2016 Tyler Yasaka
- * 
- * Modified:
- * 
- * Input
- *   url parameters:
- *     id: id of textSection
- * Output
- *   {"success": Boolean, data:  String}
- */
+	Route: List subjects
+	Input:
+	Output:
+		{"success": Boolean, data: [{
+			"_id": String,
+			"name": String
+			"abbreviation": String
+		}]}
+	Created: 04/17/2016 Tyler Yasaka
+	Modified:
+*/
+router.get
+(
+	'/catalog/subjects',
+	function(req, res)
+	{
+		db.models.Subject.find().exec( function(err, results) {
+			var success = err ? false : true;
+			res.send({
+				success: success,
+				data: results
+			});
+		});
+	}
+);
+
+/*
+	Route: View subject and list courses for subject
+	Input:
+		url parameters:
+			id: id of subject
+	Output:
+	{"success": Boolean, data: {
+		"subject": {
+			"_id": String,
+			"name": String
+			"abbreviation": String,
+		},
+		"courses": [{
+			"_id": String,
+			"title": String
+			"number": String,
+			"description": String,
+			"offerings": []
+		}]
+	}}
+	Created: 04/17/2016 Tyler Yasaka
+	Modified:
+*/
+router.get
+(
+	'/catalog/subjects/:id',
+	function(req, res)
+	{
+		db.models.Subject.findOne({_id: req.params.id}).exec(function(subjectErr, subject) {
+			db.models.Course.find({subject: req.params.id}).exec( function(coursesErr, courses) {
+				var success = (subjectErr || coursesErr) ? false : true;
+				res.send({
+					success: success,
+					data: {subject: subject, courses: courses}
+				});
+			});
+		});
+	}
+);
+
+/*
+	Route: Get facultyAndStaff
+	Input:
+	Output:
+		{"success": Boolean, data:  String}
+	Created: 04/11/2016 Tyler Yasaka
+	Modified:
+*/
 router.get
 (
 	'/catalog/facultyAndStaff',
@@ -406,21 +604,18 @@ router.get
 );
 
 /*--																					--*\
-						PRIMARY ADMIN API ROUTES 							
+						PRIMARY ADMIN API ROUTES
 \*--																					--*/
 
 /*
- * Route: Add textSection
- * 
- * Created: 03/24/2016 Tyler Yasaka
- * 
- * Modified:
- * 
- * Input
- *   payload: {"title": String, "content": String}
- * Output
- *   {"success": Boolean}
- */
+	Route: Add textSection
+	Input:
+		payload: {"title": String, "content": String}
+	Output:
+		{"success": Boolean}
+	Created: 03/24/2016 Tyler Yasaka
+	Modified:
+*/
 router.post
 (
 	'/admin/catalog/textSections',
@@ -441,17 +636,14 @@ router.post
 );
 
 /*
- * Route: Update all textSections (use to re-order them)
- * 
- * Created: 04/14/2016 Tyler Yasaka
- * 
- * Modified:
- * 
- * Input
- *   payload: [{"title": String, "content": String}, {"title": String, "content": String}]
- * Output
- *   {"success": Boolean}
- */
+	Route: Update all textSections (use to re-order them)
+	Input:
+		payload: [{"title": String, "content": String}, {"title": String, "content": String}]
+	Output:
+		{"success": Boolean}
+	Created: 04/14/2016 Tyler Yasaka
+	Modified:
+*/
 router.put
 (
 	'/admin/catalog/textSections',
@@ -477,19 +669,16 @@ router.put
 );
 
 /*
- * Route: Update textSection
- * 
- * Created: 03/24/2016 Tyler Yasaka
- * 
- * Modified:
- * 
- * Input
- *   url parameters:
- *     id: id of textSection
- *   payload: {"title": String, "content": String}
- * Output
- *   {"success": Boolean}
- */
+	Route: Update textSection
+	Input:
+		url parameters:
+			id: id of textSection
+		payload: {"title": String, "content": String}
+	Output:
+		{"success": Boolean}
+	Created: 03/24/2016 Tyler Yasaka
+	Modified:
+*/
 router.put
 (
 	'/admin/catalog/textSections/:id',
@@ -515,18 +704,15 @@ router.put
 );
 
 /*
- * Route: Remove textSection
- * 
- * Created: 03/24/2016 Tyler Yasaka
- * 
- * Modified:
- * 
- * Input
- *   url parameters:
- *     id: id of textSection
- * Output
- *   {"success": Boolean}
- */
+	Route: Remove textSection
+	Input:
+		url parameters:
+			id: id of textSection
+	Output:
+		{"success": Boolean}
+	Created: 03/24/2016 Tyler Yasaka
+	Modified:
+*/
 router.delete
 (
 	'/admin/catalog/textSections/:id',
@@ -549,20 +735,17 @@ router.delete
 );
 
 /*
- * Route: Add requirement to area
- * 
- * Created: 04/16/2016 John Batson
- * 
- * Modified:
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- *   url parameters:
- *     area: id of area to add program to
- *   payload: {"name": String, "items": []}
- * Output
- *   {"success": Boolean}
- */
+	Route: Add requirement to area
+	Input:
+		url parameters:
+			area: id of area to add program to
+		payload: {"name": String, "items": []}
+	Output:
+		{"success": Boolean}
+	Created: 04/16/2016 John Batson
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 router.post
 (
 	'/admin/catalog/generalRequirements/:area',
@@ -589,21 +772,18 @@ router.post
 );
 
 /*
- * Route: Update requirement in area
- * 
- * Created: 04/16/2016 John Batson
- * 
- * Modified:
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- *   url parameters:
- *     area: id of area containing requirement
- *     requirement: id of requirement
- *   payload: {"name": String, "items": []}
- * Output
- *   {"success": Boolean}
- */
+	Route: Update requirement in area
+	Input:
+		url parameters:
+			area: id of area containing requirement
+			requirement: id of requirement
+		payload: {"name": String, "items": []}
+	Output:
+		{"success": Boolean}
+	Created: 04/16/2016 John Batson
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 router.put
 (
 	'/admin/catalog/generalRequirements/:area/:requirement',
@@ -635,20 +815,17 @@ router.put
 );
 
 /*
- * Route: Remove requirement from area
- * 
- * Created: 04/16/2016 John Batson
- * 
- * Modified:
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- *   url parameters:
- *     area: id of area containing requirement
- *     requirement: id of requirement
- * Output
- *   {"success": Boolean}
- */
+	Route: Remove general requirement from area
+	Input:
+		url parameters:
+			area: id of area containing requirement
+			requirement: id of requirement
+	Output:
+		{"success": Boolean}
+	Created: 04/16/2016 John Batson
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 router.delete
 (
 	'/admin/catalog/generalRequirements/:area/:requirement',
@@ -678,18 +855,15 @@ router.delete
 );
 
 /*
- * Route: Add category
- * 
- * Created: 04/15/2016 Kaitlin Snyder
- * 
- * Modified:
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- *   payload: {"name": String, "description": String, "departments": [], "programs": []}
- * Output
- *   {"success": Boolean}
- */
+	Route: Add category
+	Input:
+		payload: {"name": String, "description": String, "departments": [], "programs": []}
+	Output:
+		{"success": Boolean}
+	Created: 04/15/2016 Kaitlin Snyder
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 router.post
 (
 	'/admin/catalog/programCategories',
@@ -706,20 +880,17 @@ router.post
 );
 
 /*
- * Route: Update category
- * 
- * Created: 04/15/2016 Kaitlin Snyder
- * 
- * Modified:
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- *   url parameters:
- *     id: id of category to update
- *   payload: {"name": String, "description": String, "departments": [], "programs": []}
- * Output
- *   {"success": Boolean}
- */
+	Route: Update category
+	Input:
+		url parameters:
+			id: id of category to update
+		payload: {"name": String, "description": String, "departments": [], "programs": []}
+	Output:
+		{"success": Boolean}
+	Created: 04/15/2016 Kaitlin Snyder
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 router.put
 (
 	'/admin/catalog/programCategories/:id',
@@ -746,19 +917,16 @@ router.put
 );
 
 /*
- * Route: Remove category
- * 
- * Created: 04/15/2016 Kaitlin Snyder
- * 
- * Modified:
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- *   url parameters:
- *     id: id of category to update
- * Output
- *   {"success": Boolean}
- */
+	Route: Remove category
+	Input:
+		url parameters:
+			id: id of category to update
+	Output:
+		{"success": Boolean}
+	Created: 04/15/2016 Kaitlin Snyder
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 router.delete
 (
 	'/admin/catalog/programCategories/:id',
@@ -781,23 +949,18 @@ router.delete
 	}
 );
 
-
-
 /*
- * Route: Add department
- * 
- * Created: 04/9/2016 Tyler Yasaka
- * 
- * Modified:
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- *   url parameters:
- *     category: id of category to add department to
- *   payload: {"name": String, "description": String, "programs": []}
- * Output
- *   {"success": Boolean}
- */
+	Route: Add department
+	Input:
+		url parameters:
+			category: id of category to add department to
+		payload: {"name": String, "description": String, "programs": []}
+	Output:
+		{"success": Boolean}
+	Created: 04/9/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 router.post
 (
 	'/admin/catalog/departments/:category',
@@ -822,21 +985,18 @@ router.post
 );
 
 /*
- * Route: Update department
- * 
- * Created: 04/9/2016 Tyler Yasaka
- * 
- * Modified:
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- *   url parameters:
- *     category: id of category that department is in
- *     department: id of department
- *   payload: {"name": String, "description": String, "programs": []}
- * Output
- *   {"success": Boolean}
- */
+	Route: Update department
+	Input:
+		url parameters:
+			category: id of category that department is in
+			department: id of department
+		payload: {"name": String, "description": String, "programs": []}
+	Output:
+		{"success": Boolean}
+	Created: 04/9/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 router.put
 (
 	'/admin/catalog/departments/:category/:department',
@@ -866,20 +1026,17 @@ router.put
 );
 
 /*
- * Route: Remove department
- * 
- * Created: 04/9/2016 Tyler Yasaka
- * 
- * Modified:
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- *   url parameters:
- *     category: id of category that department is in
- *     department: id of department
- * Output
- *   {"success": Boolean}
- */
+	Route: Remove department
+	Input:
+		url parameters:
+			category: id of category that department is in
+			department: id of department
+	Output:
+		{"success": Boolean}
+	Created: 04/9/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 router.delete
 (
 	'/admin/catalog/departments/:category/:department',
@@ -907,20 +1064,17 @@ router.delete
 );
 
 /*
- * Route: Add program to category
- * 
- * Created: 04/11/2016 Tyler Yasaka
- * 
- * Modified:
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- *   url parameters:
- *     category: id of category to add program to
- *   payload: {"type": String, "name": String, "description": String, requirements: []}
- * Output
- *   {"success": Boolean}
- */
+	Route: Add program to category
+	Input:
+		url parameters:
+			category: id of category to add program to
+		payload: {"type": String, "name": String, "description": String, requirements: []}
+	Output:
+		{"success": Boolean}
+	Created: 04/11/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 router.post
 (
 	'/admin/catalog/programs/:category',
@@ -945,21 +1099,18 @@ router.post
 );
 
 /*
- * Route: Add program to department
- * 
- * Created: 04/11/2016 Tyler Yasaka
- * 
- * Modified:
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- *   url parameters:
- *     category: id of category containing department
- *     department: id of department to add program to
- *   payload: {"type": String, "name": String, "description": String, requirements: []}
- * Output
- *   {"success": Boolean}
- */
+	Route: Add program to department
+	Input:
+		url parameters:
+			category: id of category containing department
+			department: id of department to add program to
+		payload: {"type": String, "name": String, "description": String, requirements: []}
+	Output:
+		{"success": Boolean}
+	Created: 04/11/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 router.post
 (
 	'/admin/catalog/programs/:category/:department',
@@ -987,21 +1138,18 @@ router.post
 );
 
 /*
- * Route: Update program in category
- * 
- * Created: 04/11/2016 Tyler Yasaka
- * 
- * Modified:
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- *   url parameters:
- *     category: id of category containing program
- *     program: id of program
- *   payload: {"type": String, "name": String, "description": String, requirements: []}
- * Output
- *   {"success": Boolean}
- */
+	Route: Update program in category
+	Input:
+		url parameters:
+			category: id of category containing department
+			program: id of program
+		payload: {"type": String, "name": String, "description": String, requirements: []}
+	Output:
+		{"success": Boolean}
+	Created: 04/11/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 router.put
 (
 	'/admin/catalog/programs/:category/:program',
@@ -1031,22 +1179,19 @@ router.put
 );
 
 /*
- * Route: Update program in department
- * 
- * Created: 04/11/2016 Tyler Yasaka
- * 
- * Modified:
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- *   url parameters:
- *     category: id of category containing department
- *     department: id of department containing program
- *     program: id of program
- *   payload: {"type": String, "name": String, "description": String, requirements: []}
- * Output
- *   {"success": Boolean}
- */
+	Route: Update program in department
+	Input:
+		url parameters:
+			category: id of category containing department
+			department: id of department containing program
+			program: id of program
+		payload: {"type": String, "name": String, "description": String, requirements: []}
+	Output:
+		{"success": Boolean}
+	Created: 04/11/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 router.put
 (
 	'/admin/catalog/programs/:category/:department/:program',
@@ -1078,21 +1223,18 @@ router.put
 	}
 );
 
-/*
- * Route: Remove program from category
- * 
- * Created: 04/11/2016 Tyler Yasaka
- * 
- * Modified:
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- *   url parameters:
- *     category: id of category containing program
- *     program: id of program
- * Output
- *   {"success": Boolean}
- */
+ /*
+	Route: Remove program from category
+	Input:
+		url parameters:
+			category: id of category containing program
+			program: id of program
+	Output:
+		{"success": Boolean}
+	Created: 04/11/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 router.delete
 (
 	'/admin/catalog/programs/:category/:program',
@@ -1120,21 +1262,18 @@ router.delete
 );
 
 /*
- * Route: Remove program from department
- * 
- * Created: 04/11/2016 Tyler Yasaka
- * 
- * Modified:
- *   04/17/2016 Tyler Yasaka
- * 
- * Input
- *   url parameters:
- *     category: id of category containing department
- *     department: id of department containing program
- *     program: id of program
- * Output
- *   {"success": Boolean}
- */
+	Route: Remove program from department
+	Input:
+		url parameters:
+			category: id of category containing department
+			department: id of department containing program
+			program: id of program
+	Output:
+		{"success": Boolean}
+	Created: 04/11/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 router.delete
 (
 	'/admin/catalog/programs/:category/:department/:program',
@@ -1164,18 +1303,15 @@ router.delete
 	}
 );
 
-/*
- * Route: Update facultyAndStaff
- * 
- * Created: 04/11/2016 Tyler Yasaka
- * 
- * Modified:
- * 
- * Input
- *   payload: {"content": String}
- * Output
- *   {"success": Boolean}
- */
+ /*
+	Route: Update facultyAndStaff
+	Input:
+		payload: {"content": String}
+	Output:
+		{"success": Boolean}
+	Created: 04/11/2016 Tyler Yasaka
+	Modified:
+*/
 router.put
 (
 	'/admin/catalog/facultyAndStaff',
@@ -1196,6 +1332,150 @@ router.put
 		}
 	}
 );
+
+/*
+	Function: sortAlphabeticallyByProperty
+	Description: Orders objects of an array in alphabetical order of a property
+	Input:
+		arr: array to sort
+		property: property to sort by
+	Output:
+		sorted array
+	Created: Tyler Yasaka 04/17/2016
+	Modified:
+*/
+sortAlphabeticallyByProperty = function(arr, property) {
+	return arr.sort(function(a, b){
+		var propertyA=a[property].toLowerCase()
+		var propertyB=b[property].toLowerCase();
+		if (propertyA < propertyB) //sort string ascending
+			return -1;
+		if (propertyA > propertyB)
+			return 1;
+		return 0; //default return value (no sorting)
+	});
+}
+
+/*
+	Function: orderPrograms
+	Description: Orders programs by type and then in alphabetical order of program name
+	Input:
+		programs: array of program objects
+	Output:
+		sorted array of programs
+	Created: Tyler Yasaka 04/17/2016
+	Modified:
+*/
+var orderPrograms = function(programs) {
+	console.log(programs)
+	var types = {};
+	for(var p in programs) {
+		var program = programs[p];
+		if(typeof types[program.type] == 'undefined') {
+			types[program.type] = [];
+		}
+		types[program.type].push(program);
+	}
+	var results = [];
+	if(types['major']) {
+		results = results.concat(
+			sortAlphabeticallyByProperty(types['major'], 'name')
+		);
+		delete types['major'];
+	}
+	if(types['minor']) {
+		results = results.concat(
+			sortAlphabeticallyByProperty(types['minor'], 'name')
+		);
+		delete types['minor']
+	}
+	if(types['certificate']) {
+		results = results.concat(
+			sortAlphabeticallyByProperty(types['certificate'], 'name')
+		);
+		delete types['certificate'];
+	}
+	for(var t in types) {
+		results = results.concat(
+			sortAlphabeticallyByProperty(types[t], 'name')
+		);
+	}
+	return results;
+}
+
+/*
+	Function: formatCredit
+	Description: format credit for display based on min and max
+	Input:
+		hours: hours object with min and max properties
+	Output:
+		formatted credit (String)
+	Created: Tyler Yasaka 04/17/2016
+	Modified:
+*/
+var formatCredit = function(hours) {
+	var credit;
+	if(hours.min == hours.max) {
+		credit = String(hours.min);
+	}
+	else {
+		credit = hours.min + ' - ' + hours.max;
+	}
+	return credit;
+}
+
+/*
+	Function: calculateCredit
+	Description: Calculate credit for each item in a requirement, as well as the total credit for that requirement
+	Input:
+		requirements: array of program requirement objects
+	Output:
+		credit for each item and requirement is stored in requirements object
+	Created: Tyler Yasaka 04/17/2016
+	Modified:
+*/
+var calculateCredit = function(requirements) {
+	for(var r in requirements) {
+		var requirement = requirements[r];
+		var total = {
+			min: 0,
+			max: 0
+		}
+		for(var i in requirement.items) {
+			var item = requirement.items[i];
+			var subtotal = {
+				min: 0,
+				max: 0
+			}
+			if(!!item.writeIn && !!item.writeIn.hours && typeof item.writeIn.hours.min != 'undefined') {
+				subtotal = item.writeIn.hours;
+			}
+			else if(item.separator == 'AND') {
+				for(var c in item.courses) {
+					var course = item.courses[c];
+					subtotal.min += course.hours.min;
+					subtotal.max += course.hours.max;
+				}
+			}
+			else if (item.separator == 'OR' && item.courses.length) {
+				subtotal.min = item.courses[0].hours.min;
+				subtotal.max = item.courses[0].hours.max;
+				for(var c = 1; c < item.courses.length; c++) {
+					var course = item.courses[c];
+					subtotal.min = Math.min(subtotal.min, course.hours.min);
+					subtotal.max = Math.max(subtotal.max, course.hours.max);
+				}
+			}
+			var credit = formatCredit(subtotal);
+			total.min += subtotal.min;
+			total.max += subtotal.max;
+			requirements[r].items[i].credit = credit;
+		}
+		var totalCredit = formatCredit(total);
+		requirements[r].credit = totalCredit;
+		return requirements;
+	}
+}
 
 
 // export these routes to the main router

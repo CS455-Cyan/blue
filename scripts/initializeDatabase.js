@@ -91,7 +91,13 @@ async.waterfall([
 					items: [{
 						separator: 'AND',
 						courses: [],
-						write_in: "optional"
+						writeIn: {
+							content: "Sing the alphabet backwards",
+							hours: {
+								min: 1,
+								max: 3
+							}
+						}
 					}]
 				}]
 			},
@@ -154,6 +160,10 @@ async.waterfall([
 			{
 				name: "Computer Science",
 				abbreviation: "CS"
+			},
+			{
+				name: "Psychology",
+				abbreviation: "PY"
 			}
 		];
 		db.models.Subject(subjects[0]).save(function(err, result){
@@ -163,15 +173,24 @@ async.waterfall([
 					title: "Artificial Intelligence",
 					number: "470",
 					description: "Robots and stuff...",
-					subject: result._id
+					subject: result._id,
+					hours: {
+						min: 3,
+						max: 3
+					}
 				},
 				{
 					title: "Programming Languages",
 					number: "410W",
 					description: "Fortran...",
-					subject: result._id
+					subject: result._id,
+					hours: {
+						min: 3,
+						max: 4
+					}
 				}
 			];
+			db.models.Subject(subjects[1]).save();
 			async.map(courses, function(course, callback) {
 				db.models.Course(course).save(function(err, result) {
 					callback(null, result._id);
@@ -187,6 +206,11 @@ async.waterfall([
 		          name: "Computer Science and Information Systems",
 		          description: "CS and CIS are not the same thing",
 		          programs: [
+								{
+									type: "minor",
+									name: "Economics",
+									description: "money money money"
+								},
 								{
 									type: "major",
 									name: "Computer Science",
@@ -213,7 +237,7 @@ async.waterfall([
 									type: "minor",
 									name: "Human-Computer Interaction/User Experience",
 									description: "emotional impact cannot be designed - only experienced"
-								},
+								}
 		          ]
 		        }],
 		        programs: [{
@@ -229,8 +253,7 @@ async.waterfall([
 					}
 		    ];
 				for(var i in programs){
-					db.models.Program(programs[i]).save(function(err, results){
-		      });
+					db.models.Program(programs[i]).save();
 				}
 
 			});
