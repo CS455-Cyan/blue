@@ -109,10 +109,20 @@ router.get
 				path: 'subject'
 			}
 		}).exec( function(err, results) {
+			// we need to make sure they are in order (they may not be)
+			var areas = ['I','II','III','IV','V'];
+			var sorted = [];
+			for(var a in areas) {
+				for(var r in results) {
+					if(areas[a] == results[r].area) {
+						sorted.push(results[r]);
+					}
+				}
+			}
 			var success = err ? false : true;
 			res.send({
 				success: success,
-				data: results
+				data: sorted
 			});
 		});
 	}
