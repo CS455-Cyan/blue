@@ -87,11 +87,12 @@ router.get
 	Input:
 	Output:
 		{"success": Boolean, data: [
-			{"_id": String, "area": String, name": String, "requirements": []},
-			{"_id": String, "area": String, "name": String, "requirements": []},
-			{"_id": String, "area": String, "name": String, "requirements": []},
-			{"_id": String, "area": String, "name": String, "requirements": []},
-			{"_id": String, "area": String, "name": String, "requirements": []},
+			{
+				"_id": String,
+				"area": String,
+				name": String,
+				"requirements": []
+			}
 		]}
 	Created: 04/02/2016 Andrew Fisher
 	Modified:
@@ -116,6 +117,7 @@ router.get
 			for(var a in areas) {
 				for(var r in results) {
 					if(areas[a] == results[r].area) {
+						results[r].requirements = calculateCredit(results[r].requirements);
 						sorted.push(results[r]);
 					}
 				}
@@ -146,7 +148,7 @@ router.get
 */
 router.get
 (
-	'/catalog/programCategories',
+	'/catalog/programs/categories',
 	function(req, res)
 	{
 		db.models.Program.find().select('name').exec( function(err, results) {
@@ -163,7 +165,7 @@ router.get
 	Route: View category details
 	Input:
 		url parameters:
-			id: id of category
+			category: id of category
 	Output:
 		{"success": Boolean, data: {
 			"_id": String,
@@ -184,10 +186,10 @@ router.get
 */
 router.get
 (
-	'/catalog/programCategories/:id',
+	'/catalog/programs/categories/:category',
 	function(req, res)
 	{
-		db.models.Program.findOne({_id: req.params.id})
+		db.models.Program.findOne({_id: req.params.category})
 		.populate({
 			path: 'departments.programs.requirements.items.courses',
 			populate: {
@@ -209,6 +211,54 @@ router.get
 			res.send({
 				success: success,
 				data: category
+			});
+		});
+	}
+);
+
+/*
+	Route: View department
+	Input:
+		url parameters:
+			category: id of category
+			department: id of department
+	Output:
+		{"success": Boolean, data: {
+			"department": {
+				"_id": String,
+				"name": String,
+				"description": String
+			},
+			"category": {
+				"_id": String,
+				"name": String
+			}
+		}}
+	Created: 04/19/2016 Tyler Yasaka
+	Modified:
+*/
+router.get
+(
+	'/catalog/programs/categories/:category/departments/:department',
+	function(req, res)
+	{
+		db.models.Program.findOne({_id: req.params.category})
+		.select('name departments')
+		.exec( function(err, result) {
+			if(result) {
+				var department, category;
+				if(result.departments) {
+					department = result.departments.id(req.params.department);
+				}
+				category = {
+					_id: result._id,
+					name: result.name
+				};
+			}
+			var success = err ? false : true;
+			res.send({
+				success: success,
+				data: {department: department, category: category}
 			});
 		});
 	}
@@ -297,11 +347,11 @@ router.post
 			}
 		}}
 	Created: 04/17/2016 Tyler Yasaka
-	Modified:
+	Modified: 04/19/2016 Tyler Yasaka
 */
 router.get
 (
-	'/catalog/programs/:category/:program',
+	'/catalog/programs/categories/:category/programs/:program',
 	function(req, res)
 	{
 		db.models.Program.findOne({_id: req.params.category}).select('name programs')
@@ -314,11 +364,13 @@ router.get
 			var program, category;
 			if(result) {
 				program = result.programs.id(req.params.program);
-				calculateCredit(program.requirements);
-				category = {
-					_id: result._id,
-					name: result.name
-				};
+				if(program) {
+					calculateCredit(program.requirements);
+					category = {
+						_id: result._id,
+						name: result.name
+					};
+				}
 			}
 			var success = err ? false : true;
 			res.send({
@@ -359,7 +411,7 @@ router.get
 */
 router.get
 (
-	'/catalog/programs/:category/:department/:program',
+	'/catalog/programs/categories/:category/departments/:department/programs/:program',
 	function(req, res)
 	{
 		db.models.Program.findOne({_id: req.params.category}).select('name departments')
@@ -374,10 +426,12 @@ router.get
 				var dept = result.departments.id(req.params.department);
 				if(dept) {
 					program = dept.programs.id(req.params.program);
-					calculateCredit(program.requirements);
-					department = {
-						_id: dept._id,
-						name: dept.name
+					if(program) {
+						calculateCredit(program.requirements);
+						department = {
+							_id: dept._id,
+							name: dept.name
+						}
 					}
 				}
 				category = {
@@ -474,10 +528,10 @@ router.get
 		{"success": Boolean, data: [
 			{
 				"_id": String,
-				"type": String,
-				"name": String,
+				"title": String,
+				"number": String,
 				"description": String,
-				"requirements": []
+				"offerings": []
 			}
 		]}
 	Created: 04/16/2016 Andrew Fisher
@@ -877,7 +931,7 @@ router.delete
 */
 router.post
 (
-	'/admin/catalog/programCategories',
+	'/admin/catalog/programs/categories',
 	function(req, res)
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
@@ -894,7 +948,7 @@ router.post
 	Route: Update category
 	Input:
 		url parameters:
-			id: id of category to update
+			category: id of category to update
 		payload: {"name": String, "description": String, "departments": [], "programs": []}
 	Output:
 		{"success": Boolean}
@@ -904,12 +958,12 @@ router.post
 */
 router.put
 (
-	'/admin/catalog/programCategories/:id',
+	'/admin/catalog/programs/categories/:category',
 	function(req, res)
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.Program.findOne({_id: req.params.id}).exec(function(err, category){
+			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
 				if(category) {
 					for(var attribute in req.body) {
 						category[attribute] = req.body[attribute];
@@ -931,7 +985,7 @@ router.put
 	Route: Remove category
 	Input:
 		url parameters:
-			id: id of category to update
+			category: id of category to update
 	Output:
 		{"success": Boolean}
 	Created: 04/15/2016 Kaitlin Snyder
@@ -940,12 +994,12 @@ router.put
 */
 router.delete
 (
-	'/admin/catalog/programCategories/:id',
+	'/admin/catalog/programs/categories/:category',
 	function(req, res)
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.Program.findOne({_id: req.params.id}).exec(function(err, category){
+			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
 				if(category) {
 					category.remove(function(err){
 						var success = err ? false : true;
@@ -974,7 +1028,7 @@ router.delete
 */
 router.post
 (
-	'/admin/catalog/departments/:category',
+	'/admin/catalog/programs/categories/:category/departments',
 	function(req, res)
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
@@ -1010,7 +1064,7 @@ router.post
 */
 router.put
 (
-	'/admin/catalog/departments/:category/:department',
+	'/admin/catalog/programs/categories/:category/departments/:department',
 	function(req, res)
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
@@ -1050,7 +1104,7 @@ router.put
 */
 router.delete
 (
-	'/admin/catalog/departments/:category/:department',
+	'/admin/catalog/programs/categories/:category/departments/:department',
 	function(req, res)
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
@@ -1088,7 +1142,7 @@ router.delete
 */
 router.post
 (
-	'/admin/catalog/programs/:category',
+	'/admin/catalog/programs/categories/:category/programs',
 	function(req, res)
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
@@ -1124,7 +1178,7 @@ router.post
 */
 router.post
 (
-	'/admin/catalog/programs/:category/:department',
+	'/admin/catalog/programs/categories/:category/departments/:department/programs',
 	function(req, res)
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
@@ -1163,7 +1217,7 @@ router.post
 */
 router.put
 (
-	'/admin/catalog/programs/:category/:program',
+	'/admin/catalog/programs/categoies/:category/programs/:program',
 	function(req, res)
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
@@ -1205,7 +1259,7 @@ router.put
 */
 router.put
 (
-	'/admin/catalog/programs/:category/:department/:program',
+	'/admin/catalog/programs/categories/:category/departments/:department/programs/:program',
 	function(req, res)
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
@@ -1248,7 +1302,7 @@ router.put
 */
 router.delete
 (
-	'/admin/catalog/programs/:category/:program',
+	'/admin/catalog/programs/categories/:category/programs/:program',
 	function(req, res)
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
@@ -1287,7 +1341,7 @@ router.delete
 */
 router.delete
 (
-	'/admin/catalog/programs/:category/:department/:program',
+	'/admin/catalog/programs/categories/:category/departments:department/programs/:program',
 	function(req, res)
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
@@ -1378,7 +1432,6 @@ sortAlphabeticallyByProperty = function(arr, property) {
 	Modified:
 */
 var orderPrograms = function(programs) {
-	console.log(programs)
 	var types = {};
 	for(var p in programs) {
 		var program = programs[p];
@@ -1484,8 +1537,8 @@ var calculateCredit = function(requirements) {
 		}
 		var totalCredit = formatCredit(total);
 		requirements[r].credit = totalCredit;
-		return requirements;
 	}
+	return requirements;
 }
 
 
