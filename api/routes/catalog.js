@@ -1565,6 +1565,144 @@ router.put
 	}
 );
 
+
+/*
+	Route: View change request queue
+	Input:
+	Output:
+		{"success": Boolean, data: {
+			"_id": String,
+			"author": String,
+			"timeOfRequest": Date,
+			"timeOfApproval": Date,
+			"status": String,
+			"requestTypes": [],
+			"newCourseInfo": {
+				"syllabusFile": String,
+				"title": String,
+				"name": String,
+				"description": String,
+				"number": String,
+				"hours": String,
+				"fee": String,
+				"prerequisitesCorequisites": String,
+				"offerings": []
+			},
+			"revisedFacultyCredentials": {
+				"needed": Boolean,
+				"content": String
+			},
+			"courseListChange": {
+				"needed": Boolean,
+				"content": String
+			},
+			"effective": {
+				"semester": String,
+				"year": String
+			},
+			"courseFeeChange": String,
+			"affectedDepartmentsPrograms": String,
+			"approvedBy": String,
+			"description": String,
+			"comment": String
+		}}
+	Created: 04/23/2016 John Batson
+	Modified:
+ */
+router.get
+(
+	'/admin/changeRequests/queue',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.ChangeRequest.find().exec(function(err, results) {
+				var success = err ? false : true;
+				res.send({
+					success: success,
+					data: results
+				});
+			});
+		}
+	}
+);
+
+/*
+	Route: Approve change request
+	Input:
+		url parameters:
+			id: id of change request to approve
+		payload: {"comment": String}
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 John Batson
+	Modified:
+ */
+router.put
+(
+	'/admin/changeRequests/approve/:id',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.ChangeRequest.findOne({_id: req.params.id}).exec(function(err, request){
+				if(request) {
+					request.status = "approved";
+					request.timeOfApproval = Date.now();
+					if (req.body.comment) {
+						request.comment = (req.body.comment);
+					}
+					request.save(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
+				}
+				else {
+					res.send({success: false, error: 'Change request does not exist'});
+				}
+			});
+		}
+	}
+);
+
+/*
+	Route: Deny change request
+	Input:
+		url parameters:
+			id: id of change request to deny
+		payload: {"comment": String}
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 John Batson
+	Modified:
+ */
+router.put
+(
+	'/admin/changeRequests/deny/:id',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.ChangeRequest.findOne({_id: req.params.id}).exec(function(err, request){
+				if(request) {
+					request.status = "denied";
+					request.timeOfApproval = Date.now();
+					if (req.body.comment) {
+						request.comment = (req.body.comment);
+					}
+					request.save(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
+				}
+				else {
+					res.send({success: false, error: 'Change request does not exist'});
+				}
+			});
+		}
+	}
+);
+
  /*
 	Route: Add admins
 	Input:
