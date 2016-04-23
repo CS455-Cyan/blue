@@ -1471,7 +1471,7 @@ router.post
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			new db.models.Course(req.body).save(function(err){
+			new db.models.Course(req.body).populate('subject').save(function(err){
 				var success = err ? false : true;
 				res.send({success: success});
 			});
