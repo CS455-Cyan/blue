@@ -1453,6 +1453,88 @@ router.delete
 	}
 );
 
+/*
+	Route: Add course
+	Input:
+		payload: {"title": String, "description": String, "number": String, "offerings": [],
+				  "hours": {"min": String, "max": String}, "fee": String, "subject": {}}
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Kaitlin Snyder
+	Modified:
+	
+*/
+router.post
+(
+	'/admin/catalog/courses',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			new db.models.Course(req.body).save(function(err){
+				var success = err ? false : true;
+				res.send({success: success});
+			});
+		}
+	}
+);
+
+/*
+	Route: Update course
+	Input:
+		url parameters:
+			id: id of course
+		payload: {"title": String, "description": String, "number": String, "offerings": [],
+				  "hours": {"min": String, "max": String}, "fee": String, "subject": {}}
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Kaitlin Snyder
+	Modified:
+	
+*/
+router.put
+(
+	'/admin/catalog/courses/:id',
+	function(req, res)
+	{
+		// restrict this to primary admins
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Course.findOne({_id: req.params.id}).update({},{ $set: req.body}).exec(
+				function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+		}
+	}
+);
+
+/*
+	Route: Remove course
+	Input:
+		url parameters:
+			id: id of course
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Kaitlin Snyder
+	Modified:
+*/
+router.delete
+(
+	'/admin/catalog/courses/:id',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Course.remove({_id: req.params.id}).exec(function(err){
+				var success = err ? false : true;
+				res.send({success: success});
+			});
+		}
+	}
+);
+
+
  /*
 	Route: Update facultyAndStaff
 	Input:
