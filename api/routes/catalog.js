@@ -1398,6 +1398,126 @@ router.put
 	}
 );
 
+ /*
+	Route: Add admins
+	Input:
+		payload: {"username": String, "password": String}
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Andrew Fisher
+	Modified:
+*/
+router.post
+(
+	'/admin/admins',
+	function(req, res)
+	{
+		// restrict this to primary admins
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Admin.findOne(function(err, admins){
+				admins.privilege = 2;
+				admins.username = (req.body.username);
+				admins.password = (req.body.password);
+				admins.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
+/*
+	Route: Remove admins
+	Input:
+		url parameters:
+			id: id of admins
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Andrew Fisher
+	Modified:
+*/
+router.delete
+(
+	'/admin/admins/:id',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Admin.findOne({_id: req.params.id}).exec(function(err, admins){
+				if(admins) {
+					admins.remove();
+				}
+				admins.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
+/*
+	Route: List admins
+	Input:
+	Output:
+		{"success": Boolean, data: [{
+			"_id": String,
+			"name": String
+			"abbreviation": String
+		}]}
+	Created: 04/17/2016 Tyler Yasaka
+	Modified:
+*/
+router.get
+(
+	'/admin/admins',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Admin.find().exec( function(err, results) {
+				var success = err ? false : true;
+				res.send({
+					success: success,
+					data: results
+				});
+			});
+		}
+	}
+);
+
+/*
+	Route: View admins
+	Input:
+		url parameters:
+			id: id of admins
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Andrew Fisher
+	Modified:
+*/
+router.get
+(
+	'/admin/admins/:id',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Admin.findOne({_id: req.params.id}).exec( function(err, result) {
+				var success = err ? false : true;
+				res.send({
+					success: success,
+					data: result
+				});
+			});
+		}
+	}
+);
+
+
+
 /*
 	Function: sortAlphabeticallyByProperty
 	Description: Orders objects of an array in alphabetical order of a property
