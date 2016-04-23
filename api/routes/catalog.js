@@ -1446,8 +1446,8 @@ router.delete
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
 			db.models.Subject.findOne({_id: req.params.id}).exec(function(err, subjects){
-				if(subject) {
-					subject.remove();
+				if(id) {
+					subjects.remove();
 				}
 				subjects.save(function(err){
 					var success = err ? false : true;
