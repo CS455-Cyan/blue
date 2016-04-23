@@ -1368,6 +1368,96 @@ router.delete
 	}
 );
 
+/*
+	Route: Add course subject
+	Input:
+		payload: {"title": String, "abbreviation": String}
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Kaitlin Snyder
+	Modified:
+	
+*/
+router.post
+(
+	'/admin/catalog/subjects',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Subject.findOne(function(err, subjects){
+				subjects.name = (req.body.name);
+				subjects.abbreviation = (req.body.abbreviation);
+
+				subjects.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
+
+/*
+	Route: Update course subject
+	Input:
+		url parameters:
+			id: id of subject
+		payload: {"title": String, "abbreviation": String}
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Kaitlin Snyder
+	Modified:
+	
+*/
+router.put
+(
+	'/admin/catalog/subjects/:id',
+	function(req, res)
+	{
+		// restrict this to primary admins
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Subject.findOne({_id: req.params.id}).update({},{ $set: req.body}).exec(
+				function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+		}
+	}
+);
+
+/*
+	Route: Remove course subject
+	Input:
+		url parameters:
+			id: id of subject
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Kaitlin Snyder
+	Modified:
+*/
+router.delete
+(
+	'/admin/catalog/subjects/:id',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Subject.findOne({_id: req.params.id}).exec(function(err, subjects){
+				if(subject) {
+					subject.remove();
+				}
+				subjects.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			});
+		}
+	}
+);
+
  /*
 	Route: Update facultyAndStaff
 	Input:
