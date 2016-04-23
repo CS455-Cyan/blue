@@ -1445,14 +1445,9 @@ router.delete
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.Subject.findOne({_id: req.params.id}).exec(function(err, subjects){
-				if(subject) {
-					subject.remove();
-				}
-				subjects.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
+			db.models.Subject.remove({_id: req.params.id}).exec(function(err){
+				var success = err ? false : true;
+				res.send({success: success});
 			});
 		}
 	}
