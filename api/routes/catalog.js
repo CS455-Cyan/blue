@@ -1503,17 +1503,44 @@ router.post
 	function(req, res)
 	{
 		// restrict this to primary admins
+		console.log(req.session);
+		req.body.privilege = 2;
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.Admin.findOne(function(err, admins){
-				admins.privilege = 2;
-				admins.username = (req.body.username);
-				admins.password = (req.body.password);
-				admins.save(function(err){
+			new db.models.Admin(req.body).save(function(err){
 					var success = err ? false : true;
 					res.send({success: success});
 				});
-			});
+		}
+	}
+);
+
+ /*
+	Route: Update admins
+	Input:
+		payload: {"password": String}
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Andrew Fisher
+	Modified:
+*/
+router.put
+(
+	'/admin/admins/:id',
+	function(req, res)
+	{
+		// restrict this to primary admins
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		{
+			db.models.Admin.update(
+				{_id: req.params.id},
+				{ $set: req.body}
+			).exec(
+				function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				}
+			);
 		}
 	}
 );
@@ -1535,14 +1562,9 @@ router.delete
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.Admin.findOne({_id: req.params.id}).exec(function(err, admins){
-				if(admins) {
-					admins.remove();
-				}
-				admins.save(function(err){
+			db.models.Admin.remove({_id: req.params.id}).exec(function(err){
 					var success = err ? false : true;
 					res.send({success: success});
-				});
 			});
 		}
 	}
@@ -1554,10 +1576,12 @@ router.delete
 	Output:
 		{"success": Boolean, data: [{
 			"_id": String,
-			"name": String
-			"abbreviation": String
+			"username": String
+			"privilege": Number
+			"password": String
+			"apps": [String]
 		}]}
-	Created: 04/17/2016 Tyler Yasaka
+	Created: 04/23/2016 Andrew Fisher
 	Modified:
 */
 router.get
