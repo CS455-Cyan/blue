@@ -1376,7 +1376,7 @@ router.delete
 		{"success": Boolean}
 	Created: 04/23/2016 Kaitlin Snyder
 	Modified:
-	
+
 */
 router.post
 (
@@ -1409,7 +1409,7 @@ router.post
 		{"success": Boolean}
 	Created: 04/23/2016 Kaitlin Snyder
 	Modified:
-	
+
 */
 router.put
 (
@@ -1462,7 +1462,7 @@ router.delete
 		{"success": Boolean}
 	Created: 04/23/2016 Kaitlin Snyder
 	Modified:
-	
+
 */
 router.post
 (
@@ -1490,7 +1490,7 @@ router.post
 		{"success": Boolean}
 	Created: 04/23/2016 Kaitlin Snyder
 	Modified:
-	
+
 */
 router.put
 (
@@ -1960,7 +1960,7 @@ var calculateCredit = function(requirements) {
 				min: 0,
 				max: 0
 			}
-			if(!!item.writeIn && !!item.writeIn.hours && typeof item.writeIn.hours.min != 'undefined') {
+			if(item.isWriteIn && !!item.writeIn && !!item.writeIn.hours && typeof item.writeIn.hours.min != 'undefined') {
 				subtotal = item.writeIn.hours;
 			}
 			else if(item.separator == 'AND') {
