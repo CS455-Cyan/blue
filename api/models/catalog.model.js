@@ -39,6 +39,7 @@ var requirementSchema = mongoose.Schema({
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Course'
 		}],
+		isWriteIn: Boolean,
 		writeIn: {
 			content: String,
 			hours: {

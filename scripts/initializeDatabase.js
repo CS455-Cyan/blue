@@ -16,7 +16,7 @@ console.log("Alright. One sec...");
 //Async allows us to simulate asynchronous behavior in javascript. That way these database queries execute one by one, in order.
 async.waterfall([
 	function(callback){
-		
+
 		// connect to mongoose
 		db.mongoose.connect('mongodb://cyan:8029df8b@ds035603.mongolab.com:35603/apps');
 		var connection = db.mongoose.connection;
@@ -34,17 +34,17 @@ async.waterfall([
 	function(callback){
 		db.models.Program.remove({}, function(){
 			callback(); // we're done. go to the next function
-		});	
+		});
 	},
 	function(callback){
     db.models.Subject.remove({}, function(){
 			callback(); // we're done. go to the next function
-		});	
+		});
 	},
 	function(callback){
     db.models.Course.remove({}, function(){
 			callback(); // we're done. go to the next function
-		});	
+		});
 	},
 	function(callback){
     db.models.ChangeRequest.remove({}, function(){
@@ -54,22 +54,22 @@ async.waterfall([
 	function(callback){
     db.models.GeneralRequirement.remove({}, function(){
 			callback(); // we're done. go to the next function
-		});	
+		});
 	},
 	function(callback){
     db.models.Admin.remove({}, function(){
 			callback(); // we're done. go to the next function
-		});	
+		});
 	},
 	function(callback){
     db.models.FacultyAndStaff.remove({}, function(){
 			callback(); // we're done. go to the next function
-		});	
+		});
 	},
 	function(callback){
     db.models.ChangeRequest.remove({}, function(){
 			callback(); // we're done. go to the next function
-		});	
+		});
 	},
 	function(callback){
 		// create some sample textSections
@@ -80,7 +80,7 @@ async.waterfall([
 			]
 		};
 		db.models.TextSection(textSections).save();
-		
+
 		// create some sample generalRequirements
 		var requirements = [
 			{
@@ -88,6 +88,7 @@ async.waterfall([
 				name: "Written Composition",
 				requirements: [{
 					name: "requirement",
+
 					separator: "OR",
 					items: [
 						{
@@ -122,7 +123,8 @@ async.waterfall([
 					name: "requirement",
 					items: [{
 						separator: 'OR',
-						courses: []
+						courses: [],
+						isWriteIn: false
 					}]
 				}]
 			},
@@ -133,7 +135,8 @@ async.waterfall([
 					name: "requirement",
 					items: [{
 						separator: 'OR',
-						courses: []
+						courses: [],
+						isWriteIn: false
 					}]
 				}]
 			},
@@ -144,7 +147,8 @@ async.waterfall([
 					name: "requirement",
 					items: [{
 						separator: 'OR',
-						courses: []
+						courses: [],
+						isWriteIn: false
 					}]
 				}]
 			},
@@ -155,7 +159,8 @@ async.waterfall([
 					name: "requirement",
 					items: [{
 						separator: 'OR',
-						courses: []
+						courses: [],
+						isWriteIn: false
 					}]
 				}]
 			}
@@ -166,9 +171,9 @@ async.waterfall([
 				callback();
 			});
 		});
-		
+
 		db.models.FacultyAndStaff({content: "Dr. Roden..."}).save();
-		
+
 		// create some sample subjects
 		var subjects = [
 			{
@@ -210,7 +215,7 @@ async.waterfall([
 					callback(null, result._id);
 				});
 			}, function(err, results) {
-				
+
 				// create some sample programs
 				var programs = [
 		      {
@@ -272,7 +277,7 @@ async.waterfall([
 
 			});
 		});
-		
+
 		// create some sample changeRequests
 		var changes = [
 			{
