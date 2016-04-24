@@ -32,6 +32,7 @@ models.TextSection = mongoose.model('TextSection', textSectionSchema);
 // requirement schema
 var requirementSchema = mongoose.Schema({
 	name: String,
+	separator: String,
 	items: [{
 		separator: String,
 		courses: [{

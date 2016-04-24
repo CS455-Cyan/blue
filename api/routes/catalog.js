@@ -1726,11 +1726,16 @@ var formatCredit = function(hours) {
 		credit for each item and requirement is stored in requirements object
 	Created: Tyler Yasaka 04/17/2016
 	Modified:
+		04/23/2016 Andrew Fisher
 */
 var calculateCredit = function(requirements) {
 	for(var r in requirements) {
 		var requirement = requirements[r];
 		var total = {
+			min: 0,
+			max: 0
+		}
+		var orTotal = {
 			min: 0,
 			max: 0
 		}
@@ -1762,10 +1767,25 @@ var calculateCredit = function(requirements) {
 			var credit = formatCredit(subtotal);
 			total.min += subtotal.min;
 			total.max += subtotal.max;
+			
+			if(i == 0) {
+				orTotal.min = subtotal.min;
+			}
+			else {
+				orTotal.min = Math.min(orTotal.min, subtotal.min);
+			}
+			orTotal.max = Math.max(orTotal.max, subtotal.max);
+
 			requirements[r].items[i].credit = credit;
 		}
-		var totalCredit = formatCredit(total);
-		requirements[r].credit = totalCredit;
+		if(requirement.separator == 'AND'){
+			var totalCredit = formatCredit(total);
+			requirements[r].credit = totalCredit;
+		}
+		else if(requirement.separator == 'OR'){
+			var orTotalCredit = formatCredit(orTotal);
+			requirements[r].credit = orTotalCredit;
+		}
 	}
 	return requirements;
 }
