@@ -1873,6 +1873,7 @@ router.get
 		}}
 	Created: 04/23/2016 John Batson
 	Modified:
+		04/25/2016 John Batson
  */
 router.get
 (
@@ -1881,7 +1882,7 @@ router.get
 	{
 		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.ChangeRequest.find().exec(function(err, results) {
+			db.models.ChangeRequest.find({status: "pending"}).exec(function(err, results) {
 				var success = err ? false : true;
 				res.send({
 					success: success,
