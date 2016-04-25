@@ -21,7 +21,7 @@ var privilege = {
 	secondaryAdmin: 2
 }
 var multer = require('multer');
-var upload = multer({ dest: 'uploads/' })
+var upload = multer({ dest: 'uploads/' });
 
 /*--																					--*\
 								PUBLIC API ROUTES
@@ -710,40 +710,48 @@ router.post
 );
 
 /*
-	Route: Update all textSections (use to re-order them)
+	Route: Re-order text sections
 	Input:
-		payload: [{"title": String, "content": String}, {"title": String, "content": String}]
+		payload: [
+			{"_id": "12345"},
+			{"_id": "67890"},
+			{"_id": "34567"}
+		]
 	Output:
 		{"success": Boolean}
-	Created: 04/14/2016 Tyler Yasaka
+	Created: 04/24/2016 Tyler Yasaka
 	Modified:
 */
 router.put
 (
-	'/admin/catalog/textSections',
+	'/admin/catalog/textSectionsOrder',
 	function(req, res)
 	{
 		// restrict this to primary admins
-		/*if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
 			db.models.TextSection.findOne(function(err, doc){
-				req.body; // the new order
-				doc.sections; // the current array
-				var newArray = [];
-				for id in req.body {
-					for textSection in doc.sections {
-						if id == textSection._id:
-							newArray.push(textSection)
+				var reordered = [];
+				for(i in req.body) {
+					var id = req.body[i]._id;
+					for(var j in doc.sections) {
+						var textSection = doc.sections[j];
+						if(id == textSection._id) {
+							reordered.push(textSection);
+						}
 					}
 				}
-				if(doc.sections.length == newArray.length):
-					doc.sections = newArray;
-				textSections.save(function(err){
+				// Make sure the length of the original array and the reordered array are the same
+				// If they're not the same, an error must have occured and we will probably lose data.
+				if(doc.sections.length == reordered.length) {
+					doc.sections = reordered;
+				}
+				doc.save(function(err){
 					var success = err ? false : true;
 					res.send({success: success});
 				});
 			});
-		}*/
+		}
 	}
 );
 
@@ -1595,7 +1603,7 @@ router.put
 	{
 		if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
 		{
-			db.models.Admin.update({ author: req.session.username}, 
+			db.models.Admin.update({ author: req.session.username},
 			{ $set: req.body }).exec(function(err, request){
 				var success = err ? false : true;
 				res.send({success: success});
@@ -1609,7 +1617,7 @@ router.put
 	Route: View change requests (created by that admin)
 	Input:
 	Output:
-		{"success": Boolean, 
+		{"success": Boolean,
 		 "data": {
 			"_id": String,
 			"author": String,
@@ -1727,7 +1735,7 @@ router.put
 		// restrict this to primary and secondary admins
 		if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
 		{
-			db.models.ChangeRequest.update({_id: req.params.id, status: "pending"}, 
+			db.models.ChangeRequest.update({_id: req.params.id, status: "pending"},
 			{ $set: req.body }).exec(function(err, request){
 				var success = err ? false : true;
 				res.send({success: success});
@@ -1766,7 +1774,7 @@ router.delete
 	Route: View change log
 	Input:
 	Output:
-		{"success": Boolean, 
+		{"success": Boolean,
 		 "data": {
 			"_id": String,
 			"author": String,
@@ -1826,7 +1834,7 @@ router.get
 	Route: View change request queue
 	Input:
 	Output:
-		{"success": Boolean, 
+		{"success": Boolean,
 		 "data": {
 			"_id": String,
 			"author": String,
@@ -2263,7 +2271,7 @@ var calculateCredit = function(requirements) {
 			var credit = formatCredit(subtotal);
 			total.min += subtotal.min;
 			total.max += subtotal.max;
-			
+
 			if(i == 0) {
 				orTotal.min = subtotal.min;
 			}
