@@ -9,7 +9,20 @@
 
 var mongoose = require('mongoose');
 
+var connection = {
+	admin: mongoose.createConnection('mongodb://cyan:8029df8b@ds035603.mongolab.com:35603/apps'),
+	public: mongoose.createConnection('mongodb://cyan:8029df8b@ds019471.mlab.com:19471/catalogpublic')
+}
+
+connection.admin.once('open', function() {
+	console.log('Connected to admin database');
+});
+connection.public.once('open', function() {
+	console.log('Connected to public database');
+});
+
 var models = {};
+var publicModels = {};
 
 // admins
 var adminSchema = mongoose.Schema({
@@ -18,7 +31,7 @@ var adminSchema = mongoose.Schema({
 	privilege: Number,
 	apps: [String]
 });
-models.Admin = mongoose.model('Admin', adminSchema);
+models.Admin = connection.admin.model('Admin', adminSchema);
 
 // textSections
 var textSectionSchema = mongoose.Schema({
@@ -27,7 +40,8 @@ var textSectionSchema = mongoose.Schema({
 		content: String
 	}]
 });
-models.TextSection = mongoose.model('TextSection', textSectionSchema);
+models.TextSection = connection.admin.model('TextSection', textSectionSchema);
+publicModels.TextSection = connection.public.model('TextSection', textSectionSchema);
 
 // requirement schema
 var requirementSchema = mongoose.Schema({
@@ -57,7 +71,8 @@ var generalRequirementsSchema = mongoose.Schema({
 	name: String,
 	requirements: [requirementSchema]
 });
-models.GeneralRequirement = mongoose.model('GeneralRequirement', generalRequirementsSchema);
+models.GeneralRequirement = connection.admin.model('GeneralRequirement', generalRequirementsSchema);
+publicModels.GeneralRequirement = connection.public.model('GeneralRequirement', generalRequirementsSchema);
 
 // programs
 var programSchema = mongoose.Schema({
@@ -76,14 +91,16 @@ var programSectionSchema = mongoose.Schema({
 	}],
 	programs: [programSchema]
 }, { typeKey: '$type' });
-models.Program = mongoose.model('Program', programSectionSchema);
+models.Program = connection.admin.model('Program', programSectionSchema);
+publicModels.Program = connection.public.model('Program', programSectionSchema);
 
 // subjects
 var subjectSchema = mongoose.Schema({
 	name: String,
 	abbreviation: String
 });
-models.Subject = mongoose.model('Subject', subjectSchema);
+models.Subject = connection.admin.model('Subject', subjectSchema);
+publicModels.Subject = connection.public.model('Subject', subjectSchema);
 
 // courses
 var courseSchema = mongoose.Schema({
@@ -101,13 +118,14 @@ var courseSchema = mongoose.Schema({
 		ref: 'Subject'
 	}
 });
-models.Course = mongoose.model('Course', courseSchema);
+models.Course = connection.admin.model('Course', courseSchema);
+publicModels.Course = connection.public.model('Course', courseSchema);
 
 // facultyAndStaff
 var facultyAndStaffSchema = mongoose.Schema({
 	content: String
 });
-models.FacultyAndStaff = mongoose.model('FacultyAndStaff', facultyAndStaffSchema);
+models.FacultyAndStaff = connection.admin.model('FacultyAndStaff', facultyAndStaffSchema);
 
 // changeRequests
 var changeRequestSchema = mongoose.Schema({
@@ -145,10 +163,10 @@ var changeRequestSchema = mongoose.Schema({
 	description: String, // generic description field for requester to describe the change,
 	comment: String // comment made by primary admin on approval/denial
 });
-models.ChangeRequest = mongoose.model('ChangeRequest', changeRequestSchema);
+models.ChangeRequest = connection.admin.model('ChangeRequest', changeRequestSchema);
 
 // export the models object for inclusion in other scripts
 module.exports = {
-	mongoose: mongoose,
-	models: models
+	models: models,
+	publicModels: publicModels
 };

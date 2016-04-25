@@ -21,14 +21,6 @@ var privilege = {
 	secondaryAdmin: 2
 }
 
-// connect to mongoose
-db.mongoose.connect('mongodb://cyan:8029df8b@ds035603.mongolab.com:35603/apps');
-var connection = db.mongoose.connection;
-connection.on('error', console.error.bind(console, 'connection error:'));
-connection.once('open', function() {
-	console.log('connected to mongodb');
-});
-
 /*--																					--*\
 								PUBLIC API ROUTES
 \*--																					--*/
@@ -46,11 +38,12 @@ router.get
 	'/catalog/textSections',
 	function(req, res)
 	{
-		db.models.TextSection.findOne().select('sections.title sections._id').exec( function(err, results) {
+		var models = selectModels(req.session);
+		models.TextSection.findOne().select('sections.title sections._id').exec( function(err, results) {
 			var success = err ? false : true;
 			res.send({
 				success: success,
-				data: results.sections
+				data: results ? results.sections : null
 			});
 		});
 	}
@@ -71,7 +64,8 @@ router.get
 	'/catalog/textSections/:id',
 	function(req, res)
 	{
-		db.models.TextSection.findOne().exec(function(err, results) {
+		var models = selectModels(req.session);
+		models.TextSection.findOne().exec(function(err, results) {
 			var section = results.sections.id(req.params.id);
 			var success = err || !section ? false : true;
 			res.send({
@@ -104,7 +98,8 @@ router.get
 	'/catalog/generalRequirements',
 	function(req, res)
 	{
-		db.models.GeneralRequirement.find()
+		var models = selectModels(req.session);
+		models.GeneralRequirement.find()
 		.populate({
 			path: 'requirements.items.courses',
 			populate: {
@@ -151,7 +146,8 @@ router.get
 	'/catalog/programs/categories',
 	function(req, res)
 	{
-		db.models.Program.find().select('name').exec( function(err, results) {
+		var models = selectModels(req.session);
+		models.Program.find().select('name').exec( function(err, results) {
 			var success = err ? false : true;
 			res.send({
 				success: success,
@@ -189,7 +185,8 @@ router.get
 	'/catalog/programs/categories/:category',
 	function(req, res)
 	{
-		db.models.Program.findOne({_id: req.params.category})
+		var models = selectModels(req.session);
+		models.Program.findOne({_id: req.params.category})
 		.populate({
 			path: 'departments.programs.requirements.items.courses',
 			populate: {
@@ -242,7 +239,8 @@ router.get
 	'/catalog/programs/categories/:category/departments/:department',
 	function(req, res)
 	{
-		db.models.Program.findOne({_id: req.params.category})
+		var models = selectModels(req.session);
+		models.Program.findOne({_id: req.params.category})
 		.select('name departments')
 		.exec( function(err, result) {
 			if(result) {
@@ -287,7 +285,8 @@ router.post
 	'/catalog/programs/search/',
 	function(req, res)
 	{
-		db.models.Program.find(function(err, categories) {
+		var models = selectModels(req.session);
+		models.Program.find(function(err, categories) {
 			var term = req.body.term.toLowerCase();
 			var programsArr = [];
 			for(var c in categories){
@@ -354,7 +353,8 @@ router.get
 	'/catalog/programs/categories/:category/programs/:program',
 	function(req, res)
 	{
-		db.models.Program.findOne({_id: req.params.category}).select('name programs')
+		var models = selectModels(req.session);
+		models.Program.findOne({_id: req.params.category}).select('name programs')
 		.populate({
 			path: 'programs.requirements.items.courses',
 			populate: {
@@ -414,7 +414,8 @@ router.get
 	'/catalog/programs/categories/:category/departments/:department/programs/:program',
 	function(req, res)
 	{
-		db.models.Program.findOne({_id: req.params.category}).select('name departments')
+		var models = selectModels(req.session);
+		models.Program.findOne({_id: req.params.category}).select('name departments')
 		.populate({
 			path: 'departments.programs.requirements.items.courses',
 			populate: {
@@ -474,7 +475,8 @@ router.get
 	'/catalog/courses',
 	function(req, res)
 	{
-		db.models.Course.find().populate('subject').exec( function(err, results) {
+		var models = selectModels(req.session);
+		models.Course.find().populate('subject').exec( function(err, results) {
 			var success = err ? false : true;
 			res.send({
 				success: success,
@@ -510,7 +512,8 @@ router.get
 	'/catalog/courses/:id',
 	function(req, res)
 	{
-		db.models.Course.findOne({_id: req.params.id}).populate('subject').exec( function(err, result) {
+		var models = selectModels(req.session);
+		models.Course.findOne({_id: req.params.id}).populate('subject').exec( function(err, result) {
 			var success = err ? false : true;
 			res.send({
 				success: success,
@@ -543,7 +546,8 @@ router.post
 	'/catalog/courses/search/',
 	function(req, res)
 	{
-		db.models.Course.find().populate('subject').exec(function(err, courses) {
+		var models = selectModels(req.session);
+		models.Course.find().populate('subject').exec(function(err, courses) {
 			var term = req.body.term.toLowerCase();
 			var courseArr = [];
 			for(var c in courses){
@@ -595,7 +599,8 @@ router.get
 	'/catalog/subjects',
 	function(req, res)
 	{
-		db.models.Subject.find().exec( function(err, results) {
+		var models = selectModels(req.session);
+		models.Subject.find().exec( function(err, results) {
 			var success = err ? false : true;
 			res.send({
 				success: success,
@@ -633,8 +638,9 @@ router.get
 	'/catalog/subjects/:id',
 	function(req, res)
 	{
-		db.models.Subject.findOne({_id: req.params.id}).exec(function(subjectErr, subject) {
-			db.models.Course.find({subject: req.params.id}).exec( function(coursesErr, courses) {
+		var models = selectModels(req.session);
+		models.Subject.findOne({_id: req.params.id}).exec(function(subjectErr, subject) {
+			models.Course.find({subject: req.params.id}).exec( function(coursesErr, courses) {
 				var success = (subjectErr || coursesErr) ? false : true;
 				res.send({
 					success: success,
@@ -658,7 +664,8 @@ router.get
 	'/catalog/facultyAndStaff',
 	function(req, res)
 	{
-		db.models.FacultyAndStaff.findOne().exec(function(err, result) {
+		var models = selectModels(req.session);
+		models.FacultyAndStaff.findOne().exec(function(err, result) {
 			var success = err ? false : true;
 			res.send({
 				success: success,
@@ -715,21 +722,26 @@ router.put
 	function(req, res)
 	{
 		// restrict this to primary admins
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+		/*if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 		{
-			db.models.TextSection.findOne(function(err, textSections){
-				textSections.sections = [];
-				if(req.body.length) {
-					for(var i in req.body) {
-						textSections.sections.push(req.body[i]);
+			db.models.TextSection.findOne(function(err, doc){
+				req.body; // the new order
+				doc.sections; // the current array
+				var newArray = [];
+				for id in req.body {
+					for textSection in doc.sections {
+						if id == textSection._id:
+							newArray.push(textSection)
 					}
 				}
+				if(doc.sections.length == newArray.length):
+					doc.sections = newArray;
 				textSections.save(function(err){
 					var success = err ? false : true;
 					res.send({success: success});
 				});
 			});
-		}
+		}*/
 	}
 );
 
@@ -1845,7 +1857,26 @@ router.get
 	}
 );
 
-
+/*
+	Function: selectModels
+	Description: select which database models to use for GET requests, based on whether admin is logged in
+	Input:
+		session: http session object (to check if user is logged in)
+	Output:
+		the selected database models object (admin or public)
+	Created: Tyler Yasaka 04/24/2016
+	Modified:
+*/
+var selectModels = function(session) {
+	var models;
+	if(session && (session.privilege >= privilege.primaryAdmin)) {
+		models = db.models;
+	}
+	else {
+		models = db.publicModels;
+	}
+	return models;
+}
 
 /*
 	Function: sortAlphabeticallyByProperty
@@ -1858,7 +1889,7 @@ router.get
 	Created: Tyler Yasaka 04/17/2016
 	Modified:
 */
-sortAlphabeticallyByProperty = function(arr, property) {
+var sortAlphabeticallyByProperty = function(arr, property) {
 	return arr.sort(function(a, b){
 		var propertyA=a[property].toLowerCase()
 		var propertyB=b[property].toLowerCase();
