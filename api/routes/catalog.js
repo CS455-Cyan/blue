@@ -20,6 +20,8 @@ var privilege = {
 	primaryAdmin: 5,
 	secondaryAdmin: 2
 }
+var multer = require('multer');
+var upload = multer({ dest: 'uploads/' })
 
 /*--																					--*\
 								PUBLIC API ROUTES
@@ -1577,12 +1579,255 @@ router.put
 	}
 );
 
+/*
+	Route: Change password
+	Input:
+		payload: {"password": String}
+	Output:
+
+	Created: 04/24/2016 Andrew Fisher
+	Modified:
+ */
+router.put
+(
+	'/admin/password',
+	function(req, res)
+	{
+		if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
+		{
+			db.models.Admin.update({ author: req.session.username}, 
+			{ $set: req.body }).exec(function(err, request){
+				var success = err ? false : true;
+				res.send({success: success});
+			});
+		}
+	}
+);
+
+
+/*
+	Route: View change requests (created by that admin)
+	Input:
+	Output:
+		{"success": Boolean, 
+		 "data": {
+			"_id": String,
+			"author": String,
+			"timeOfRequest": Date,
+			"timeOfApproval": Date,
+			"status": String,
+			"requestTypes": [],
+			"newCourseInfo": {
+				"syllabusFile": String,
+				"title": String,
+				"name": String,
+				"description": String,
+				"number": String,
+				"hours": String,
+				"fee": String,
+				"prerequisitesCorequisites": String,
+				"offerings": []
+			},
+			"revisedFacultyCredentials": {
+				"needed": Boolean,
+				"content": String
+			},
+			"courseListChange": {
+				"needed": Boolean,
+				"content": String
+			},
+			"effective": {
+				"semester": String,
+				"year": String
+			},
+			"courseFeeChange": String,
+			"affectedDepartmentsPrograms": String,
+			"approvedBy": String,
+			"description": String,
+			"comment": String
+		}}
+	Created: 04/24/2016 Andrew Fisher
+	Modified:
+ */
+router.get
+(
+	'/admin/changeRequests/userRequests',
+	function(req, res)
+	{
+		// restrict this to primary and secondary admins
+		if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
+		{
+			db.models.ChangeRequest.find({author: req.session.username}).exec(function(err, results){
+					var success = err ? false : true;
+					res.send({success: success, data: results});
+			});
+		}
+	}
+);
+
+/*
+	Route: Create change request
+	Input:
+		upload:	file
+	Output:
+
+	Created: 04/24/2016 Andrew Fisher
+	Modified:
+ */
+router.post
+(
+	'/admin/changeRequests/userRequests',
+	upload.single('file'),
+	function(req, res)
+	{
+		// restrict this to primary and secondary admins
+		if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
+		{
+			if(req.session.privilege >= privilege.primaryAdmin){
+				req.body.status = "approved";
+			}
+			else{
+				req.body.status = "pending";
+			}
+			req.body.author = req.session.username;
+			new db.models.ChangeRequest(req.body).save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			var storage = multer.diskStorage({
+				destination: function (req, file, cb) {
+					cb(null, 'uploads/catalog')
+				},
+				filename: function (req, file, cb) {
+					cb(null, Date.now())
+				}
+			})
+			var upload = multer({ storage: storage })
+		}
+	}
+);
+
+/*
+	Route: Edit change request
+	Input:
+		payload: {"effective" {
+					"semester": String,
+					"year": String
+					}}
+	Output:
+
+	Created: 04/24/2016 Andrew Fisher
+	Modified:
+ */
+router.put
+(
+	'/admin/changeRequests/userRequests/:id',
+	function(req, res)
+	{
+		// restrict this to primary and secondary admins
+		if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
+		{
+			db.models.ChangeRequest.update({_id: req.params.id, status: "pending"}, 
+			{ $set: req.body }).exec(function(err, request){
+				var success = err ? false : true;
+				res.send({success: success});
+			});
+		}
+	}
+);
+
+/*
+	Route: Remove change request
+	Input:
+		url parameters:
+			id: id of course
+	Output:
+
+	Created: 04/24/2016 Andrew Fisher
+	Modified:
+ */
+router.delete
+(
+	'/admin/changeRequests/userRequests/:id',
+	function(req, res)
+	{
+		// restrict this to primary and secondary admins
+		if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
+		{
+			db.models.ChangeRequest.remove({_id: req.params.id, status: "pending"}).exec(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+			});
+		}
+	}
+);
+
+/*
+	Route: View change log
+	Input:
+	Output:
+		{"success": Boolean, 
+		 "data": {
+			"_id": String,
+			"author": String,
+			"timeOfRequest": Date,
+			"timeOfApproval": Date,
+			"status": String,
+			"requestTypes": [],
+			"newCourseInfo": {
+				"syllabusFile": String,
+				"title": String,
+				"name": String,
+				"description": String,
+				"number": String,
+				"hours": String,
+				"fee": String,
+				"prerequisitesCorequisites": String,
+				"offerings": []
+			},
+			"revisedFacultyCredentials": {
+				"needed": Boolean,
+				"content": String
+			},
+			"courseListChange": {
+				"needed": Boolean,
+				"content": String
+			},
+			"effective": {
+				"semester": String,
+				"year": String
+			},
+			"courseFeeChange": String,
+			"affectedDepartmentsPrograms": String,
+			"approvedBy": String,
+			"description": String,
+			"comment": String
+		}}
+	Created: 04/24/2016 Andrew Fisher
+	Modified:
+ */
+router.get
+(
+	'/admin/changeRequests/log',
+	function(req, res)
+	{
+		// restrict this to primary and secondary admins
+		if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
+		{
+			db.models.ChangeRequest.find({status: "approved"}).exec(function(err, results){
+					var success = err ? false : true;
+					res.send({success: success, data: results});
+			});
+		}
+	}
+);
 
 /*
 	Route: View change request queue
 	Input:
 	Output:
-		{"success": Boolean, data: {
+		{"success": Boolean, 
+		 "data": {
 			"_id": String,
 			"author": String,
 			"timeOfRequest": Date,
@@ -1977,11 +2222,16 @@ var formatCredit = function(hours) {
 		credit for each item and requirement is stored in requirements object
 	Created: Tyler Yasaka 04/17/2016
 	Modified:
+		04/23/2016 Andrew Fisher
 */
 var calculateCredit = function(requirements) {
 	for(var r in requirements) {
 		var requirement = requirements[r];
 		var total = {
+			min: 0,
+			max: 0
+		}
+		var orTotal = {
 			min: 0,
 			max: 0
 		}
@@ -2013,10 +2263,25 @@ var calculateCredit = function(requirements) {
 			var credit = formatCredit(subtotal);
 			total.min += subtotal.min;
 			total.max += subtotal.max;
+			
+			if(i == 0) {
+				orTotal.min = subtotal.min;
+			}
+			else {
+				orTotal.min = Math.min(orTotal.min, subtotal.min);
+			}
+			orTotal.max = Math.max(orTotal.max, subtotal.max);
+
 			requirements[r].items[i].credit = credit;
 		}
-		var totalCredit = formatCredit(total);
-		requirements[r].credit = totalCredit;
+		if(requirement.separator == 'AND'){
+			var totalCredit = formatCredit(total);
+			requirements[r].credit = totalCredit;
+		}
+		else if(requirement.separator == 'OR'){
+			var orTotalCredit = formatCredit(orTotal);
+			requirements[r].credit = orTotalCredit;
+		}
 	}
 	return requirements;
 }

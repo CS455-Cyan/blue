@@ -46,6 +46,7 @@ publicModels.TextSection = connection.public.model('TextSection', textSectionSch
 // requirement schema
 var requirementSchema = mongoose.Schema({
 	name: String,
+	separator: String,
 	items: [{
 		separator: String,
 		courses: [{

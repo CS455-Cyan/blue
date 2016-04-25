@@ -88,18 +88,32 @@ async.waterfall([
 				name: "Written Composition",
 				requirements: [{
 					name: "requirement",
-					items: [{
-						separator: 'AND',
-						courses: [],
-						isWriteIn: true,
-						writeIn: {
-							content: "Sing the alphabet backwards",
-							hours: {
-								min: 1,
-								max: 3
+
+					separator: "OR",
+					items: [
+						{
+							separator: 'AND',
+							courses: [],
+							writeIn: {
+								content: "Sing the alphabet backwards",
+								hours: {
+									min: 1,
+									max: 3
+								}
+							}
+						},
+						{
+							separator: 'AND',
+							courses: [],
+							writeIn: {
+								content: "Sing the alphabet backwards 2",
+								hours: {
+									min: 1,
+									max: 3
+								}
 							}
 						}
-					}]
+					]
 				}]
 			},
 			{

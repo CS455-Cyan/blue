@@ -1,0 +1,21 @@
+{
+    "requestTypes": [
+        "Addition of/Change in Course Fee",
+    ],
+    "revisedFacultyCredentials": {
+        "needed": false,
+        "content": null
+    },
+    "courseListChange": {
+        "needed": false,
+        "content": null
+    },
+    "effective": {
+        "semester": "Fall",
+        "year": "2016"
+    },
+    "courseFeeChange": null,
+    "affectedDepartmentsPrograms": "Computer Science and Information Systems",
+    "approvedBy": "Renee Vandiver",
+    "description": "Change course fee for CS455 to $3000 so nobody can graduate. hehe"
+}
