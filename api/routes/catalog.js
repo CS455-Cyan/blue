@@ -20,8 +20,18 @@ var privilege = {
 	primaryAdmin: 5,
 	secondaryAdmin: 2
 }
+var fileStorage = modules.multer.diskStorage({
+	destination: function(req, file, cb)
+	{
+	  cb(null, __dirname + '/../uploads/catalog')
+	},
+	filename: function(req, file, cb)
+	{
+		cb(null, Date.now() + '-' + file.originalname);
+	}
+});
 var multer = require('multer');
-var upload = multer({ dest: 'uploads/' });
+var upload = multer({ storage: fileStorage });
 
 /*--																					--*\
 								PUBLIC API ROUTES
@@ -1676,7 +1686,42 @@ router.get
 /*
 	Route: Create change request
 	Input:
-		upload:	file
+		payload: {
+			"author": String,
+			"timeOfRequest": Date,
+			"timeOfApproval": Date,
+			"status": String,
+			"requestTypes": [],
+			"newCourseInfo": {
+				"syllabusFile": String,
+				"title": String,
+				"name": String,
+				"description": String,
+				"number": String,
+				"hours": String,
+				"fee": String,
+				"prerequisitesCorequisites": String,
+				"offerings": []
+			},
+			"revisedFacultyCredentials": {
+				"needed": Boolean,
+				"content": String
+			},
+			"courseListChange": {
+				"needed": Boolean,
+				"content": String
+			},
+			"effective": {
+				"semester": String,
+				"year": String
+			},
+			"courseFeeChange": String,
+			"affectedDepartmentsPrograms": String,
+			"approvedBy": String,
+			"description": String,
+			"comment": String
+		}
+		file: file
 	Output:
 
 	Created: 04/24/2016 Andrew Fisher
@@ -1699,18 +1744,9 @@ router.post
 			}
 			req.body.author = req.session.username;
 			new db.models.ChangeRequest(req.body).save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
-			var storage = multer.diskStorage({
-				destination: function (req, file, cb) {
-					cb(null, 'uploads/catalog')
-				},
-				filename: function (req, file, cb) {
-					cb(null, Date.now())
-				}
-			})
-			var upload = multer({ storage: storage })
+				var success = err ? false : true;
+				res.send({success: success});
+			});
 		}
 	}
 );
@@ -1718,7 +1754,7 @@ router.post
 /*
 	Route: Edit change request
 	Input:
-		payload: {"effective" {
+		payload: {"effective": {
 					"semester": String,
 					"year": String
 					}}

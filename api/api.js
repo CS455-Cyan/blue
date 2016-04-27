@@ -4,7 +4,7 @@
 	Author: Tyler Yasaka, Mitchel Moon
 
 	Copyright (c) 2015 University of North Alabama
-	
+
 \***																					***/
 
 
@@ -15,7 +15,7 @@
 // Set timezone
 process.env.TZ = 'America/Chicago';
 
-var routes = 
+var routes =
 [
 	require('./routes/states'),
 	require('./routes/admin'),
@@ -64,6 +64,8 @@ app.use
   )
 );
 
-app.use('',routes);
+app.use('/public', modules.express.static(__dirname + '/public'));
+
+app.use('', routes);
 
 var server = app.listen(8080);
