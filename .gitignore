@@ -1,4 +1,4 @@
 api/node_modules
 *.DS_Store
-ap/uploads/*
+api/uploads/catalog/*
 public/*
