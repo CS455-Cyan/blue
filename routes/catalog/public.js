@@ -1,6 +1,6 @@
 /***																					***\
 
-	Filename: api/routes/public.js
+	Filename: routes/public.js
 	Authors:
 			Andrew Fisher
 

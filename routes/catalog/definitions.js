@@ -1,3 +1,11 @@
+/***																					***\
+
+	Filename: routes/definitions.js
+	Authors:
+			Tyler Yasaka
+			Andrew Fisher
+
+***/
 var definitionExports = {};
 
 definitionExports.appname = 'catalog';

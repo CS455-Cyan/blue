@@ -1,6 +1,6 @@
 /***																					***\
 
-	Filename: api/models/catalog.model.js
+	Filename: models/catalog.model.js
 	Authors:
 			Tyler Yasaka
 			Andrew Fisher
@@ -170,6 +170,13 @@ var changeRequestSchema = mongoose.Schema({
 	comment: String // comment made by primary admin on approval/denial
 });
 models.ChangeRequest = connection.admin.model('ChangeRequest', changeRequestSchema);
+
+// catalogYears
+var catalogYearSchema = mongoose.Schema({
+	beginYear: String,
+	endYear: String
+});
+models.CatalogYear = connection.admin.model('CatalogYear', catalogYearSchema);
 
 // export the models object for inclusion in other scripts
 module.exports = {
