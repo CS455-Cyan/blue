@@ -9,6 +9,8 @@
 
 var mongoose = require('mongoose');
 
+var connectionEmitter = new events.EventEmitter();
+
 var connection = {
 	admin: mongoose.createConnection('mongodb://cyan:8029df8b@ds035603.mongolab.com:35603/apps'),
 	public: mongoose.createConnection('mongodb://cyan:8029df8b@ds019471.mlab.com:19471/catalogpublic')
@@ -16,9 +18,11 @@ var connection = {
 
 connection.admin.once('open', function() {
 	console.log('Connected to admin database');
+	connectionEmitter.emit('admin');
 });
 connection.public.once('open', function() {
 	console.log('Connected to public database');
+	connectionEmitter.emit('public');
 });
 
 var models = {};

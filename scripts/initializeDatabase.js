@@ -16,14 +16,10 @@ console.log("Alright. One sec...");
 //Async allows us to simulate asynchronous behavior in javascript. That way these database queries execute one by one, in order.
 async.waterfall([
 	function(callback){
-
-		// connect to mongoose
-		db.mongoose.connect('mongodb://cyan:8029df8b@ds035603.mongolab.com:35603/apps');
-		var connection = db.mongoose.connection;
-		connection.on('error', console.error.bind(console, 'connection error:'));
-		connection.once('open', function() {
-			callback(); // now that the connection's open, proceed to the next function
-		});
+    //connect to database before trying to interact with it
+    db.connection.on('admin', function(){
+      callback();
+    });
 	},
 	function(callback){
 		// delete all existing textSections and programSections
