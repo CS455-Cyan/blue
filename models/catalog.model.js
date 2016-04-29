@@ -8,6 +8,7 @@
 \***																					***/
 
 var mongoose = require('mongoose');
+var events = require('events');
 
 var connectionEmitter = new events.EventEmitter();
 

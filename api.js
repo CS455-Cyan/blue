@@ -17,8 +17,8 @@ process.env.TZ = 'America/Chicago';
 
 var routes =
 [
-	require('./routes/states'),
-	require('./routes/admin'),
+	require('./routes/states.routes'),
+	require('./routes/admin.routes'),
 	require('./routes/catalog.routes')
 ];
 
