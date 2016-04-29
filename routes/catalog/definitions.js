@@ -143,7 +143,7 @@ definitionExports.calculateCredit = function(requirements) {
 					subtotal.max = Math.max(subtotal.max, course.hours.max);
 				}
 			}
-			var credit = formatCredit(subtotal);
+			var credit = definitionExports.formatCredit(subtotal);
 			total.min += subtotal.min;
 			total.max += subtotal.max;
 
@@ -158,11 +158,11 @@ definitionExports.calculateCredit = function(requirements) {
 			requirements[r].items[i].credit = credit;
 		}
 		if(requirement.separator == 'AND'){
-			var totalCredit = formatCredit(total);
+			var totalCredit = definitionExports.formatCredit(total);
 			requirements[r].credit = totalCredit;
 		}
 		else if(requirement.separator == 'OR'){
-			var orTotalCredit = formatCredit(orTotal);
+			var orTotalCredit = definitionExports.formatCredit(orTotal);
 			requirements[r].credit = orTotalCredit;
 		}
 	}
