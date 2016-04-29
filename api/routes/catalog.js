@@ -15,11 +15,13 @@ var modules = globals.modules;
 var db = require('../models/catalog.model');
 var isAuthenticated = globals.isAuthenticated;
 var router = modules.express.Router();
-var appname = 'catalog';
-var privilege = {
-	primaryAdmin: 5,
-	secondaryAdmin: 2
-}
+var multer = require('multer');
+var definitions = require('./definitions');
+var privilege = definitions.privilege;
+
+var publicAPI = require('./public');
+
+
 var fileStorage = modules.multer.diskStorage({
 	destination: function(req, file, cb)
 	{
@@ -30,7 +32,7 @@ var fileStorage = modules.multer.diskStorage({
 		cb(null, Date.now() + '-' + file.originalname);
 	}
 });
-var multer = require('multer');
+
 var upload = multer({ storage: fileStorage });
 
 /*--																					--*\
@@ -48,17 +50,7 @@ var upload = multer({ storage: fileStorage });
 router.get
 (
 	'/catalog/textSections',
-	function(req, res)
-	{
-		var models = selectModels(req.session);
-		models.TextSection.findOne().select('sections.title sections._id').exec( function(err, results) {
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: results ? results.sections : null
-			});
-		});
-	}
+	publicAPI.getTextSections
 );
 
 /*
@@ -74,18 +66,7 @@ router.get
 router.get
 (
 	'/catalog/textSections/:id',
-	function(req, res)
-	{
-		var models = selectModels(req.session);
-		models.TextSection.findOne().exec(function(err, results) {
-			var section = results.sections.id(req.params.id);
-			var success = err || !section ? false : true;
-			res.send({
-				success: success,
-				data: section
-			});
-		});
-	}
+	publicAPI.getTextSectionsById
 );
 
 /*
@@ -108,34 +89,7 @@ router.get
 router.get
 (
 	'/catalog/generalRequirements',
-	function(req, res)
-	{
-		var models = selectModels(req.session);
-		models.GeneralRequirement.find()
-		.populate({
-			path: 'requirements.items.courses',
-			populate: {
-				path: 'subject'
-			}
-		}).exec( function(err, results) {
-			// we need to make sure they are in order (they may not be)
-			var areas = ['I','II','III','IV','V'];
-			var sorted = [];
-			for(var a in areas) {
-				for(var r in results) {
-					if(areas[a] == results[r].area) {
-						results[r].requirements = calculateCredit(results[r].requirements);
-						sorted.push(results[r]);
-					}
-				}
-			}
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: sorted
-			});
-		});
-	}
+	publicAPI.listGeneralRequirements
 );
 
 /*
@@ -156,17 +110,7 @@ router.get
 router.get
 (
 	'/catalog/programs/categories',
-	function(req, res)
-	{
-		var models = selectModels(req.session);
-		models.Program.find().select('name').exec( function(err, results) {
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: results
-			});
-		});
-	}
+	publicAPI.listProgramCategories
 );
 
 /*
@@ -195,34 +139,7 @@ router.get
 router.get
 (
 	'/catalog/programs/categories/:category',
-	function(req, res)
-	{
-		var models = selectModels(req.session);
-		models.Program.findOne({_id: req.params.category})
-		.populate({
-			path: 'departments.programs.requirements.items.courses',
-			populate: {
-				path: 'subject'
-			}
-		}).populate({
-			path: 'programs.requirements.items.courses',
-			populate: {
-				path: 'subject'
-			}
-		}).exec( function(err, category) {
-			if(category) {
-				for(var d in category.departments) {
-					category.departments[d].programs = orderPrograms(category.departments[d].programs);
-				}
-				category.programs = orderPrograms(category.programs);
-			}
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: category
-			});
-		});
-	}
+	publicAPI.viewCategoryDetails
 );
 
 /*
@@ -249,29 +166,7 @@ router.get
 router.get
 (
 	'/catalog/programs/categories/:category/departments/:department',
-	function(req, res)
-	{
-		var models = selectModels(req.session);
-		models.Program.findOne({_id: req.params.category})
-		.select('name departments')
-		.exec( function(err, result) {
-			if(result) {
-				var department, category;
-				if(result.departments) {
-					department = result.departments.id(req.params.department);
-				}
-				category = {
-					_id: result._id,
-					name: result.name
-				};
-			}
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: {department: department, category: category}
-			});
-		});
-	}
+	publicAPI.viewDepartment
 );
 
 /*
@@ -295,46 +190,7 @@ router.get
 router.post
 (
 	'/catalog/programs/search/',
-	function(req, res)
-	{
-		var models = selectModels(req.session);
-		models.Program.find(function(err, categories) {
-			var term = req.body.term.toLowerCase();
-			var programsArr = [];
-			for(var c in categories){
-				for(var p in categories[c].programs){
-					var match = false;
-					var program = categories[c].programs[p];
-					if( program.name.toLowerCase().indexOf(term) > -1) {
-						match = true;
-					}
-					if( program.description.toLowerCase().indexOf(term) > -1) {
-						match = true;
-					}
-					if(match) {
-						programsArr.push(program);
-					}
-				}
-				for(var d in categories[c].departments){
-					for(var p in categories[c].departments[d].programs){
-						var match = false;
-						var program = categories[c].departments[d].programs[p];
-						if( program.name.toLowerCase().indexOf(term) > -1) {
-							match = true;
-						}
-						if( program.description.toLowerCase().indexOf(term) > -1) {
-							match = true;
-						}
-						if(match) {
-							programsArr.push(program);
-						}
-					}
-				}
-			}
-			var success = err ? false : true;
-			res.send({success: success, data: programsArr});
-		});
-	}
+	publicAPI.searchPrograms
 );
 
 /*
@@ -363,34 +219,7 @@ router.post
 router.get
 (
 	'/catalog/programs/categories/:category/programs/:program',
-	function(req, res)
-	{
-		var models = selectModels(req.session);
-		models.Program.findOne({_id: req.params.category}).select('name programs')
-		.populate({
-			path: 'programs.requirements.items.courses',
-			populate: {
-				path: 'subject'
-			}
-		}).exec( function(err, result) {
-			var program, category;
-			if(result) {
-				program = result.programs.id(req.params.program);
-				if(program) {
-					calculateCredit(program.requirements);
-					category = {
-						_id: result._id,
-						name: result.name
-					};
-				}
-			}
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: {program: program, category: category}
-			});
-		});
-	}
+	publicAPI.viewProgramsInCategory
 );
 
 /*
@@ -424,41 +253,7 @@ router.get
 router.get
 (
 	'/catalog/programs/categories/:category/departments/:department/programs/:program',
-	function(req, res)
-	{
-		var models = selectModels(req.session);
-		models.Program.findOne({_id: req.params.category}).select('name departments')
-		.populate({
-			path: 'departments.programs.requirements.items.courses',
-			populate: {
-				path: 'subject'
-			}
-		}).exec( function(err, result) {
-			var program, department, category;
-			if(result) {
-				var dept = result.departments.id(req.params.department);
-				if(dept) {
-					program = dept.programs.id(req.params.program);
-					if(program) {
-						calculateCredit(program.requirements);
-						department = {
-							_id: dept._id,
-							name: dept.name
-						}
-					}
-				}
-				category = {
-					_id: result._id,
-					name: result.name
-				};
-			}
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: {program: program, department: department, category: category}
-			});
-		});
-	}
+	publicAPI.viewProgramsInDepartment
 );
 
 /*
@@ -485,21 +280,11 @@ router.get
 router.get
 (
 	'/catalog/courses',
-	function(req, res)
-	{
-		var models = selectModels(req.session);
-		models.Course.find().populate('subject').exec( function(err, results) {
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: results
-			});
-		});
-	}
+	publicAPI.listCourses
 );
 
 /*
-	Route: view course
+	Route: View Course
 	Input:
 		url parameters:
 			id: id of course
@@ -522,17 +307,7 @@ router.get
 router.get
 (
 	'/catalog/courses/:id',
-	function(req, res)
-	{
-		var models = selectModels(req.session);
-		models.Course.findOne({_id: req.params.id}).populate('subject').exec( function(err, result) {
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: result
-			});
-		});
-	}
+	publicAPI.viewCourses
 );
 
 /*
@@ -556,42 +331,7 @@ router.get
 router.post
 (
 	'/catalog/courses/search/',
-	function(req, res)
-	{
-		var models = selectModels(req.session);
-		models.Course.find().populate('subject').exec(function(err, courses) {
-			var term = req.body.term.toLowerCase();
-			var courseArr = [];
-			for(var c in courses){
-				var match = false;
-				// match title
-				if( courses[c].title.toLowerCase().indexOf(term) > -1) {
-					match = true;
-				}
-				// match number
-				if( courses[c].number.toLowerCase().indexOf(term) > -1) {
-					match = true;
-				}
-				// match description
-				if( courses[c].description.toLowerCase().indexOf(term) > -1) {
-					match = true;
-				}
-				// match subject name
-				if( courses[c].subject.name.toLowerCase().indexOf(term) > -1) {
-					match = true;
-				}
-				// match subject abbreviation
-				if( courses[c].subject.abbreviation.toLowerCase().indexOf(term) > -1) {
-					match = true;
-				}
-				if(match) {
-					courseArr.push(courses[c]);
-				}
-			}
-			var success = err ? false : true;
-			res.send({success: success, data: courseArr});
-		});
-	}
+	publicAPI.searchCourses
 );
 
 /*
@@ -609,17 +349,7 @@ router.post
 router.get
 (
 	'/catalog/subjects',
-	function(req, res)
-	{
-		var models = selectModels(req.session);
-		models.Subject.find().exec( function(err, results) {
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: results
-			});
-		});
-	}
+	publicAPI.listSubjects
 );
 
 /*
@@ -648,19 +378,7 @@ router.get
 router.get
 (
 	'/catalog/subjects/:id',
-	function(req, res)
-	{
-		var models = selectModels(req.session);
-		models.Subject.findOne({_id: req.params.id}).exec(function(subjectErr, subject) {
-			models.Course.find({subject: req.params.id}).exec( function(coursesErr, courses) {
-				var success = (subjectErr || coursesErr) ? false : true;
-				res.send({
-					success: success,
-					data: {subject: subject, courses: courses}
-				});
-			});
-		});
-	}
+	publicAPI.listCoursesForSubject
 );
 
 /*
@@ -674,17 +392,7 @@ router.get
 router.get
 (
 	'/catalog/facultyAndStaff',
-	function(req, res)
-	{
-		var models = selectModels(req.session);
-		models.FacultyAndStaff.findOne().exec(function(err, result) {
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: result.content
-			});
-		});
-	}
+	publicAPI.getFacultyAndStaff
 );
 
 /*--																					--*\
