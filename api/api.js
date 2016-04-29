@@ -19,7 +19,7 @@ var routes =
 [
 	require('./routes/states'),
 	require('./routes/admin'),
-	require('./routes/catalog')
+	require('./routes/catalog.routes')
 ];
 
 var modules =
