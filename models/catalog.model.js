@@ -174,5 +174,6 @@ models.ChangeRequest = connection.admin.model('ChangeRequest', changeRequestSche
 // export the models object for inclusion in other scripts
 module.exports = {
 	models: models,
-	publicModels: publicModels
+	publicModels: publicModels,
+	connection: connectionEmitter
 };

@@ -279,7 +279,7 @@ async.waterfall([
 			{
 				author: "Sean Connery",
 			 	timeOfRequest: Date.now(),
-				timeOfApproval: Date.now(),
+				timeOfApproval: null,
 				status: "pending",
 				requestTypes: [
 					"Change in Course Description",
@@ -334,7 +334,13 @@ async.waterfall([
 		var admins = [
 			{
 				privilege: 5,
-				username: "lanel52",
+				username: "primaryAdmin",
+				apps: ['catalog'],
+				password: crypto.createHash('md5').update("punchcards_rock").digest('hex')
+			},
+			{
+				privilege: 2,
+				username: "secondaryAdmin",
 				apps: ['catalog'],
 				password: crypto.createHash('md5').update("punchcards_rock").digest('hex')
 			}
