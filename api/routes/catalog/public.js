@@ -7,26 +7,15 @@
 \***																					***/
 
 // housekeeping
-var globals = require('./global');
+var globals = require('../global');
 var modules = globals.modules;
-var db = require('../models/catalog.model');
+var db = require('../../models/catalog.model');
 var isAuthenticated = globals.isAuthenticated;
 var router = modules.express.Router();
-var multer = require('multer');
 var definitions = require('./definitions');
 var privilege = definitions.privilege;
-
-
-var fileStorage = modules.multer.diskStorage({
-	destination: function(req, file, cb)
-	{
-	  cb(null, __dirname + '/../uploads/catalog')
-	},
-	filename: function(req, file, cb)
-	{
-		cb(null, Date.now() + '-' + file.originalname);
-	}
-});
+var calculateCredit = definitions.calculateCredit;
+var orderPrograms = definitions.orderPrograms;
 
 var publicExports = {};
 
@@ -34,11 +23,16 @@ var publicExports = {};
 								PUBLIC API ROUTES
 \*--																					--*/
 
-
-/*	Get Text Sections	*/
+/*
+	Route: List textSections
+	Input:
+	Output:
+		{"success": Boolean, data: ["_id": String, "title": String]}
+	Created: 03/24/2016 Tyler Yasaka
+	Modified:
+*/
 publicExports.getTextSections = function(req, res) {
-	var models = selectModels(req.session);
-	models.TextSection.findOne().select('sections.title sections._id').exec( function(err, results) {
+	db.models.TextSection.findOne().select('sections.title sections._id').exec( function(err, results) {
 		var success = err ? false : true;
 		res.send({
 			success: success,
@@ -47,11 +41,19 @@ publicExports.getTextSections = function(req, res) {
 	});
 };
 
-/*	Get Text Sections By Id	*/
+/*
+	Route: Get textSection
+	Input:
+		url parameters:
+			id: id of textSection
+	Output:
+		{"success": Boolean, data: {"_id": String, "title": String, "content": String}}
+	Created: 03/24/2016 Tyler Yasaka
+	Modified:
+*/
 publicExports.getTextSectionsById = function(req, res)
 {
-	var models = selectModels(req.session);
-	models.TextSection.findOne().exec(function(err, results) {
+	db.models.TextSection.findOne().exec(function(err, results) {
 		var section = results.sections.id(req.params.id);
 		var success = err || !section ? false : true;
 		res.send({
@@ -61,11 +63,26 @@ publicExports.getTextSectionsById = function(req, res)
 	});
 };
 
-/*	List The General Requirements	*/
+/*
+	Route: List generalRequirements
+	Input:
+	Output:
+		{"success": Boolean, data: [
+			{
+				"_id": String,
+				"area": String,
+				name": String,
+				"requirements": []
+			}
+		]}
+	Created: 04/02/2016 Andrew Fisher
+	Modified:
+		04/17/2016 Tyler Yasaka
+		04/19/2016 Tyler Yasaka
+*/
 publicExports.listGeneralRequirements = function(req, res)
 {
-	var models = selectModels(req.session);
-	models.GeneralRequirement.find()
+	db.models.GeneralRequirement.find()
 	.populate({
 		path: 'requirements.items.courses',
 		populate: {
@@ -91,11 +108,24 @@ publicExports.listGeneralRequirements = function(req, res)
 	});
 };
 
-/*	List Program Categories	*/
+/*
+	Route: List program categories
+	Input:
+	Output:
+		{"success": Boolean, data: [
+			{
+				"_id": String,
+				"name": String,
+			}
+		]}
+	Created: 04/02/2016 Andrew Fisher
+	Modified:
+		04/08/2016 Tyler Yasaka
+		04/17/2016 Tyler Yasaka
+*/
 publicExports.listProgramCategories = function(req, res)
 {
-	var models = selectModels(req.session);
-	models.Program.find().select('name').exec( function(err, results) {
+	db.models.Program.find().select('name').exec( function(err, results) {
 		var success = err ? false : true;
 		res.send({
 			success: success,
@@ -104,11 +134,32 @@ publicExports.listProgramCategories = function(req, res)
 	});
 };
 
-/*	View Category Details	*/
+/*
+	Route: View category details
+	Input:
+		url parameters:
+			category: id of category
+	Output:
+		{"success": Boolean, data: {
+			"_id": String,
+			"name": String,
+			"description": String,
+			"programs": [],
+			"departments": [{
+				"_id": String,
+				"name": String,
+				"description: String,
+				"programs": []
+			}]
+		}}
+	Created: 04/02/2016 Andrew Fisher
+	Modified:
+		04/08/2016 Tyler Yasaka
+		04/17/2016 Tyler Yasaka
+*/
 publicExports.viewCategoryDetails = function(req, res)
 {
-	var models = selectModels(req.session);
-	models.Program.findOne({_id: req.params.category})
+	db.models.Program.findOne({_id: req.params.category})
 	.populate({
 		path: 'departments.programs.requirements.items.courses',
 		populate: {
@@ -134,11 +185,30 @@ publicExports.viewCategoryDetails = function(req, res)
 	});
 };
 
-/*	View Departments	*/
+/*
+	Route: View department
+	Input:
+		url parameters:
+			category: id of category
+			department: id of department
+	Output:
+		{"success": Boolean, data: {
+			"department": {
+				"_id": String,
+				"name": String,
+				"description": String
+			},
+			"category": {
+				"_id": String,
+				"name": String
+			}
+		}}
+	Created: 04/19/2016 Tyler Yasaka
+	Modified:
+*/
 publicExports.viewDepartment = function(req, res)
 {
-	var models = selectModels(req.session);
-	models.Program.findOne({_id: req.params.category})
+	db.models.Program.findOne({_id: req.params.category})
 	.select('name departments')
 	.exec( function(err, result) {
 		if(result) {
@@ -159,11 +229,27 @@ publicExports.viewDepartment = function(req, res)
 	});
 };
 
-/*	Search Programs	*/
+/*
+	Route: Search programs
+	Input:
+		payload: {"term": String}
+	Output:
+		{"success": Boolean, data: [
+			{
+				"_id": String,
+				"type": String,
+				"name": String,
+				"description": String,
+				"requirements": []
+			}
+		]}
+	Created: 04/16/2016 Andrew Fisher
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 publicExports.searchPrograms = function(req, res)
 {
-	var models = selectModels(req.session);
-	models.Program.find(function(err, categories) {
+	db.models.Program.find(function(err, categories) {
 		var term = req.body.term.toLowerCase();
 		var programsArr = [];
 		for(var c in categories){
@@ -201,11 +287,32 @@ publicExports.searchPrograms = function(req, res)
 	});
 };
 
-/*	View Programs In Category	*/
+/*
+	Route: View program in category
+	Input:
+		url parameters:
+			category: id of category
+			program: id of program
+	Output:
+		{"success": Boolean, data: {
+			"program": {
+				"_id": String,
+				"type": String,
+				"name": String,
+				"description": String,
+				"requirements": []
+			},
+			"category": {
+				"_id": String,
+				"name": String
+			}
+		}}
+	Created: 04/17/2016 Tyler Yasaka
+	Modified: 04/19/2016 Tyler Yasaka
+*/
 publicExports.viewProgramsInCategory = function(req, res)
 {
-	var models = selectModels(req.session);
-	models.Program.findOne({_id: req.params.category}).select('name programs')
+	db.models.Program.findOne({_id: req.params.category}).select('name programs')
 	.populate({
 		path: 'programs.requirements.items.courses',
 		populate: {
@@ -231,11 +338,37 @@ publicExports.viewProgramsInCategory = function(req, res)
 	});
 };
 
-/*	View Programs In Departments	*/
+/*
+	Route: View program in department
+	Input:
+		url parameters:
+			category: id of categoryt
+			department: id of departmen
+			program: id of program
+	Output:
+		{"success": Boolean, data: {
+			"program": {
+				"_id": String,
+				"type": String,
+				"name": String,
+				"description": String,
+				"requirements": []
+			},
+			"category": {
+				"_id": String,
+				"name": String
+			},
+			"department": {
+				"_id": String,
+				"name": String
+			}
+		}}
+	Created: 04/17/2016 Tyler Yasaka
+	Modified:
+*/
 publicExports.viewProgramsInDepartment = function(req, res)
 {
-	var models = selectModels(req.session);
-	models.Program.findOne({_id: req.params.category}).select('name departments')
+	db.models.Program.findOne({_id: req.params.category}).select('name departments')
 	.populate({
 		path: 'departments.programs.requirements.items.courses',
 		populate: {
@@ -268,11 +401,30 @@ publicExports.viewProgramsInDepartment = function(req, res)
 	});
 };
 
-/*	List Courses	*/
+/*
+	Route: List courses
+	Input:
+	Output:
+		{"success": Boolean, data: [{
+			"_id": String,
+			"title": String
+			"number": String,
+			"description": String,
+			"offerings": [],
+			"subject": {
+				"_id": String,
+				"name": String,
+				"abbreviation": String
+			}
+		}]}
+	Created: 04/02/2016 Andrew Fisher
+	Modified:
+		04/08/2016 Tyler Yasaka
+		04/17/2016 Tyler Yasaka
+*/
 publicExports.listCourses = function(req, res)
 {
-	var models = selectModels(req.session);
-	models.Course.find().populate('subject').exec( function(err, results) {
+	db.models.Course.find().populate('subject').exec( function(err, results) {
 		var success = err ? false : true;
 		res.send({
 			success: success,
@@ -281,10 +433,29 @@ publicExports.listCourses = function(req, res)
 	});
 };
 
-/*	View Courses	*/
+/*
+	Route: View Course
+	Input:
+		url parameters:
+			id: id of course
+	Output:
+		{"success": Boolean, data: {
+			"_id": String,
+			"title": String
+			"number": String,
+			"description": String,
+			"offerings": [],
+			"subject": {
+				"_id": String,
+				"name": String,
+				"abbreviation": String
+			}
+		}}
+	Created: 04/17/2016 Tyler Yasaka
+	Modified:
+*/
 publicExports.viewCourses = function(req, res)
 {
-	var models = selectModels(req.session);
 	models.Course.findOne({_id: req.params.id}).populate('subject').exec( function(err, result) {
 		var success = err ? false : true;
 		res.send({
@@ -294,11 +465,27 @@ publicExports.viewCourses = function(req, res)
 	});
 };
 
-/*	Search Courses	*/
+/*
+	Route: Search courses
+	Input:
+		payload: {"term": String}
+	Output:
+		{"success": Boolean, data: [
+			{
+				"_id": String,
+				"title": String,
+				"number": String,
+				"description": String,
+				"offerings": []
+			}
+		]}
+	Created: 04/16/2016 Andrew Fisher
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 publicExports.searchCourses = function(req, res)
 {
-	var models = selectModels(req.session);
-	models.Course.find().populate('subject').exec(function(err, courses) {
+	db.models.Course.find().populate('subject').exec(function(err, courses) {
 		var term = req.body.term.toLowerCase();
 		var courseArr = [];
 		for(var c in courses){
@@ -332,11 +519,21 @@ publicExports.searchCourses = function(req, res)
 	});
 };
 
-/*	List Subjects	*/
+/*
+	Route: List subjects
+	Input:
+	Output:
+		{"success": Boolean, data: [{
+			"_id": String,
+			"name": String
+			"abbreviation": String
+		}]}
+	Created: 04/17/2016 Tyler Yasaka
+	Modified:
+*/
 publicExports.listSubjects = function(req, res)
 {
-	var models = selectModels(req.session);
-	models.Subject.find().exec( function(err, results) {
+	db.models.Subject.find().exec( function(err, results) {
 		var success = err ? false : true;
 		res.send({
 			success: success,
@@ -345,11 +542,32 @@ publicExports.listSubjects = function(req, res)
 	});
 };
 
-/*	View subject and list courses for subject	*/
+/*
+	Route: View subject and list courses for subject
+	Input:
+		url parameters:
+			id: id of subject
+	Output:
+	{"success": Boolean, data: {
+		"subject": {
+			"_id": String,
+			"name": String
+			"abbreviation": String,
+		},
+		"courses": [{
+			"_id": String,
+			"title": String
+			"number": String,
+			"description": String,
+			"offerings": []
+		}]
+	}}
+	Created: 04/17/2016 Tyler Yasaka
+	Modified:
+*/
 publicExports.listCoursesForSubject = function(req, res)
 {
-	var models = selectModels(req.session);
-	models.Subject.findOne({_id: req.params.id}).exec(function(subjectErr, subject) {
+	db.models.Subject.findOne({_id: req.params.id}).exec(function(subjectErr, subject) {
 		models.Course.find({subject: req.params.id}).exec( function(coursesErr, courses) {
 			var success = (subjectErr || coursesErr) ? false : true;
 			res.send({
@@ -360,11 +578,17 @@ publicExports.listCoursesForSubject = function(req, res)
 	});
 };
 
-/*	Get Faculty And Staff	*/
+/*
+	Route: Get facultyAndStaff
+	Input:
+	Output:
+		{"success": Boolean, data:  String}
+	Created: 04/11/2016 Tyler Yasaka
+	Modified:
+*/
 publicExports.getFacultyAndStaff = function(req, res)
 {
-	var models = selectModels(req.session);
-	models.FacultyAndStaff.findOne().exec(function(err, result) {
+	db.models.FacultyAndStaff.findOne().exec(function(err, result) {
 		var success = err ? false : true;
 		res.send({
 			success: success,
@@ -372,28 +596,5 @@ publicExports.getFacultyAndStaff = function(req, res)
 		});
 	});
 };
-
-
-/*
-	Function: selectModels
-	Description: select which database models to use for GET requests, based on whether admin is logged in
-	Input:
-		session: http session object (to check if user is logged in)
-	Output:
-		the selected database models object (admin or public)
-	Created: Tyler Yasaka 04/24/2016
-	Modified:
-*/
-var selectModels = function(session) {
-	var models;
-	console.log(db.models, db.publicModels, "check");
-	if(session && (session.privilege >= privilege.primaryAdmin)) {
-		models = db.models;
-	}
-	else {
-		models = db.publicModels;
-	}
-	return models;
-}
 
 module.exports = publicExports;

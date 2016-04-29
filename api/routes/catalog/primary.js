@@ -2,9 +2,27 @@
 						PRIMARY ADMIN API ROUTES
 \*--																					--*/
 
+// housekeeping
+var globals = require('../global');
+var modules = globals.modules;
+var db = require('../../models/catalog.model');
+var isAuthenticated = globals.isAuthenticated;
+var router = modules.express.Router();
+var definitions = require('./definitions');
+var privilege = definitions.privilege;
+var appname = definitions.appname;
+
 var primaryExports = {};
 
-/* Add Text Section */
+/*
+	Route: Add textSection
+	Input:
+		payload: {"title": String, "content": String}
+	Output:
+		{"success": Boolean}
+	Created: 03/24/2016 Tyler Yasaka
+	Modified:
+*/
 primaryExports.addTextSection = function(req, res){
 	// restrict this to primary admins
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
@@ -19,7 +37,19 @@ primaryExports.addTextSection = function(req, res){
 	}
 };
 
-/* Reorder Text Sections */
+/*
+	Route: Re-order text sections
+	Input:
+		payload: [
+			{"_id": "12345"},
+			{"_id": "67890"},
+			{"_id": "34567"}
+		]
+	Output:
+		{"success": Boolean}
+	Created: 04/24/2016 Tyler Yasaka
+	Modified:
+*/
 primaryExports.reorderTextSections = function(req, res){
 	// restrict this to primary admins
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
@@ -48,7 +78,17 @@ primaryExports.reorderTextSections = function(req, res){
 	}
 };
 
-/* Update Text Section */
+/*
+	Route: Update textSection
+	Input:
+		url parameters:
+			id: id of textSection
+		payload: {"title": String, "content": String}
+	Output:
+		{"success": Boolean}
+	Created: 03/24/2016 Tyler Yasaka
+	Modified:
+*/
 primaryExports.updateTextSection = function(req, res){
 	// restrict this to primary admins
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
@@ -68,7 +108,16 @@ primaryExports.updateTextSection = function(req, res){
 	}
 };
 
-/* Remove Text Section */
+/*
+	Route: Remove textSection
+	Input:
+		url parameters:
+			id: id of textSection
+	Output:
+		{"success": Boolean}
+	Created: 03/24/2016 Tyler Yasaka
+	Modified:
+*/
 primaryExports.removeTextSection = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -85,7 +134,18 @@ primaryExports.removeTextSection = function(req, res){
 	}
 };
 
-/* Add Requirement to Area */
+/*
+	Route: Add requirement to area
+	Input:
+		url parameters:
+			area: id of area to add program to
+		payload: {"name": String, "items": []}
+	Output:
+		{"success": Boolean}
+	Created: 04/16/2016 John Batson
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 primaryExports.addRequirementToArea = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -106,7 +166,19 @@ primaryExports.addRequirementToArea = function(req, res){
 	}
 };
 
-/* Update Requirement in Area */
+/*
+	Route: Update requirement in area
+	Input:
+		url parameters:
+			area: id of area containing requirement
+			requirement: id of requirement
+		payload: {"name": String, "items": []}
+	Output:
+		{"success": Boolean}
+	Created: 04/16/2016 John Batson
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 primaryExports.updateRequirementInArea = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -132,7 +204,18 @@ primaryExports.updateRequirementInArea = function(req, res){
 	}
 };
 
-/* Remove General Requirement from Area */
+/*
+	Route: Remove general requirement from area
+	Input:
+		url parameters:
+			area: id of area containing requirement
+			requirement: id of requirement
+	Output:
+		{"success": Boolean}
+	Created: 04/16/2016 John Batson
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 primaryExports.removeGeneralRequirementFromArea = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -156,7 +239,16 @@ primaryExports.removeGeneralRequirementFromArea = function(req, res){
 	}
 };
 
-/* Add Category */
+/*
+	Route: Add category
+	Input:
+		payload: {"name": String, "description": String, "departments": [], "programs": []}
+	Output:
+		{"success": Boolean}
+	Created: 04/15/2016 Kaitlin Snyder
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 primaryExports.addCategory = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -167,7 +259,18 @@ primaryExports.addCategory = function(req, res){
 	}
 };
 
-/* Update Category */
+/*
+	Route: Update category
+	Input:
+		url parameters:
+			category: id of category to update
+		payload: {"name": String, "description": String, "departments": [], "programs": []}
+	Output:
+		{"success": Boolean}
+	Created: 04/15/2016 Kaitlin Snyder
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 primaryExports.updateCategory = function(req, res){
 
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
@@ -189,7 +292,17 @@ primaryExports.updateCategory = function(req, res){
 	}
 };
 
-/* Remove Category */
+/*
+	Route: Remove category
+	Input:
+		url parameters:
+			category: id of category to update
+	Output:
+		{"success": Boolean}
+	Created: 04/15/2016 Kaitlin Snyder
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 primaryExports.removeCategory = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -207,7 +320,18 @@ primaryExports.removeCategory = function(req, res){
 	}
 };
 
-/* Add Department */
+/*
+	Route: Add department
+	Input:
+		url parameters:
+			category: id of category to add department to
+		payload: {"name": String, "description": String, "programs": []}
+	Output:
+		{"success": Boolean}
+	Created: 04/9/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 primaryExports.addDepartment = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -226,7 +350,19 @@ primaryExports.addDepartment = function(req, res){
 	}
 };
 
-/* Update Department */
+/*
+	Route: Update department
+	Input:
+		url parameters:
+			category: id of category that department is in
+			department: id of department
+		payload: {"name": String, "description": String, "programs": []}
+	Output:
+		{"success": Boolean}
+	Created: 04/9/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 primaryExports.updateDepartment = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -250,7 +386,18 @@ primaryExports.updateDepartment = function(req, res){
 	}
 };
 
-/* Remove Department */
+/*
+	Route: Remove department
+	Input:
+		url parameters:
+			category: id of category that department is in
+			department: id of department
+	Output:
+		{"success": Boolean}
+	Created: 04/9/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 primaryExports.removeDepartment = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -272,7 +419,18 @@ primaryExports.removeDepartment = function(req, res){
 	}
 };
 
-/* Add Program to Category */
+/*
+	Route: Add program to category
+	Input:
+		url parameters:
+			category: id of category to add program to
+		payload: {"type": String, "name": String, "description": String, requirements: []}
+	Output:
+		{"success": Boolean}
+	Created: 04/11/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 primaryExports.addProgramToCategory = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -291,7 +449,19 @@ primaryExports.addProgramToCategory = function(req, res){
 	}
 };
 
-/* Add Program to Department */
+/*
+	Route: Add program to department
+	Input:
+		url parameters:
+			category: id of category containing department
+			department: id of department to add program to
+		payload: {"type": String, "name": String, "description": String, requirements: []}
+	Output:
+		{"success": Boolean}
+	Created: 04/11/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 primaryExports.addProgramToDepartment = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -313,7 +483,19 @@ primaryExports.addProgramToDepartment = function(req, res){
 	}
 };
 
-/* Update Program in Category */
+/*
+	Route: Update program in category
+	Input:
+		url parameters:
+			category: id of category containing department
+			program: id of program
+		payload: {"type": String, "name": String, "description": String, requirements: []}
+	Output:
+		{"success": Boolean}
+	Created: 04/11/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 primaryExports.updateProgramInCategory = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -337,7 +519,20 @@ primaryExports.updateProgramInCategory = function(req, res){
 	}
 };
 
-/* Update Program in Department */
+/*
+	Route: Update program in department
+	Input:
+		url parameters:
+			category: id of category containing department
+			department: id of department containing program
+			program: id of program
+		payload: {"type": String, "name": String, "description": String, requirements: []}
+	Output:
+		{"success": Boolean}
+	Created: 04/11/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 primaryExports.updateProgramInDepartment = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -364,7 +559,18 @@ primaryExports.updateProgramInDepartment = function(req, res){
 	}
 };
 
-/* Remove Program from Category */
+ /*
+	Route: Remove program from category
+	Input:
+		url parameters:
+			category: id of category containing program
+			program: id of program
+	Output:
+		{"success": Boolean}
+	Created: 04/11/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 primaryExports.removeProgramFromCategory = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -386,7 +592,19 @@ primaryExports.removeProgramFromCategory = function(req, res){
 	}
 };
 
-/* Remove Program from Department */
+/*
+	Route: Remove program from department
+	Input:
+		url parameters:
+			category: id of category containing department
+			department: id of department containing program
+			program: id of program
+	Output:
+		{"success": Boolean}
+	Created: 04/11/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
 primaryExports.removeProgramFromDepartment = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -411,7 +629,16 @@ primaryExports.removeProgramFromDepartment = function(req, res){
 	}
 };
 
-/* Add Course Subject */
+/*
+	Route: Add course subject
+	Input:
+		payload: {"title": String, "abbreviation": String}
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Kaitlin Snyder
+	Modified:
+
+*/
 primaryExports.addCourseSubject = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -427,7 +654,18 @@ primaryExports.addCourseSubject = function(req, res){
 	}
 };
 
-/* Update Course Subject */
+/*
+	Route: Update course subject
+	Input:
+		url parameters:
+			id: id of subject
+		payload: {"title": String, "abbreviation": String}
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Kaitlin Snyder
+	Modified:
+
+*/
 primaryExports.updateCourseSubject = function(req, res){
 	// restrict this to primary admins
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
@@ -440,7 +678,16 @@ primaryExports.updateCourseSubject = function(req, res){
 	}
 };
 
-/* Remove Course Subject */
+/*
+	Route: Remove course subject
+	Input:
+		url parameters:
+			id: id of subject
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Kaitlin Snyder
+	Modified:
+*/
 primaryExports.removeCourseSubject = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -451,7 +698,17 @@ primaryExports.removeCourseSubject = function(req, res){
 	}
 };
 
-/* Add Course */
+/*
+	Route: Add course
+	Input:
+		payload: {"title": String, "description": String, "number": String, "offerings": [],
+				  "hours": {"min": String, "max": String}, "fee": String, "subject": {}}
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Kaitlin Snyder
+	Modified:
+
+*/
 primaryExports.addCourse = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -462,7 +719,19 @@ primaryExports.addCourse = function(req, res){
 	}
 };
 
-/* Update Course */
+/*
+	Route: Update course
+	Input:
+		url parameters:
+			id: id of course
+		payload: {"title": String, "description": String, "number": String, "offerings": [],
+				  "hours": {"min": String, "max": String}, "fee": String, "subject": {}}
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Kaitlin Snyder
+	Modified:
+
+*/
 primaryExports.updateCourse = function(req, res){
 	// restrict this to primary admins
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
@@ -475,7 +744,16 @@ primaryExports.updateCourse = function(req, res){
 	}
 };
 
-/* Remove Course */
+/*
+	Route: Remove course
+	Input:
+		url parameters:
+			id: id of course
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Kaitlin Snyder
+	Modified:
+*/
 primaryExports.removeCourse = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -486,7 +764,15 @@ primaryExports.removeCourse = function(req, res){
 	}
 };
 
-/* Update Faculty and Staff */
+ /*
+	Route: Update facultyAndStaff
+	Input:
+		payload: {"content": String}
+	Output:
+		{"success": Boolean}
+	Created: 04/11/2016 Tyler Yasaka
+	Modified:
+*/
 primaryExports.updateFacultyAndStaff = function(req, res){
 	// restrict this to primary admins
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
@@ -503,7 +789,15 @@ primaryExports.updateFacultyAndStaff = function(req, res){
 	}
 };
 
-/* Change Password */
+/*
+	Route: Change password
+	Input:
+		payload: {"password": String}
+	Output:
+
+	Created: 04/24/2016 Andrew Fisher
+	Modified:
+ */
 primaryExports.changePassword = function(req, res){
 	if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
 	{
@@ -515,7 +809,51 @@ primaryExports.changePassword = function(req, res){
 	}
 };
 
-/* View Change Request Queue */
+/*
+	Route: View change request queue
+	Input:
+	Output:
+		{"success": Boolean,
+		 "data": {
+			"_id": String,
+			"author": String,
+			"timeOfRequest": Date,
+			"timeOfApproval": Date,
+			"status": String,
+			"requestTypes": [],
+			"newCourseInfo": {
+				"syllabusFile": String,
+				"title": String,
+				"name": String,
+				"description": String,
+				"number": String,
+				"hours": String,
+				"fee": String,
+				"prerequisitesCorequisites": String,
+				"offerings": []
+			},
+			"revisedFacultyCredentials": {
+				"needed": Boolean,
+				"content": String
+			},
+			"courseListChange": {
+				"needed": Boolean,
+				"content": String
+			},
+			"effective": {
+				"semester": String,
+				"year": String
+			},
+			"courseFeeChange": String,
+			"affectedDepartmentsPrograms": String,
+			"approvedBy": String,
+			"description": String,
+			"comment": String
+		}}
+	Created: 04/23/2016 John Batson
+	Modified:
+		04/25/2016 John Batson
+ */
 primaryExports.viewChangeRequestQueue = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -529,7 +867,17 @@ primaryExports.viewChangeRequestQueue = function(req, res){
 	}
 };
 
-/* Approve Change Request */
+/*
+	Route: Approve change request
+	Input:
+		url parameters:
+			id: id of change request to approve
+		payload: {"comment": String}
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 John Batson
+	Modified:
+ */
 primaryExports.approveChangeRequest = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -552,7 +900,17 @@ primaryExports.approveChangeRequest = function(req, res){
 	}
 };
 
-/* Deny Change Request */
+/*
+	Route: Deny change request
+	Input:
+		url parameters:
+			id: id of change request to deny
+		payload: {"comment": String}
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 John Batson
+	Modified:
+ */
 primaryExports.denyChangeRequest = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -575,7 +933,15 @@ primaryExports.denyChangeRequest = function(req, res){
 	}
 };
 
-/* Add Admin */
+ /*
+	Route: Add admins
+	Input:
+		payload: {"username": String, "password": String}
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Andrew Fisher
+	Modified:
+*/
 primaryExports.addAdmin = function(req, res){
 	// restrict this to primary admins
 	console.log(req.session);
@@ -589,7 +955,15 @@ primaryExports.addAdmin = function(req, res){
 	}
 };
 
-/* Update Admin */
+ /*
+	Route: Update admins
+	Input:
+		payload: {"password": String}
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Andrew Fisher
+	Modified:
+*/
 primaryExports.updateAdmin = function(req, res){
 	// restrict this to primary admins
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
@@ -606,7 +980,16 @@ primaryExports.updateAdmin = function(req, res){
 	}
 };
 
-/* Remove Admin */
+/*
+	Route: Remove admins
+	Input:
+		url parameters:
+			id: id of admins
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Andrew Fisher
+	Modified:
+*/
 primaryExports.removeAdmin = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -617,7 +1000,20 @@ primaryExports.removeAdmin = function(req, res){
 	}
 };
 
-/* List Admins */
+/*
+	Route: List admins
+	Input:
+	Output:
+		{"success": Boolean, data: [{
+			"_id": String,
+			"username": String
+			"privilege": Number
+			"password": String
+			"apps": [String]
+		}]}
+	Created: 04/23/2016 Andrew Fisher
+	Modified:
+*/
 primaryExports.listAdmins = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -631,7 +1027,16 @@ primaryExports.listAdmins = function(req, res){
 	}
 };
 
-/* View Admin */
+/*
+	Route: View admins
+	Input:
+		url parameters:
+			id: id of admins
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Andrew Fisher
+	Modified:
+*/
 primaryExports.viewAdmin = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
@@ -645,3 +1050,4 @@ primaryExports.viewAdmin = function(req, res){
 	}
 };
 
+module.exports = primaryExports;
