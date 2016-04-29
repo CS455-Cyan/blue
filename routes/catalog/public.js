@@ -342,8 +342,8 @@ publicExports.viewProgramsInCategory = function(req, res)
 	Route: View program in department
 	Input:
 		url parameters:
-			category: id of categoryt
-			department: id of departmen
+			category: id of category
+			department: id of department
 			program: id of program
 	Output:
 		{"success": Boolean, data: {
@@ -456,7 +456,7 @@ publicExports.listCourses = function(req, res)
 */
 publicExports.viewCourses = function(req, res)
 {
-	models.Course.findOne({_id: req.params.id}).populate('subject').exec( function(err, result) {
+	db.models.Course.findOne({_id: req.params.id}).populate('subject').exec( function(err, result) {
 		var success = err ? false : true;
 		res.send({
 			success: success,
@@ -568,7 +568,7 @@ publicExports.listSubjects = function(req, res)
 publicExports.listCoursesForSubject = function(req, res)
 {
 	db.models.Subject.findOne({_id: req.params.id}).exec(function(subjectErr, subject) {
-		models.Course.find({subject: req.params.id}).exec( function(coursesErr, courses) {
+		db.models.Course.find({subject: req.params.id}).exec( function(coursesErr, courses) {
 			var success = (subjectErr || coursesErr) ? false : true;
 			res.send({
 				success: success,

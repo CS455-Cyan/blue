@@ -51,25 +51,25 @@ definitionExports.orderPrograms = function(programs) {
 	var results = [];
 	if(types['major']) {
 		results = results.concat(
-			sortAlphabeticallyByProperty(types['major'], 'name')
+			definitionExports.sortAlphabeticallyByProperty(types['major'], 'name')
 		);
 		delete types['major'];
 	}
 	if(types['minor']) {
 		results = results.concat(
-			sortAlphabeticallyByProperty(types['minor'], 'name')
+			definitionExports.sortAlphabeticallyByProperty(types['minor'], 'name')
 		);
 		delete types['minor']
 	}
 	if(types['certificate']) {
 		results = results.concat(
-			sortAlphabeticallyByProperty(types['certificate'], 'name')
+			definitionExports.sortAlphabeticallyByProperty(types['certificate'], 'name')
 		);
 		delete types['certificate'];
 	}
 	for(var t in types) {
 		results = results.concat(
-			sortAlphabeticallyByProperty(types[t], 'name')
+			definitionExports.sortAlphabeticallyByProperty(types[t], 'name')
 		);
 	}
 	return results;
