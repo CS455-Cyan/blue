@@ -7,9 +7,9 @@
 
 \***																					***/
 
-var async = require('../api/node_modules/async');
+var async = require('../node_modules/async');
 var crypto = require('crypto');
-var db = require('../api/models/catalog.model');
+var db = require('../models/catalog.model');
 
 console.log("Alright. One sec...");
 
