@@ -15,6 +15,8 @@ var modules = globals.modules;
 var db = require('../models/catalog.model');
 var isAuthenticated = globals.isAuthenticated;
 var router = modules.express.Router();
+var primaryAPI = require('./primary');
+var secondaryAPI = require('./secondary');
 var appname = 'catalog';
 var privilege = {
 	primaryAdmin: 5,
@@ -703,20 +705,7 @@ router.get
 router.post
 (
 	'/admin/catalog/textSections',
-	function(req, res)
-	{
-		// restrict this to primary admins
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.TextSection.findOne(function(err, textSections){
-				textSections.sections.push(req.body);
-				textSections.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
-			});
-		}
-	}
+	primaryAPI.addTextSection
 );
 
 /*
@@ -735,34 +724,7 @@ router.post
 router.put
 (
 	'/admin/catalog/textSectionsOrder',
-	function(req, res)
-	{
-		// restrict this to primary admins
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.TextSection.findOne(function(err, doc){
-				var reordered = [];
-				for(i in req.body) {
-					var id = req.body[i]._id;
-					for(var j in doc.sections) {
-						var textSection = doc.sections[j];
-						if(id == textSection._id) {
-							reordered.push(textSection);
-						}
-					}
-				}
-				// Make sure the length of the original array and the reordered array are the same
-				// If they're not the same, an error must have occured and we will probably lose data.
-				if(doc.sections.length == reordered.length) {
-					doc.sections = reordered;
-				}
-				doc.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
-			});
-		}
-	}
+	primaryAPI.reorderTextSections
 );
 
 /*
@@ -779,25 +741,7 @@ router.put
 router.put
 (
 	'/admin/catalog/textSections/:id',
-	function(req, res)
-	{
-		// restrict this to primary admins
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.TextSection.findOne(function(err, textSections){
-				var section = textSections.sections.id(req.params.id);
-				if(section) {
-					for(var attribute in req.body) {
-						section[attribute] = req.body[attribute];
-					}
-				}
-				textSections.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
-			});
-		}
-	}
+	primaryAPI.updateTextSection
 );
 
 /*
@@ -813,22 +757,7 @@ router.put
 router.delete
 (
 	'/admin/catalog/textSections/:id',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.TextSection.findOne(function(err, textSections){
-				var section = textSections.sections.id(req.params.id);
-				if(section) {
-					section.remove();
-				}
-				textSections.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
-			});
-		}
-	}
+	primaryAPI.removeTextSection
 );
 
 /*
@@ -846,26 +775,7 @@ router.delete
 router.post
 (
 	'/admin/catalog/generalRequirements/:area',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.GeneralRequirement.findOne({area: req.params.area}).exec(function(err, area){
-				if(area) {
-					if(area.requirements) {
-						area.requirements.push(req.body);
-					}
-					area.save(function(err){
-						var success = err ? false : true;
-						res.send({success: success});
-					});
-				}
-				else {
-					res.send({success: false, error: 'Area does not exist'});
-				}
-			});
-		}
-	}
+	primaryAPI.addRequirementToArea
 );
 
 /*
@@ -884,31 +794,7 @@ router.post
 router.put
 (
 	'/admin/catalog/generalRequirements/:area/:requirement',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.GeneralRequirement.findOne({area: req.params.area}).exec(function(err, area){
-				if(area) {
-					if(area.requirements) {
-						var requirement = area.requirements.id(req.params.requirement);
-						if(requirement) {
-							for(var attribute in req.body) {
-								requirement[attribute] = req.body[attribute];
-							}
-						}
-					}
-					area.save(function(err){
-						var success = err ? false : true;
-						res.send({success: success});
-					});
-				}
-				else {
-					res.send({success: false, error: 'Area does not exist'});
-				}
-			});
-		}
-	}
+	primaryAPI.updateRequirementInArea
 );
 
 /*
@@ -926,29 +812,7 @@ router.put
 router.delete
 (
 	'/admin/catalog/generalRequirements/:area/:requirement',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.GeneralRequirement.findOne({area: req.params.area}).exec(function(err, area){
-				if(area) {
-					if(area.requirements) {
-						var requirement = area.requirements.id(req.params.requirement);
-						if(requirement) {
-							requirement.remove();
-						}
-					}
-					area.save(function(err){
-						var success = err ? false : true;
-						res.send({success: success});
-					});
-				}
-				else {
-					res.send({success: false, error: 'Area does not exist'});
-				}
-			});
-		}
-	}
+	primaryAPI.removeGeneralRequirementFromArea
 );
 
 /*
@@ -964,16 +828,7 @@ router.delete
 router.post
 (
 	'/admin/catalog/programs/categories',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Program(req.body).save(function(err){
-				var success = err ? false : true;
-				res.send({success: success});
-			});
-		}
-	}
+	primaryAPI.addCategory
 );
 
 /*
@@ -991,26 +846,7 @@ router.post
 router.put
 (
 	'/admin/catalog/programs/categories/:category',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-				if(category) {
-					for(var attribute in req.body) {
-						category[attribute] = req.body[attribute];
-					}
-					category.save(function(err){
-						var success = err ? false : true;
-						res.send({success: success});
-					});
-				}
-				else {
-					res.send({success: false, error: 'Category does not exist'});
-				}
-			});
-		}
-	}
+	primaryAPI.updateCategory
 );
 
 /*
@@ -1027,23 +863,7 @@ router.put
 router.delete
 (
 	'/admin/catalog/programs/categories/:category',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-				if(category) {
-					category.remove(function(err){
-						var success = err ? false : true;
-						res.send({success: success});
-					});
-				}
-				else {
-					res.send({success: false, error: 'Category does not exist'});
-				}
-			});
-		}
-	}
+	primaryAPI.removeCategory
 );
 
 /*
@@ -1061,24 +881,7 @@ router.delete
 router.post
 (
 	'/admin/catalog/programs/categories/:category/departments',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-				if(category) {
-					category.departments.push(req.body);
-					category.save(function(err){
-						var success = err ? false : true;
-						res.send({success: success});
-					});
-				}
-				else {
-					res.send({success: false, error: 'Category does not exist'});
-				}
-			});
-		}
-	}
+	primaryAPI.addDepartment
 );
 
 /*
@@ -1097,29 +900,7 @@ router.post
 router.put
 (
 	'/admin/catalog/programs/categories/:category/departments/:department',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-				if(category) {
-					var department = category.departments.id(req.params.department);
-					if(department) {
-						for(var attribute in req.body) {
-							department[attribute] = req.body[attribute];
-						}
-					}
-					category.save(function(err){
-						var success = err ? false : true;
-						res.send({success: success});
-					});
-				}
-				else {
-					res.send({success: false, error: 'Category does not exist'});
-				}
-			});
-		}
-	}
+	primaryAPI.updateDepartment
 );
 
 /*
@@ -1137,27 +918,7 @@ router.put
 router.delete
 (
 	'/admin/catalog/programs/categories/:category/departments/:department',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-				if(category) {
-					var department = category.departments.id(req.params.department);
-					if(department) {
-						department.remove();
-					}
-					category.save(function(err){
-						var success = err ? false : true;
-						res.send({success: success});
-					});
-				}
-				else {
-					res.send({success: false, error: 'Category does not exist'});
-				}
-			});
-		}
-	}
+	primaryAPI.removeDepartment
 );
 
 /*
@@ -1175,24 +936,7 @@ router.delete
 router.post
 (
 	'/admin/catalog/programs/categories/:category/programs',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-				if(category) {
-					category.programs.push(req.body);
-					category.save(function(err){
-						var success = err ? false : true;
-						res.send({success: success});
-					});
-				}
-				else {
-					res.send({success: false, error: 'Category does not exist'});
-				}
-			});
-		}
-	}
+	primaryAPI.addProgramToCategory
 );
 
 /*
@@ -1211,27 +955,7 @@ router.post
 router.post
 (
 	'/admin/catalog/programs/categories/:category/departments/:department/programs',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-				if(category) {
-					var department = category.departments.id(req.params.department);
-					if(department){
-						department.programs.push(req.body);
-					}
-					category.save(function(err){
-						var success = err ? false : true;
-						res.send({success: success});
-					});
-				}
-				else {
-					res.send({success: false, error: 'Category does not exist'});
-				}
-			});
-		}
-	}
+	primaryAPI.addProgramToDepartment
 );
 
 /*
@@ -1250,29 +974,7 @@ router.post
 router.put
 (
 	'/admin/catalog/programs/categoies/:category/programs/:program',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-				if(category) {
-					var program = category.programs.id(req.params.program);
-					if(program) {
-						for(var attribute in req.body) {
-							program[attribute] = req.body[attribute];
-						}
-					}
-					category.save(function(err){
-						var success = err ? false : true;
-						res.send({success: success});
-					});
-				}
-				else {
-					res.send({success: false, error: 'Category does not exist'});
-				}
-			});
-		}
-	}
+	primaryAPI.updateProgramInCategory
 );
 
 /*
@@ -1292,32 +994,7 @@ router.put
 router.put
 (
 	'/admin/catalog/programs/categories/:category/departments/:department/programs/:program',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-				if(category) {
-					var department = category.departments.id(req.params.department);
-					if(department) {
-						var program = department.programs.id(req.params.program);
-						if(program) {
-							for(var attribute in req.body) {
-								program[attribute] = req.body[attribute];
-							}
-						}
-					}
-					category.save(function(err){
-						var success = err ? false : true;
-						res.send({success: success});
-					});
-				}
-				else {
-					res.send({success: false, error: 'Category does not exist'});
-				}
-			});
-		}
-	}
+	primaryAPI.updateProgramInDepartment
 );
 
  /*
@@ -1335,27 +1012,7 @@ router.put
 router.delete
 (
 	'/admin/catalog/programs/categories/:category/programs/:program',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-				if(category) {
-					var program = category.programs.id(req.params.program);
-					if(program) {
-						program.remove();
-					}
-					category.save(function(err){
-						var success = err ? false : true;
-						res.send({success: success});
-					});
-				}
-				else {
-					res.send({success: false, error: 'Category does not exist'});
-				}
-			});
-		}
-	}
+	primaryAPI.removeProgramFromCategory
 );
 
 /*
@@ -1374,30 +1031,7 @@ router.delete
 router.delete
 (
 	'/admin/catalog/programs/categories/:category/departments:department/programs/:program',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-				if(category) {
-					var department = category.departments.id(req.params.department);
-					if(department) {
-						var program = department.programs.id(req.params.program);
-						if(program) {
-							program.remove();
-						}
-					}
-					category.save(function(err){
-						var success = err ? false : true;
-						res.send({success: success});
-					});
-				}
-				else {
-					res.send({success: false, error: 'Category does not exist'});
-				}
-			});
-		}
-	}
+	primaryAPI.removeProgramFromDepartment
 );
 
 /*
@@ -1413,21 +1047,7 @@ router.delete
 router.post
 (
 	'/admin/catalog/subjects',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Subject.findOne(function(err, subjects){
-				subjects.name = (req.body.name);
-				subjects.abbreviation = (req.body.abbreviation);
-
-				subjects.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
-			});
-		}
-	}
+	primaryAPI.addCourseSubject
 );
 
 
@@ -1446,18 +1066,7 @@ router.post
 router.put
 (
 	'/admin/catalog/subjects/:id',
-	function(req, res)
-	{
-		// restrict this to primary admins
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Subject.findOne({_id: req.params.id}).update({},{ $set: req.body}).exec(
-				function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
-		}
-	}
+	primaryAPI.updateCourseSubject
 );
 
 /*
@@ -1473,16 +1082,7 @@ router.put
 router.delete
 (
 	'/admin/catalog/subjects/:id',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Subject.remove({_id: req.params.id}).exec(function(err){
-				var success = err ? false : true;
-				res.send({success: success});
-			});
-		}
-	}
+	primaryAPI.removeCourseSubject
 );
 
 /*
@@ -1499,16 +1099,7 @@ router.delete
 router.post
 (
 	'/admin/catalog/courses',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			new db.models.Course(req.body).populate('subject').save(function(err){
-				var success = err ? false : true;
-				res.send({success: success});
-			});
-		}
-	}
+	primaryAPI.addCourse
 );
 
 /*
@@ -1527,18 +1118,7 @@ router.post
 router.put
 (
 	'/admin/catalog/courses/:id',
-	function(req, res)
-	{
-		// restrict this to primary admins
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Course.findOne({_id: req.params.id}).update({},{ $set: req.body}).exec(
-				function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
-		}
-	}
+	primaryAPI.updateCourse
 );
 
 /*
@@ -1554,16 +1134,7 @@ router.put
 router.delete
 (
 	'/admin/catalog/courses/:id',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Course.remove({_id: req.params.id}).exec(function(err){
-				var success = err ? false : true;
-				res.send({success: success});
-			});
-		}
-	}
+	primaryAPI.removeCourse
 );
 
 
@@ -1579,22 +1150,7 @@ router.delete
 router.put
 (
 	'/admin/catalog/facultyAndStaff',
-	function(req, res)
-	{
-		// restrict this to primary admins
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.FacultyAndStaff.update(
-				{},
-				{ $set: req.body}
-			).exec(
-				function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				}
-			);
-		}
-	}
+	primaryAPI.updateFacultyAndStaff
 );
 
 /*
@@ -1609,19 +1165,8 @@ router.put
 router.put
 (
 	'/admin/password',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
-		{
-			db.models.Admin.update({ author: req.session.username},
-			{ $set: req.body }).exec(function(err, request){
-				var success = err ? false : true;
-				res.send({success: success});
-			});
-		}
-	}
+	primaryAPI.changePassword
 );
-
 
 /*
 	Route: View change requests (created by that admin)
@@ -1670,17 +1215,7 @@ router.put
 router.get
 (
 	'/admin/changeRequests/userRequests',
-	function(req, res)
-	{
-		// restrict this to primary and secondary admins
-		if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
-		{
-			db.models.ChangeRequest.find({author: req.session.username}).exec(function(err, results){
-					var success = err ? false : true;
-					res.send({success: success, data: results});
-			});
-		}
-	}
+	secondaryAPI.viewChangeRequests
 );
 
 /*
@@ -1731,24 +1266,7 @@ router.post
 (
 	'/admin/changeRequests/userRequests',
 	upload.single('file'),
-	function(req, res)
-	{
-		// restrict this to primary and secondary admins
-		if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
-		{
-			if(req.session.privilege >= privilege.primaryAdmin){
-				req.body.status = "approved";
-			}
-			else{
-				req.body.status = "pending";
-			}
-			req.body.author = req.session.username;
-			new db.models.ChangeRequest(req.body).save(function(err){
-				var success = err ? false : true;
-				res.send({success: success});
-			});
-		}
-	}
+	secondaryAPI.createChangeRequest
 );
 
 /*
@@ -1766,18 +1284,7 @@ router.post
 router.put
 (
 	'/admin/changeRequests/userRequests/:id',
-	function(req, res)
-	{
-		// restrict this to primary and secondary admins
-		if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
-		{
-			db.models.ChangeRequest.update({_id: req.params.id, status: "pending"},
-			{ $set: req.body }).exec(function(err, request){
-				var success = err ? false : true;
-				res.send({success: success});
-			});
-		}
-	}
+	secondaryAPI.editChangeRequest
 );
 
 /*
@@ -1793,17 +1300,7 @@ router.put
 router.delete
 (
 	'/admin/changeRequests/userRequests/:id',
-	function(req, res)
-	{
-		// restrict this to primary and secondary admins
-		if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
-		{
-			db.models.ChangeRequest.remove({_id: req.params.id, status: "pending"}).exec(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-			});
-		}
-	}
+	secondaryAPI.removeChangeRequest
 );
 
 /*
@@ -1853,17 +1350,7 @@ router.delete
 router.get
 (
 	'/admin/changeRequests/log',
-	function(req, res)
-	{
-		// restrict this to primary and secondary admins
-		if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
-		{
-			db.models.ChangeRequest.find({status: "approved"}).exec(function(err, results){
-					var success = err ? false : true;
-					res.send({success: success, data: results});
-			});
-		}
-	}
+	secondaryAPI.viewChangeLog
 );
 
 /*
@@ -1914,19 +1401,7 @@ router.get
 router.get
 (
 	'/admin/changeRequests/queue',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.ChangeRequest.find({status: "pending"}).exec(function(err, results) {
-				var success = err ? false : true;
-				res.send({
-					success: success,
-					data: results
-				});
-			});
-		}
-	}
+	primaryAPI.viewChangeRequestQueue
 );
 
 /*
@@ -1943,28 +1418,7 @@ router.get
 router.put
 (
 	'/admin/changeRequests/approve/:id',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.ChangeRequest.findOne({_id: req.params.id}).exec(function(err, request){
-				if(request) {
-					request.status = "approved";
-					request.timeOfApproval = Date.now();
-					if (req.body.comment) {
-						request.comment = (req.body.comment);
-					}
-					request.save(function(err){
-						var success = err ? false : true;
-						res.send({success: success});
-					});
-				}
-				else {
-					res.send({success: false, error: 'Change request does not exist'});
-				}
-			});
-		}
-	}
+	primaryAPI.approveChangeRequest
 );
 
 /*
@@ -1981,28 +1435,7 @@ router.put
 router.put
 (
 	'/admin/changeRequests/deny/:id',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.ChangeRequest.findOne({_id: req.params.id}).exec(function(err, request){
-				if(request) {
-					request.status = "denied";
-					request.timeOfApproval = Date.now();
-					if (req.body.comment) {
-						request.comment = (req.body.comment);
-					}
-					request.save(function(err){
-						var success = err ? false : true;
-						res.send({success: success});
-					});
-				}
-				else {
-					res.send({success: false, error: 'Change request does not exist'});
-				}
-			});
-		}
-	}
+	primaryAPI.denyChangeRequest
 );
 
  /*
@@ -2017,19 +1450,7 @@ router.put
 router.post
 (
 	'/admin/admins',
-	function(req, res)
-	{
-		// restrict this to primary admins
-		console.log(req.session);
-		req.body.privilege = 2;
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			new db.models.Admin(req.body).save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
-		}
-	}
+	primaryAPI.addAdmin
 );
 
  /*
@@ -2044,22 +1465,7 @@ router.post
 router.put
 (
 	'/admin/admins/:id',
-	function(req, res)
-	{
-		// restrict this to primary admins
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Admin.update(
-				{_id: req.params.id},
-				{ $set: req.body}
-			).exec(
-				function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				}
-			);
-		}
-	}
+	primaryAPI.updateAdmin
 );
 
 /*
@@ -2075,16 +1481,7 @@ router.put
 router.delete
 (
 	'/admin/admins/:id',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Admin.remove({_id: req.params.id}).exec(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-			});
-		}
-	}
+	primaryAPI.removeAdmin
 );
 
 /*
@@ -2104,19 +1501,7 @@ router.delete
 router.get
 (
 	'/admin/admins',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Admin.find().exec( function(err, results) {
-				var success = err ? false : true;
-				res.send({
-					success: success,
-					data: results
-				});
-			});
-		}
-	}
+	primaryAPI.listAdmins
 );
 
 /*
@@ -2132,19 +1517,7 @@ router.get
 router.get
 (
 	'/admin/admins/:id',
-	function(req, res)
-	{
-		if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-		{
-			db.models.Admin.findOne({_id: req.params.id}).exec( function(err, result) {
-				var success = err ? false : true;
-				res.send({
-					success: success,
-					data: result
-				});
-			});
-		}
-	}
+	primaryAPI.viewAdmin
 );
 
 /*
