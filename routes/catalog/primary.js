@@ -19,6 +19,7 @@ var router = modules.express.Router();
 var definitions = require('./definitions');
 var privilege = definitions.privilege;
 var appname = definitions.appname;
+var crypto = require('crypto');
 
 var primaryExports = {};
 
@@ -1044,11 +1045,13 @@ primaryExports.denyChangeRequest = function(req, res){
 		{"success": Boolean}
 	Created: 04/23/2016 Andrew Fisher
 	Modified:
+			04/30/2016 Andrew Fisher
 */
 primaryExports.addAdmin = function(req, res){
 	// restrict this to primary admins
 	console.log(req.session);
 	req.body.privilege = 2;
+	req.body.password = crypto.createHash('md5').update(req.body.password).digest('hex');
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
 		new db.models.Admin(req.body).save(function(err){
@@ -1061,13 +1064,16 @@ primaryExports.addAdmin = function(req, res){
  /*
 	Route: Update admins
 	Input:
-		payload: {"password": String}
+		payload: {	"username": String
+					"password": String}
 	Output:
 		{"success": Boolean}
 	Created: 04/23/2016 Andrew Fisher
 	Modified:
+		04/30/2016 Andrew Fisher
 */
 primaryExports.updateAdmin = function(req, res){
+	req.body.password = crypto.createHash('md5').update(req.body.password).digest('hex');
 	// restrict this to primary admins
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
