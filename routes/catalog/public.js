@@ -589,4 +589,32 @@ publicExports.getFacultyAndStaff = function(req, res)
 	});
 };
 
+/*
+	Route: List archived PDFs
+	Input:
+	Output:
+		{"success": Boolean, data: [
+			{
+				"beginYear": "2016",
+				"endYear": "2017"
+			},
+			{
+				"beginYear": "2017",
+				"endYear": "2018"
+			}
+		]}
+	Created: 04/02/2016 Tyler Yasaka
+	Modified:
+*/
+publicExports.listArchivedPDFs = function(req, res)
+{
+	db.models.CatalogYear.find().exec( function(err, results) {
+		var success = err ? false : true;
+		res.send({
+			success: success,
+			data: results
+		});
+	});
+};
+
 module.exports = publicExports;

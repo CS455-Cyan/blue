@@ -141,6 +141,13 @@ router.get
 	publicAPI.getFacultyAndStaff
 );
 
+/*	List archived PDFs	*/
+router.get
+(
+	'/catalog/archives',
+	publicAPI.listArchivedPDFs
+);
+
 /*--																					--*\
 						PRIMARY ADMIN API ROUTES
 \*--																					--*/
