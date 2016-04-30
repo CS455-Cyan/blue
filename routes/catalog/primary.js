@@ -13,6 +13,7 @@
 var globals = require('../global');
 var modules = globals.modules;
 var async = modules.async;
+var crypto = require('crypto');
 var db = require('../../models/catalog.model');
 var isAuthenticated = globals.isAuthenticated;
 var router = modules.express.Router();
@@ -1044,11 +1045,14 @@ primaryExports.denyChangeRequest = function(req, res){
 		{"success": Boolean}
 	Created: 04/23/2016 Andrew Fisher
 	Modified:
+		04/30/2016 John Batson
 */
 primaryExports.addAdmin = function(req, res){
 	// restrict this to primary admins
 	console.log(req.session);
 	req.body.privilege = 2;
+	req.body.apps = ['catalog']
+	req.body.password = crypto.createHash('md5').update(req.body.password).digest('hex');
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
 		new db.models.Admin(req.body).save(function(err){
