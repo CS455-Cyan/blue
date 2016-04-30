@@ -159,7 +159,7 @@ secondaryExports.editChangeRequest = function(req, res){
 	if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
 	{
 		db.models.ChangeRequest.update({_id: req.params.id, status: "pending"},
-		{ $set: req.body }).exec(function(err, request){
+		{ $set: req.body }).exec(function(err){
 			var success = err ? false : true;
 			res.send({success: success});
 		});

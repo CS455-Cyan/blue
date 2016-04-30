@@ -893,6 +893,7 @@ primaryExports.publishCatalog = function(req, res){
 	Modified:
  */
 primaryExports.changePassword = function(req, res){
+	req.body.password = crypto.createHash('md5').update(req.body.password).digest('hex');
 	if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
 	{
 		db.models.Admin.update({ author: req.session.username},
