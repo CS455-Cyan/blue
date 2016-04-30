@@ -10,6 +10,8 @@
 var db = require('../../models/catalog.model');
 var async = require('async');
 var mongoose = require('mongoose');
+var fs = require('fs');
+var phantomPDF = require('phantom-html2pdf');
 
 var definitionExports = {};
 
@@ -246,31 +248,36 @@ definitionExports.copyCollection = function(fromDB, toDB, modelName, callback){
 	Function: generateCatalogPDF
 	Description: Generate PDF of the catalog from database
 	Input:
+		ear: object containing academic year for this catalog
 		callback: function to execute when finished
 	Output:
 		PDF is stored to the filesystem
 	Created: Tyler Yasaka 04/29/2016
 	Modified:
 */
-definitionExports.generateCatalogPDF = function(callback) {
+definitionExports.generateCatalogPDF = function(year, callback) {
+	var htmlPath = __dirname + '/../../public/assets/catalog.html';
+	var pdfPath = __dirname + '/../../public/assets/catalog.pdf';
 	async.waterfall([
-
 		function(cb) {
 			// Generate HTML of catalog
-			definitions.generateCatalogHTML(function(html) {
+			definitionExports.generateCatalogHTML(year, function(html) {
 				cb(null, html);
 			});
 		},
-
 		function(html, cb) {
 			// save html to file system
-			cb();
+			fs.writeFile(htmlPath, html, cb);
 		},
-
 		function(cb) {
 			// generate pdf
+			var options = {
+				html: htmlPath,
+			};
+			phantomPDF.convert(options, function(result) {
+				result.toFile(pdfPath, cb);
+			})
 		}
-
 	], callback);
 }
 
@@ -290,10 +297,10 @@ definitionExports.generateCatalogHTML = function(year, callback){
 	html += '<link href=" ' + __dirname + '/../../public/assets/bootstrap.min.css" type="text/css" rel="stylesheet">';
 	html += '<div class="container-fluid" style="margin-top: 50px;">';
 	html += '<h2>' + year.start + '-' + year.end + ' Undergraduate Catalog</h2>';
-
 	html += '<img class="img-responsive" style="width: 100px; margin: 50px auto" src="'
 		+ __dirname
 		+ '/../../public/assets/una.jpg" alt="University of North Alabama"/>';
+	html += '<h2>University of North Alabama</h2>';
 
 	async.waterfall([
 
@@ -368,7 +375,10 @@ definitionExports.generateCatalogHTML = function(year, callback){
 			.exec(function(err, categories) {
         for(var c in categories) {
         	var category = categories[c];
-        	html += '<h2 style="page-break-before:always;">' + category.name + '</h2>';
+        	// don't page break on the first category,
+        	// since "colleges and programs" heading just made a page break
+        	var pagebreak = (c > 0 ? ' style="page-break-before:always;"' : '');
+        	html += '<h2 class="catalog-category"' + pagebreak + '>' + category.name + '</h2>';
         	for(var d in category.departments) {
         		var department = category.departments[d];
         		department.programs = definitionExports.orderPrograms(department.programs);
@@ -415,13 +425,13 @@ definitionExports.generateCatalogHTML = function(year, callback){
 								}
 								html += '<div class="list-group-item">';
 								var course = courses[c];
-								html += '<h3>';
+								html += '<h4 class="catalog-course">';
 								html += subject.abbreviation + ' ';
 								html += course.number + ' ';
 								html += '- ';
 								html += course.title;
 								html += '<span class="pull-right">' + credit + '</span>';
-								html += '</h3>';
+								html += '</h4>';
 								html += '<p>' + course.description + '</p>';
 								if(course.offerings && course.offerings.length) {
 									html += '<strong>Offered:</strong> ' + offered + '<br>';

@@ -800,7 +800,7 @@ primaryExports.updateFacultyAndStaff = function(req, res){
  /*
 	Route: Publish Catalog
 	Input:
-		payload: {"startYear": String, "endYear": String}
+		payload: {"beginYear": String, "endYear": String}
 	Output:
 		{"success": Boolean}
 	Created: 04/29/2016 Tyler Yasaka
@@ -810,44 +810,72 @@ primaryExports.publishCatalog = function(req, res){
 	// restrict this to primary admins
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
-		// !!!check if catalog has already been published
-
-		async.waterfall([
-
-			// Copy listed models to public database
-			function(callback) {
-				var modelsToCopy = [
-					'TextSection',
-					'GeneralRequirement',
-					'Program',
-					'Subject',
-					'Course',
-					'FacultyAndStaff'
-				];
-				async.eachSeries(
-					modelsToCopy,
-					// execute this function on each model
-					function(model, cb){
-						definitions.copyCollection(db.models, db.publicModels, model, cb);
-					},
-					// execute this function after all collections have been copied
-					function(err) {
-						callback(err);
-					}
-				);
-			},
-
-			function(callback) {
-				// generate pdf
-				definitions.generateCatalogPDF(callback);
+		// check if catalog has already been published
+		db.models.CatalogYear.find(
+			{beginYear: req.body.beginYear, endYear: req.body.endYear}
+		).exec(function(err, matches) {
+			// Don't allow duplicate publishing of the same academic year
+			if(matches.length > 0) {
+				res.send({success: false, error: "This academic year has already been published."});
 			}
+			// Make sure the years are consequtive
+			else if (Number(req.body.beginYear) + 1 != Number(req.body.endYear)) {
+				res.send({success: false, error: "Invalid year received."});
+			}
+			// otherwise proceed to publish
+			else {
 
-		],
+				async.waterfall([
 
-		// execute after other functions have completed
-		function(err) {
-			var success = err ? false : true;
-			res.send({success: success});
+					// Copy listed models to public database
+					function(callback) {
+						var modelsToCopy = [
+							'TextSection',
+							'GeneralRequirement',
+							'Program',
+							'Subject',
+							'Course',
+							'FacultyAndStaff'
+						];
+						async.eachSeries(
+							modelsToCopy,
+							// execute this function on each model
+							function(model, cb){
+								definitions.copyCollection(db.models, db.publicModels, model, cb);
+							},
+							// execute this function after all collections have been copied
+							function(err) {
+								callback(err);
+							}
+						);
+					},
+
+					function(callback) {
+						// generate pdf
+						var year = {
+							start: req.body.beginYear,
+							end: req.body.endYear
+						};
+						definitions.generateCatalogPDF(year, callback);
+					}
+
+				],
+
+				// execute after other functions have completed
+				function(err) {
+					var success = err ? false : true;
+					if(success) {
+						// save record of published pdf to database
+						new db.models.CatalogYear(req.body).save(function(err) {
+							res.send({success: true});
+						})
+					}
+					else {
+						  res.send({success: false, error: err});
+					}
+				});
+
+			}
 		});
 
 	}
