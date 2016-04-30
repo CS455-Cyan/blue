@@ -13,6 +13,16 @@ var db = require('../models/catalog.model');
 
 console.log("Alright. One sec...");
 
+// Clear public databae
+// This can be done asynchronously
+db.connection.on('public', function() {
+	db.publicModels.TextSection.remove();
+	db.publicModels.GeneralRequirement.remove();
+	db.publicModels.Program.remove();
+	db.publicModels.Course.remove();
+	db.publicModels.FacultyAndStaff.remove();
+});
+
 //Async allows us to simulate asynchronous behavior in javascript. That way these database queries execute one by one, in order.
 async.waterfall([
 	function(callback){
@@ -22,8 +32,13 @@ async.waterfall([
     });
 	},
 	function(callback){
-		// delete all existing textSections and programSections
+		// delete all existing textSections
 		db.models.TextSection.remove({}, function(){
+			callback(); // we're done. go to the next function
+		});
+	},
+	function(callback){
+    db.models.GeneralRequirement.remove({}, function(){
 			callback(); // we're done. go to the next function
 		});
 	},
@@ -43,12 +58,7 @@ async.waterfall([
 		});
 	},
 	function(callback){
-    db.models.ChangeRequest.remove({}, function(){
-			callback(); // we're done. go to the next function
-		});
-	},
-	function(callback){
-    db.models.GeneralRequirement.remove({}, function(){
+    db.models.FacultyAndStaff.remove({}, function(){
 			callback(); // we're done. go to the next function
 		});
 	},
@@ -58,13 +68,123 @@ async.waterfall([
 		});
 	},
 	function(callback){
-    db.models.FacultyAndStaff.remove({}, function(){
+    db.models.ChangeRequest.remove({}, function(){
 			callback(); // we're done. go to the next function
 		});
 	},
 	function(callback){
-    db.models.ChangeRequest.remove({}, function(){
-			callback(); // we're done. go to the next function
+		// create some sample subjects
+		var subjects = [
+			{
+				name: "Psychology",
+				abbreviation: "PY"
+			},
+			{
+				name: "Computer Science",
+				abbreviation: "CS"
+			}
+		];
+		db.models.Subject(subjects[1]).save(function(err, result){
+			callback(null, result);
+		});
+		db.models.Subject(subjects[0]).save();
+	},
+	function(subject, callback){
+		// create some sample courses
+		var courses = [
+			{
+				title: "Artificial Intelligence",
+				number: "470",
+				description: "Robots and stuff...",
+				subject: subject._id,
+				hours: {
+					min: 3,
+					max: 3
+				},
+				offerings: [
+					"Fall",
+					"Spring",
+					"Summer"
+				],
+				fee: '30'
+			},
+			{
+				title: "Programming Languages",
+				number: "410W",
+				description: "Fortran...",
+				subject: subject._id,
+				hours: {
+					min: 3,
+					max: 4
+				}
+			}
+		];
+		async.map(courses, function(course, cb) {
+			db.models.Course(course).save(function(err, result) {
+				cb(null, result._id);
+			});
+		}, function(err, results) {
+
+			// create some sample programs
+			var programs = [
+	      {
+	        name: "College of Business",
+	        description: "Hr Hm Business Hum",
+	        departments: [{
+	          name: "Computer Science and Information Systems",
+	          description: "CS and CIS are not the same thing",
+	          programs: [
+							{
+								type: "minor",
+								name: "Economics",
+								description: "money money money"
+							},
+							{
+								type: "major",
+								name: "Computer Science",
+								description: "not for the faint of heart",
+								requirements: [{
+									name: "Core Requirements",
+									separator: "AND",
+									items: [
+										{
+											separator: 'AND',
+											courses: [
+												results[0]
+											]
+										},
+										{
+											separator: 'AND',
+											courses: [
+												results[1]
+											]
+										}
+									]
+								}]
+							},
+							{
+								type: "minor",
+								name: "Human-Computer Interaction/User Experience",
+								description: "emotional impact cannot be designed - only experienced"
+							}
+	          ]
+	        }],
+	        programs: [{
+	          type: "type",
+	          name: "name",
+	          description: "description"
+	        }]
+	      },
+	      {
+					name: "College of Arts and Sciences",
+					departments: [],
+					programs: []
+				}
+	    ];
+			for(var i in programs){
+				db.models.Program(programs[i]).save();
+			}
+			callback();
 		});
 	},
 	function(callback){
@@ -96,11 +216,13 @@ async.waterfall([
 									min: 1,
 									max: 3
 								}
-							}
+							},
+							isWriteIn: true
 						},
 						{
 							separator: 'AND',
 							courses: [],
+							isWriteIn: true,
 							writeIn: {
 								content: "Sing the alphabet backwards 2",
 								hours: {
@@ -170,110 +292,6 @@ async.waterfall([
 
 		db.models.FacultyAndStaff({content: "Dr. Roden..."}).save();
 
-		// create some sample subjects
-		var subjects = [
-			{
-				name: "Computer Science",
-				abbreviation: "CS"
-			},
-			{
-				name: "Psychology",
-				abbreviation: "PY"
-			}
-		];
-		db.models.Subject(subjects[0]).save(function(err, result){
-			// create some sample courses
-			var courses = [
-				{
-					title: "Artificial Intelligence",
-					number: "470",
-					description: "Robots and stuff...",
-					subject: result._id,
-					hours: {
-						min: 3,
-						max: 3
-					}
-				},
-				{
-					title: "Programming Languages",
-					number: "410W",
-					description: "Fortran...",
-					subject: result._id,
-					hours: {
-						min: 3,
-						max: 4
-					}
-				}
-			];
-			db.models.Subject(subjects[1]).save();
-			async.map(courses, function(course, callback) {
-				db.models.Course(course).save(function(err, result) {
-					callback(null, result._id);
-				});
-			}, function(err, results) {
-
-				// create some sample programs
-				var programs = [
-		      {
-		        name: "College of Business",
-		        description: "Hr Hm Business Hum",
-		        departments: [{
-		          name: "Computer Science and Information Systems",
-		          description: "CS and CIS are not the same thing",
-		          programs: [
-								{
-									type: "minor",
-									name: "Economics",
-									description: "money money money"
-								},
-								{
-									type: "major",
-									name: "Computer Science",
-									description: "not for the faint of heart",
-									requirements: [{
-										name: "Core Requirements",
-										items: [
-											{
-												separator: 'AND',
-												courses: [
-													results[0]
-												]
-											},
-											{
-												separator: 'AND',
-												courses: [
-													results[1]
-												]
-											}
-										]
-									}]
-								},
-								{
-									type: "minor",
-									name: "Human-Computer Interaction/User Experience",
-									description: "emotional impact cannot be designed - only experienced"
-								}
-		          ]
-		        }],
-		        programs: [{
-		          type: "type",
-		          name: "name",
-		          description: "description"
-		        }]
-		      },
-		      {
-						name: "College of Arts and Sciences",
-						departments: [],
-						programs: []
-					}
-		    ];
-				for(var i in programs){
-					db.models.Program(programs[i]).save();
-				}
-
-			});
-		});
-
 		// create some sample changeRequests
 		var changes = [
 			{
@@ -328,7 +346,7 @@ async.waterfall([
 			}
 		];
 		for(var i in changes){
-			db.models.ChangeRequest(changes[i]).save();
+			//db.models.ChangeRequest(changes[i]).save();
 		}
 		// create some sample adminSection
 		var admins = [

@@ -90,16 +90,7 @@ publicExports.listGeneralRequirements = function(req, res)
 		}
 	}).exec( function(err, results) {
 		// we need to make sure they are in order (they may not be)
-		var areas = ['I','II','III','IV','V'];
-		var sorted = [];
-		for(var a in areas) {
-			for(var r in results) {
-				if(areas[a] == results[r].area) {
-					results[r].requirements = calculateCredit(results[r].requirements);
-					sorted.push(results[r]);
-				}
-			}
-		}
+		var sorted = definitions.orderGeneralRequirements(results);
 		var success = err ? false : true;
 		res.send({
 			success: success,
@@ -534,10 +525,11 @@ publicExports.searchCourses = function(req, res)
 publicExports.listSubjects = function(req, res)
 {
 	db.models.Subject.find().exec( function(err, results) {
+		var sorted = definitions.sortAlphabeticallyByProperty(results, 'abbreviation');
 		var success = err ? false : true;
 		res.send({
 			success: success,
-			data: results
+			data: sorted
 		});
 	});
 };

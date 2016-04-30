@@ -132,6 +132,7 @@ var facultyAndStaffSchema = mongoose.Schema({
 	content: String
 });
 models.FacultyAndStaff = connection.admin.model('FacultyAndStaff', facultyAndStaffSchema);
+publicModels.FacultyAndStaff = connection.public.model('FacultyAndStaff', facultyAndStaffSchema);
 
 // changeRequests
 var changeRequestSchema = mongoose.Schema({

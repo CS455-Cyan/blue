@@ -327,6 +327,13 @@ router.put
 	primaryAPI.updateFacultyAndStaff
 );
 
+/* Update Faculty and Staff */
+router.post
+(
+	'/admin/catalog/publish',
+	primaryAPI.publishCatalog
+);
+
 /* Change Password */
 router.put
 (

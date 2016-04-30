@@ -4,7 +4,7 @@
 	Authors:
 			Kaitlin Snyder
 
-\***	
+\***
 /*--																					--*\
 						PRIMARY ADMIN API ROUTES
 \*--																					--*/
@@ -12,6 +12,7 @@
 // housekeeping
 var globals = require('../global');
 var modules = globals.modules;
+var async = modules.async;
 var db = require('../../models/catalog.model');
 var isAuthenticated = globals.isAuthenticated;
 var router = modules.express.Router();
@@ -795,6 +796,62 @@ primaryExports.updateFacultyAndStaff = function(req, res){
 		);
 	}
 };
+
+ /*
+	Route: Publish Catalog
+	Input:
+		payload: {"startYear": String, "endYear": String}
+	Output:
+		{"success": Boolean}
+	Created: 04/29/2016 Tyler Yasaka
+	Modified:
+*/
+primaryExports.publishCatalog = function(req, res){
+	// restrict this to primary admins
+	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+	{
+		// !!!check if catalog has already been published
+
+		async.waterfall([
+
+			// Copy listed models to public database
+			function(callback) {
+				var modelsToCopy = [
+					'TextSection',
+					'GeneralRequirement',
+					'Program',
+					'Subject',
+					'Course',
+					'FacultyAndStaff'
+				];
+				async.eachSeries(
+					modelsToCopy,
+					// execute this function on each model
+					function(model, cb){
+						definitions.copyCollection(db.models, db.publicModels, model, cb);
+					},
+					// execute this function after all collections have been copied
+					function(err) {
+						callback(err);
+					}
+				);
+			},
+
+			function(callback) {
+				// generate pdf
+				definitions.generateCatalogPDF(callback);
+			}
+
+		],
+
+		// execute after other functions have completed
+		function(err) {
+			var success = err ? false : true;
+			res.send({success: success});
+		});
+
+	}
+}
 
 /*
 	Route: Change password

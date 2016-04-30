@@ -6,12 +6,48 @@
 			Andrew Fisher
 
 ***/
+
+var db = require('../../models/catalog.model');
+var async = require('async');
+var mongoose = require('mongoose');
+
 var definitionExports = {};
 
 definitionExports.appname = 'catalog';
 definitionExports.privilege = {
 	primaryAdmin: 5,
 	secondaryAdmin: 2
+}
+definitionExports.sectionTitles = {
+	generalRequirements: "General Education Requirements",
+	programs: "Colleges and Programs",
+	courses: "Courses",
+	facultyAndStaff: "Faculty And Staff"
+};
+
+/*
+	Function: orderGeneralRequirements
+	Description: Puts general requirements in correct order
+	Input:
+		arr: original array to sort
+	Output:
+		sorted array
+	Created: Tyler Yasaka 04/29/2016
+	Modified:
+*/
+definitionExports.orderGeneralRequirements = function(arr) {
+	var areas = ['I','II','III','IV','V'];
+	var sorted = [];
+	for(var a in areas) {
+		for(var i in arr) {
+			var item = arr[i];
+			if(areas[a] == item.area) {
+				item.requirements = definitionExports.calculateCredit(item.requirements);
+				sorted.push(item);
+			}
+		}
+	}
+	return sorted;
 }
 
 /*
@@ -132,7 +168,7 @@ definitionExports.calculateCredit = function(requirements) {
 				min: 0,
 				max: 0
 			}
-			if(item.isWriteIn && !!item.writeIn && !!item.writeIn.hours && typeof item.writeIn.hours.min != 'undefined') {
+			if(item.isWriteIn && item.writeIn && item.writeIn.hours && typeof item.writeIn.hours.min != 'undefined') {
 				subtotal = item.writeIn.hours;
 			}
 			else if(item.separator == 'AND') {
@@ -189,19 +225,326 @@ definitionExports.calculateCredit = function(requirements) {
 	Modified:
 
 */
-definitionExports.copyCollection = function(modelName, callback){
-	db.models.[modelName].find(function(err, text) {
+definitionExports.copyCollection = function(fromDB, toDB, modelName, callback){
+	fromDB[modelName].find(function(err, items) {
 		var functionToExecuteOnEachItem = function(item, cb) {
-			new db.publicModels(item).save(function(){
-				cb();
+			item._id = mongoose.Types.ObjectId();
+			item.isNew = true;
+			new toDB[modelName](item).save(function(err){
+				cb(err);
 			});
 		}
 		async.each(
-			text,
+			items,
 			functionToExecuteOnEachItem,
 			callback
 		);
 	});
+}
+
+/*
+	Function: generateCatalogPDF
+	Description: Generate PDF of the catalog from database
+	Input:
+		callback: function to execute when finished
+	Output:
+		PDF is stored to the filesystem
+	Created: Tyler Yasaka 04/29/2016
+	Modified:
+*/
+definitionExports.generateCatalogPDF = function(callback) {
+	async.waterfall([
+
+		function(cb) {
+			// Generate HTML of catalog
+			definitions.generateCatalogHTML(function(html) {
+				cb(null, html);
+			});
+		},
+
+		function(html, cb) {
+			// save html to file system
+			cb();
+		},
+
+		function(cb) {
+			// generate pdf
+		}
+
+	], callback);
+}
+
+/*
+	Function: generateCatalogHTML
+	Description: Generate HTML of the catalog from database
+	Input:
+		year: object containing academic year for this catalog
+		callback: function to execute when finished
+	Output:
+		execute callback, passing generated html as argument
+	Created: Tyler Yasaka 04/29/2016
+	Modified:
+*/
+definitionExports.generateCatalogHTML = function(year, callback){
+	var html = '';
+	html += '<link href=" ' + __dirname + '/../../public/assets/bootstrap.min.css" type="text/css" rel="stylesheet">';
+	html += '<div class="container-fluid" style="margin-top: 50px;">';
+	html += '<h2>' + year.start + '-' + year.end + ' Undergraduate Catalog</h2>';
+
+	html += '<img class="img-responsive" style="width: 100px; margin: 50px auto" src="'
+		+ __dirname
+		+ '/../../public/assets/una.jpg" alt="University of North Alabama"/>';
+
+	async.waterfall([
+
+		// text sections
+		function(cb) {
+			db.models['TextSection'].findOne(function(err, doc) {
+				var text = '';
+				var sectionTitles = [];
+				var tableOfContents = '';
+        for(var s in doc.sections) {
+          var section = doc.sections[s];
+          sectionTitles.push(section.title);
+          text += '<h1 style="page-break-before:always;">';
+          text += section.title;
+          text += '</h1>'
+          text += section.content;
+        }
+        tableOfContents += '<h2 style="page-break-before:always;">';
+        tableOfContents += 'Table of Contents</h2>';
+        tableOfContents += '<table class="table">';
+        sectionTitles = sectionTitles.concat([
+        	definitionExports.sectionTitles.generalRequirements,
+        	definitionExports.sectionTitles.programs,
+        	definitionExports.sectionTitles.courses,
+        	definitionExports.sectionTitles.facultyAndStaff
+        ]);
+        for(var t in sectionTitles) {
+        	var title = sectionTitles[t];
+        	tableOfContents += '<tr><td>' + title + '</tr></td>';
+        }
+        tableOfContents += '</table>';
+        html += tableOfContents;
+        html += text;
+				cb(); // move on
+			});
+		},
+
+		// general requirements
+		function(cb) {
+			html += '<h1 style="page-break-before:always;">';
+			html += definitionExports.sectionTitles.generalRequirements;
+			html += '</h1>';
+			db.models['GeneralRequirement'].find(function(err, results) {
+				var generalRequirements = definitionExports.orderGeneralRequirements(results);
+        for(var a in generalRequirements) {
+        	var area = generalRequirements[a];
+        	// area title (e.g. "Area I - Written Composition")
+        	html += '<h2>Area ' + area.area + ' - ' + area.name + '</h2>';
+        	html += definitionExports.requirementsToHTML(area.requirements);
+        }
+				cb(); // move on
+			});
+		},
+
+		// programs
+		function(cb) {
+			html += '<h1 style="page-break-before:always;">';
+			html += definitionExports.sectionTitles.programs;
+			html += '</h1>';
+			db.models['Program'].find()
+			.populate({
+					path: 'departments.programs.requirements.items.courses',
+					populate: {
+						path: 'subject'
+					}
+				}).populate({
+					path: 'programs.requirements.items.courses',
+					populate: {
+						path: 'subject'
+					}
+				})
+			.exec(function(err, categories) {
+        for(var c in categories) {
+        	var category = categories[c];
+        	html += '<h2 style="page-break-before:always;">' + category.name + '</h2>';
+        	for(var d in category.departments) {
+        		var department = category.departments[d];
+        		department.programs = definitionExports.orderPrograms(department.programs);
+        		html += '<h3 class="catalog-department"><u>Department of ' + department.name + '</u></h3>';
+        		html += definitionExports.programsToHTML(department.programs);
+        	}
+        	if(category.programs && category.programs.length) {
+        		category.programs = definitionExports.orderPrograms(category.programs);
+        		html += '<h3 class="catalog-department">Other Programs</h3>';
+        		html += definitionExports.programsToHTML(category.programs);
+        	}
+        }
+				cb(); // move on
+			});
+		},
+
+		// courses
+		function(cb) {
+			html += '<h1 style="page-break-before:always;">';
+			html += definitionExports.sectionTitles.courses;
+			html += '</h1>';
+			db.models['Subject'].find(function(err, subjects) {
+				var subjects = definitionExports.sortAlphabeticallyByProperty(subjects, 'abbreviation');
+				async.eachSeries(
+					subjects,
+					function(subject, cb2) { // execute on each item, in order
+						html += '<h2>';
+						html += subject.name + ' ';
+						html += '(' + subject.abbreviation + ')';
+						html += '</h2>';
+						db.models['Course'].find({subject: subject._id}).exec(function(err, courses) {
+							html += '<div class="list-group"><div class="list-group-item">';
+							html += 'Course <span class="pull-right">Credit</span>';
+							html += '</div>';
+							for(var c in courses) {
+								var course = courses[c];
+								var credit = definitionExports.formatCredit(course.hours);
+								var offered = '';
+								for(var o in course.offerings) {
+									offered += course.offerings[o];
+									if(o < course.offerings.length-1) {
+										offered += ', ';
+									}
+								}
+								html += '<div class="list-group-item">';
+								var course = courses[c];
+								html += '<h3>';
+								html += subject.abbreviation + ' ';
+								html += course.number + ' ';
+								html += '- ';
+								html += course.title;
+								html += '<span class="pull-right">' + credit + '</span>';
+								html += '</h3>';
+								html += '<p>' + course.description + '</p>';
+								if(course.offerings && course.offerings.length) {
+									html += '<strong>Offered:</strong> ' + offered + '<br>';
+								}
+								if(course.fee && course.fee > 0) {
+									html += '<strong>Fee:</strong> $' + course.fee;
+								}
+								html += '</div>';
+							}
+							html += '</div>';
+							cb2();
+						});
+					},
+					function(err) { // execute once all have finished
+						cb(); // move on
+					}
+				);
+			});
+		},
+
+		// faculty and staff
+		function(cb) {
+			html += '<h1 style="page-break-before:always;">';
+			html += definitionExports.sectionTitles.facultyAndStaff;
+			html += '</h1>';
+			db.models['FacultyAndStaff'].findOne(function(err, facultyAndStaff) {
+				html += facultyAndStaff.content;
+				cb(); // move on
+			});
+		}
+
+	],
+
+	function(err) {
+		html += '</div>';
+		callback(html); // finally done!
+	});
+}
+
+/*
+	Function: programsToHTML
+	Description: format a list of programs as HTML
+	Input:
+		programs: array of program objects
+	Output:
+		formatted html (String)
+	Created: Tyler Yasaka 04/29/2016
+	Modified:
+*/
+definitionExports.programsToHTML = function(programs) {
+	var html = '';
+	for(var p in programs) {
+		var program = programs[p];
+		definitionExports.calculateCredit(program.requirements);
+		var types = {
+			major: 'Major in ',
+			minor: 'Minor in ',
+			certificate: 'Certificate in ',
+		}
+		var type = '';
+		if(types[program.type]) {
+			type = types[program.type];
+		}
+		html += '<h3 class="catalog-program">';
+		html += type + program.name;
+		html += '</h3>';
+		html += definitionExports.requirementsToHTML(program.requirements);
+	}
+	return html;
+}
+
+/*
+	Function: requirementsToHTML
+	Description: format a list of requirements as HTML
+	Input:
+		requirements: array of requirement objects
+	Output:
+		formatted html (String)
+	Created: Tyler Yasaka 04/29/2016
+	Modified:
+*/
+definitionExports.requirementsToHTML = function(requirements) {
+	var html = '';
+	for(var g in requirements) {
+		var group = requirements[g];
+		// group name
+		html += '<div class="panel panel-default">';
+		html += '<div class="panel-heading"><h4>';
+		html += group.name;
+		html += '</h4></div>';
+		// group content
+		html += '<table class="table">'
+		html += '<tr><th>Requirement</th>';
+		html += '<th><span class="pull-right">Credit</span></th></tr>';
+		for(var i in group.items) {
+			var item = group.items[i];
+			//row in table for item
+			html += '<tr>';
+			// requirement column
+			html += '<td>';
+			if(item.isWriteIn) {
+				html += item.writeIn.content;
+			} else {
+				for(var c in item.courses) {
+					var course = item.courses[c];
+					html += course.title;
+					// if not last course in list add separator after it
+					if(c < item.courses.length - 1) {
+						html += '<div>' + item.separator + '</div>';
+					}
+				}
+			}
+			html += '</td>';
+			// credit column
+			html += '<td><span class="pull-right">' + item.credit + '</span></td>';
+			html += '</tr>';
+		}
+		html += '<tr><th>Total</th><th><span class="pull-right">';
+		html += group.credit + '</span></th></tr>';
+		html += '</table>';
+		html += '</div>';
+	}
+	return html;
 }
 
 module.exports = definitionExports;
