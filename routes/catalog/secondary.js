@@ -29,6 +29,7 @@ var secondaryExports = {};
 		 "data": {
 			"_id": String,
 			"author": String,
+			"username": String,
 			"timeOfRequest": Date,
 			"timeOfApproval": Date,
 			"status": String,
@@ -64,12 +65,13 @@ var secondaryExports = {};
 		}}
 	Created: 04/24/2016 Andrew Fisher
 	Modified:
+		04/30/2016 John Batson
  */
 secondaryExports.viewChangeRequests = function(req, res){
 	// restrict this to primary and secondary admins
 	if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
 	{
-		db.models.ChangeRequest.find({author: req.session.username}).exec(function(err, results){
+		db.models.ChangeRequest.find({username: req.session.username}).exec(function(err, results){
 				var success = err ? false : true;
 				res.send({success: success, data: results});
 		});
@@ -80,10 +82,6 @@ secondaryExports.viewChangeRequests = function(req, res){
 	Route: Create change request
 	Input:
 		payload: {
-			"author": String,
-			"timeOfRequest": Date,
-			"timeOfApproval": Date,
-			"status": String,
 			"requestTypes": [],
 			"newCourseInfo": {
 				"syllabusFile": String,
@@ -111,14 +109,14 @@ secondaryExports.viewChangeRequests = function(req, res){
 			"courseFeeChange": String,
 			"affectedDepartmentsPrograms": String,
 			"approvedBy": String,
-			"description": String,
-			"comment": String
+			"description": String
 		}
 		file: file
 	Output:
 
 	Created: 04/24/2016 Andrew Fisher
 	Modified:
+		04/30/2016 John Batson
  */
 secondaryExports.createChangeRequest = function(req, res){
 	// restrict this to primary and secondary admins
@@ -126,11 +124,17 @@ secondaryExports.createChangeRequest = function(req, res){
 	{
 		if(req.session.privilege >= privilege.primaryAdmin){
 			req.body.status = "approved";
+			req.body.timeOfApproval = Date.now();
 		}
 		else{
 			req.body.status = "pending";
+			req.body.timeOfApproval = null;
+			req.body.comment = null;
 		}
-		req.body.author = req.session.username;
+		req.body.timeOfRequest = Date.now();
+		req.body.author = req.session.name;
+		req.body.username = req.session.username;
+		
 		new db.models.ChangeRequest(req.body).save(function(err){
 			var success = err ? false : true;
 			res.send({success: success});
@@ -191,6 +195,7 @@ secondaryExports.removeChangeRequest = function(req, res){
 		 "data": {
 			"_id": String,
 			"author": String,
+			"username": String,
 			"timeOfRequest": Date,
 			"timeOfApproval": Date,
 			"status": String,

@@ -909,6 +909,7 @@ primaryExports.changePassword = function(req, res){
 		 "data": {
 			"_id": String,
 			"author": String,
+			"username": String,
 			"timeOfRequest": Date,
 			"timeOfApproval": Date,
 			"status": String,
@@ -969,24 +970,29 @@ primaryExports.viewChangeRequestQueue = function(req, res){
 		{"success": Boolean}
 	Created: 04/23/2016 John Batson
 	Modified:
+		04/30/2016 John Batson
  */
 primaryExports.approveChangeRequest = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
 		db.models.ChangeRequest.findOne({_id: req.params.id}).exec(function(err, request){
-			if(request) {
-				request.status = "approved";
-				request.timeOfApproval = Date.now();
-				if (req.body.comment) {
+			if(request){
+				if(request.status === "pending"){
+					request.status = "approved";
+					request.timeOfApproval = Date.now();
 					request.comment = (req.body.comment);
+					
+					request.save(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
 				}
-				request.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
+				else {
+					res.send({success: false, error: 'Change request is not pending.'});
+				}
 			}
-			else {
-				res.send({success: false, error: 'Change request does not exist'});
+			else{
+				res.send({success: false, error: 'Change request does not exist.'});
 			}
 		});
 	}
@@ -1002,24 +1008,29 @@ primaryExports.approveChangeRequest = function(req, res){
 		{"success": Boolean}
 	Created: 04/23/2016 John Batson
 	Modified:
+		04/30/2016 John Batson
  */
 primaryExports.denyChangeRequest = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
 		db.models.ChangeRequest.findOne({_id: req.params.id}).exec(function(err, request){
-			if(request) {
-				request.status = "denied";
-				request.timeOfApproval = Date.now();
-				if (req.body.comment) {
+			if(request){
+				if(request.status === "pending"){
+					request.status = "denied";
+					request.timeOfApproval = Date.now();
 					request.comment = (req.body.comment);
+						
+					request.save(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
 				}
-				request.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
+				else {
+					res.send({success: false, error: 'Change request is not pending.'});
+				}
 			}
-			else {
-				res.send({success: false, error: 'Change request does not exist'});
+			else{
+				res.send({success: false, error: 'Change request does not exist.'});
 			}
 		});
 	}
@@ -1028,7 +1039,7 @@ primaryExports.denyChangeRequest = function(req, res){
  /*
 	Route: Add admins
 	Input:
-		payload: {"username": String, "password": String}
+		payload: {"username": String, "name": String, "password": String}
 	Output:
 		{"success": Boolean}
 	Created: 04/23/2016 Andrew Fisher
@@ -1099,6 +1110,7 @@ primaryExports.removeAdmin = function(req, res){
 		{"success": Boolean, data: [{
 			"_id": String,
 			"username": String
+			"name": String
 			"privilege": Number
 			"password": String
 			"apps": [String]

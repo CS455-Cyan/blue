@@ -58,9 +58,10 @@ router.post
 				function(err, records)
 				{
 					var apps = [];
-
+					
 					if(records.length > 0)
 					{
+						var name = records[0].name;
 						var privilege = records[0].privilege;
 						var apps = [];
 
@@ -81,14 +82,15 @@ router.post
 								}
 							}
 						}
-
+						
+						req.session.name = name;
 						req.session.username = username;
 						req.session.privilege = privilege;
 						req.session.apps = apps;
-
+						
 						success = true;
 					}
-
+					
 					res.send
 					(
 						{

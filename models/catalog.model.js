@@ -32,6 +32,7 @@ var publicModels = {};
 // admins
 var adminSchema = mongoose.Schema({
 	username: String,
+	name: String,
 	password: String,
 	privilege: Number,
 	apps: [String]
@@ -137,6 +138,7 @@ publicModels.FacultyAndStaff = connection.public.model('FacultyAndStaff', facult
 // changeRequests
 var changeRequestSchema = mongoose.Schema({
 	author: String, // the admin that made the request; usually will be secondary admin
+	username: String,
 	timeOfRequest: Date,
 	timeOfApproval: Date,
 	status: String, // "pending", "approved", or "denied"; can only be changed by primary admin
