@@ -1096,13 +1096,26 @@ primaryExports.updateAdmin = function(req, res){
 		{"success": Boolean}
 	Created: 04/23/2016 Andrew Fisher
 	Modified:
+		04/30/2016 John Batson
 */
 primaryExports.removeAdmin = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
-		db.models.Admin.remove({_id: req.params.id}).exec(function(err){
-				var success = err ? false : true;
-				res.send({success: success});
+		db.models.Admin.findOne({_id: req.params.id}).exec(function(err, user){
+			if(user){
+				if(user.privilege < 5){
+					user.remove();
+					
+					var success = err ? false : true;
+					res.send({success: success});
+				}
+				else{
+					res.send({success: false, error: 'Specified admin is primary admin.'});
+				}
+			}
+			else{
+				res.send({success: false, error: 'Specified admin does not exist.'});
+			}
 		});
 	}
 };
