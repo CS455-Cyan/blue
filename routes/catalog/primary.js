@@ -1,3 +1,10 @@
+/***																					***\
+
+	Filename: routes/primary.js
+	Authors:
+			Kaitlin Snyder
+
+\***	
 /*--																					--*\
 						PRIMARY ADMIN API ROUTES
 \*--																					--*/

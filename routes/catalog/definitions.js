@@ -1,3 +1,11 @@
+/***																					***\
+
+	Filename: routes/definitions.js
+	Authors:
+			Tyler Yasaka
+			Andrew Fisher
+
+***/
 var definitionExports = {};
 
 definitionExports.appname = 'catalog';
@@ -167,6 +175,33 @@ definitionExports.calculateCredit = function(requirements) {
 		}
 	}
 	return requirements;
+}
+
+/*
+	Function: copyCollection
+	Description: Copies each collection into a database
+	Input:
+		modelName: name of the collection to copy
+		callback
+	Output:
+
+	Created: Andrew Fisher 04/29/2016
+	Modified:
+
+*/
+definitionExports.copyCollection = function(modelName, callback){
+	db.models.[modelName].find(function(err, text) {
+		var functionToExecuteOnEachItem = function(item, cb) {
+			new db.publicModels(item).save(function(){
+				cb();
+			});
+		}
+		async.each(
+			text,
+			functionToExecuteOnEachItem,
+			callback
+		);
+	});
 }
 
 module.exports = definitionExports;

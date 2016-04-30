@@ -1,3 +1,10 @@
+/***																					***\
+
+	Filename: routes/secondary.js
+	Authors:
+			Kaitlin Snyder
+
+\***	
 /*--																					--*\
 						SECONDARY ADMIN API ROUTES
 \*--																					--*/

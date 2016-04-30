@@ -1,6 +1,6 @@
 /***																					***\
 
-	Filename: api/routes/catalog.js
+	Filename: routes/catalog.js
 	Authors:
 			Tyler Yasaka
 			Andrew Fisher
