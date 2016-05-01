@@ -256,8 +256,8 @@ definitionExports.copyCollection = function(fromDB, toDB, modelName, callback){
 	Modified:
 */
 definitionExports.generateCatalogPDF = function(year, callback) {
-	var htmlPath = __dirname + '/../../public/assets/catalog.html';
-	var pdfPath = __dirname + '/../../public/assets/catalog.pdf';
+	var htmlPath = __dirname + '/../../private/assets/catalog.html';
+	var pdfPath = __dirname + '/../../private/assets/catalog.pdf';
 	async.waterfall([
 		function(cb) {
 			// Generate HTML of catalog
@@ -294,12 +294,12 @@ definitionExports.generateCatalogPDF = function(year, callback) {
 */
 definitionExports.generateCatalogHTML = function(year, callback){
 	var html = '';
-	html += '<link href=" ' + __dirname + '/../../public/assets/bootstrap.min.css" type="text/css" rel="stylesheet">';
+	html += '<link href=" ' + __dirname + '/../../private/assets/bootstrap.min.css" type="text/css" rel="stylesheet">';
 	html += '<div class="container-fluid" style="margin-top: 50px;">';
 	html += '<h2>' + year.start + '-' + year.end + ' Undergraduate Catalog</h2>';
 	html += '<img class="img-responsive" style="width: 100px; margin: 50px auto" src="'
 		+ __dirname
-		+ '/../../public/assets/una.jpg" alt="University of North Alabama"/>';
+		+ '/../../private/assets/una.jpg" alt="University of North Alabama"/>';
 	html += '<h2>University of North Alabama</h2>';
 
 	async.waterfall([
