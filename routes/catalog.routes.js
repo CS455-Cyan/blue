@@ -281,7 +281,7 @@ router.delete
 /* Remove Program from Department */
 router.delete
 (
-	'/admin/catalog/programs/categories/:category/departments:department/programs/:program',
+	'/admin/catalog/programs/categories/:category/departments/:department/programs/:program',
 	primaryAPI.removeProgramFromDepartment
 );
 

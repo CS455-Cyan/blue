@@ -108,11 +108,14 @@ primaryExports.updateTextSection = function(req, res){
 				for(var attribute in req.body) {
 					section[attribute] = req.body[attribute];
 				}
+				textSections.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
 			}
-			textSections.save(function(err){
-				var success = err ? false : true;
-				res.send({success: success});
-			});
+			else {
+				res.send({success: false, error: 'Text Section does not exist'});
+			}
 		});
 	}
 };
@@ -134,11 +137,14 @@ primaryExports.removeTextSection = function(req, res){
 			var section = textSections.sections.id(req.params.id);
 			if(section) {
 				section.remove();
+				textSections.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
 			}
-			textSections.save(function(err){
-				var success = err ? false : true;
-				res.send({success: success});
-			});
+			else {
+				res.send({success: false, error: 'Text Section does not exist'});
+			}
 		});
 	}
 };
