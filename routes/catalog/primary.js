@@ -108,11 +108,14 @@ primaryExports.updateTextSection = function(req, res){
 				for(var attribute in req.body) {
 					section[attribute] = req.body[attribute];
 				}
+				textSections.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
 			}
-			textSections.save(function(err){
-				var success = err ? false : true;
-				res.send({success: success});
-			});
+			else {
+				res.send({success: false, error: 'Text Section does not exist'});
+			}
 		});
 	}
 };
@@ -134,11 +137,14 @@ primaryExports.removeTextSection = function(req, res){
 			var section = textSections.sections.id(req.params.id);
 			if(section) {
 				section.remove();
+				textSections.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
 			}
-			textSections.save(function(err){
-				var success = err ? false : true;
-				res.send({success: success});
-			});
+			else {
+				res.send({success: false, error: 'Text Section does not exist'});
+			}
 		});
 	}
 };
@@ -646,19 +652,16 @@ primaryExports.removeProgramFromDepartment = function(req, res){
 		{"success": Boolean}
 	Created: 04/23/2016 Kaitlin Snyder
 	Modified:
+		05/01/2016	Tyler Yasaka
+		05/01/2016 	Andrew Fisher
 
 */
 primaryExports.addCourseSubject = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
-		db.models.Subject.findOne(function(err, subjects){
-			subjects.name = (req.body.name);
-			subjects.abbreviation = (req.body.abbreviation);
-
-			subjects.save(function(err){
-				var success = err ? false : true;
-				res.send({success: success});
-			});
+		new db.models.Subject(req.body).save(function(err, subjects){
+			var success = err ? false : true;
+			res.send({success: success});
 		});
 	}
 };
