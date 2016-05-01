@@ -32,7 +32,6 @@ var publicModels = {};
 // admins
 var adminSchema = mongoose.Schema({
 	username: String,
-	name: String,
 	password: String,
 	privilege: Number,
 	apps: [String]

@@ -12,6 +12,7 @@
 // housekeeping
 var globals = require('../global');
 var modules = globals.modules;
+var crypto = require('crypto');
 var db = require('../../models/catalog.model');
 var isAuthenticated = globals.isAuthenticated;
 var router = modules.express.Router();
@@ -20,6 +21,35 @@ var privilege = definitions.privilege;
 var appname = definitions.appname;
 
 var secondaryExports = {};
+
+ /*
+	Route: Change password
+	Input:
+		payload: {"password": String}
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Andrew Fisher
+	Modified:
+		04/30/2016 Andrew Fisher
+		04/30/2016 John Batson
+*/
+secondaryExports.changePassword = function(req, res){
+	// restrict this to primary and secondary admins
+	if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
+	{
+		req.body.password = crypto.createHash('md5').update(req.body.password).digest('hex');
+		db.models.Admin.findOne({username: req.session.username}).exec(function(err, user){
+			if(user){
+				user.password = req.body.password;
+				user.save(function(err){
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			}
+		});
+		
+	}
+};
 
 /*
 	Route: View change requests (created by that admin)
@@ -82,6 +112,7 @@ secondaryExports.viewChangeRequests = function(req, res){
 	Route: Create change request
 	Input:
 		payload: {
+			"author": String,
 			"requestTypes": [],
 			"newCourseInfo": {
 				"syllabusFile": String,
@@ -132,7 +163,6 @@ secondaryExports.createChangeRequest = function(req, res){
 			req.body.comment = null;
 		}
 		req.body.timeOfRequest = Date.now();
-		req.body.author = req.session.name;
 		req.body.username = req.session.username;
 		
 		new db.models.ChangeRequest(req.body).save(function(err){

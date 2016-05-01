@@ -355,14 +355,12 @@ async.waterfall([
 			{
 				privilege: 5,
 				username: "primaryAdmin",
-				name: "Primary Admin",
 				apps: ['catalog'],
 				password: crypto.createHash('md5').update("punchcards_rock").digest('hex')
 			},
 			{
 				privilege: 2,
 				username: "secondaryAdmin",
-				name: "Secondary Admin",
 				apps: ['catalog'],
 				password: crypto.createHash('md5').update("punchcards_rock").digest('hex')
 			}

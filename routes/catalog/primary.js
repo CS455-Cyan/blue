@@ -20,7 +20,6 @@ var router = modules.express.Router();
 var definitions = require('./definitions');
 var privilege = definitions.privilege;
 var appname = definitions.appname;
-var crypto = require('crypto');
 
 var primaryExports = {};
 
@@ -884,27 +883,6 @@ primaryExports.publishCatalog = function(req, res){
 }
 
 /*
-	Route: Change password
-	Input:
-		payload: {"password": String}
-	Output:
-
-	Created: 04/24/2016 Andrew Fisher
-	Modified:
- */
-primaryExports.changePassword = function(req, res){
-	req.body.password = crypto.createHash('md5').update(req.body.password).digest('hex');
-	if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
-	{
-		db.models.Admin.update({ author: req.session.username},
-		{ $set: req.body }).exec(function(err, request){
-			var success = err ? false : true;
-			res.send({success: success});
-		});
-	}
-};
-
-/*
 	Route: View change request queue
 	Input:
 	Output:
@@ -1040,7 +1018,7 @@ primaryExports.denyChangeRequest = function(req, res){
 };
 
  /*
-	Route: Add admins
+	Route: Add secondary admin
 	Input:
 		payload: {"username": String, "name": String, "password": String}
 	Output:
@@ -1052,12 +1030,12 @@ primaryExports.denyChangeRequest = function(req, res){
 */
 primaryExports.addAdmin = function(req, res){
 	// restrict this to primary admins
-	console.log(req.session);
-	req.body.privilege = 2;
-	req.body.apps = ['catalog']
-	req.body.password = crypto.createHash('md5').update(req.body.password).digest('hex');
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
+		req.body.privilege = 2;
+		req.body.apps = ['catalog'];
+		req.body.password = crypto.createHash('md5').update(req.body.password).digest('hex');
+		
 		new db.models.Admin(req.body).save(function(err){
 				var success = err ? false : true;
 				res.send({success: success});
@@ -1065,36 +1043,8 @@ primaryExports.addAdmin = function(req, res){
 	}
 };
 
- /*
-	Route: Update admins
-	Input:
-		payload: {	"username": String
-					"password": String}
-	Output:
-		{"success": Boolean}
-	Created: 04/23/2016 Andrew Fisher
-	Modified:
-		04/30/2016 Andrew Fisher
-*/
-primaryExports.updateAdmin = function(req, res){
-	req.body.password = crypto.createHash('md5').update(req.body.password).digest('hex');
-	// restrict this to primary admins
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.Admin.update(
-			{_id: req.params.id},
-			{ $set: req.body}
-		).exec(
-			function(err){
-				var success = err ? false : true;
-				res.send({success: success});
-			}
-		);
-	}
-};
-
 /*
-	Route: Remove admins
+	Route: Remove secondary admin
 	Input:
 		url parameters:
 			id: id of admins
@@ -1116,40 +1066,49 @@ primaryExports.removeAdmin = function(req, res){
 					res.send({success: success});
 				}
 				else{
-					res.send({success: false, error: 'Specified admin is primary admin.'});
+					res.send({success: false, error: 'Primary admins cannot be removed.'});
 				}
 			}
 			else{
-				res.send({success: false, error: 'Specified admin does not exist.'});
+				res.send({success: false, error: 'Specified admin was not found.'});
 			}
 		});
 	}
 };
 
 /*
-	Route: List admins
+	Route: Change password of admin
 	Input:
+		url parameters:
+			id: id of admin
+		payload: {"password": String}
 	Output:
-		{"success": Boolean, data: [{
-			"_id": String,
-			"username": String
-			"name": String
-			"privilege": Number
-			"password": String
-			"apps": [String]
-		}]}
-	Created: 04/23/2016 Andrew Fisher
+
+	Created: 04/24/2016 Andrew Fisher
 	Modified:
-*/
-primaryExports.listAdmins = function(req, res){
+		04/30/2016 John Batson
+ */
+primaryExports.changePasswordAdmin = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
-		db.models.Admin.find().exec( function(err, results) {
-			var success = err ? false : true;
-			res.send({
-				success: success,
-				data: results
-			});
+		req.body.password = crypto.createHash('md5').update(req.body.password).digest('hex');
+		db.models.Admin.findOne({_id: req.params.id}).exec(function(err, user){
+			if(user){
+				if (user.username !== req.session.username){
+					user.password = req.body.password;
+					
+					user.save(function(err){
+						var success = err ? false : true;
+						res.send({success: success});
+					});
+				}
+				else{
+					res.send({success: false, error: 'Cannot change own password through this route.'});
+				}
+			}
+			else{
+				res.send({success: false, error: 'Specified admin was not found.'});
+			}
 		});
 	}
 };
@@ -1157,21 +1116,26 @@ primaryExports.listAdmins = function(req, res){
 /*
 	Route: View admins
 	Input:
-		url parameters:
-			id: id of admins
 	Output:
-		{"success": Boolean}
+		{"success": Boolean, data: [{
+			"_id": String,
+			"username": String
+			"privilege": Number
+			"password": String
+			"apps": [String]
+		}]}
 	Created: 04/23/2016 Andrew Fisher
 	Modified:
+		04/30/2016 John Batson
 */
-primaryExports.viewAdmin = function(req, res){
+primaryExports.viewAdmins = function(req, res){
 	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
-		db.models.Admin.findOne({_id: req.params.id}).exec( function(err, result) {
+		db.models.Admin.find().exec( function(err, results) {
 			var success = err ? false : true;
 			res.send({
 				success: success,
-				data: result
+				data: results
 			});
 		});
 	}

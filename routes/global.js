@@ -82,7 +82,7 @@ var globals =
 				}
 			}
 
-			if(!appAuthenticated)
+			if(!login)
 			{
 				res.send
 				(
@@ -93,7 +93,7 @@ var globals =
 				);
 			}
 
-			return appAuthenticated;
+			return login;
 		},
 
 	/*																							*\
