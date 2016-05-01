@@ -341,13 +341,6 @@ router.post
 	primaryAPI.publishCatalog
 );
 
-/* Change Password */
-router.put
-(
-	'/admin/password',
-	primaryAPI.changePassword
-);
-
 /* View Change Request Queue */
 router.get
 (
@@ -369,44 +362,46 @@ router.put
 	primaryAPI.denyChangeRequest
 );
 
-/* Add Admin */
+/* Add Secondary Admin */
 router.post
 (
 	'/admin/admins',
 	primaryAPI.addAdmin
 );
 
-/* Update Admin */
-router.put
-(
-	'/admin/admins/:id',
-	primaryAPI.updateAdmin
-);
 
-/* Remove Admin */
+/* Remove Secondary Admin */
 router.delete
 (
 	'/admin/admins/:id',
 	primaryAPI.removeAdmin
 );
 
-/* List Admins */
+/* Change Password of Admin*/
+router.put
+(
+	'/admin/password/:id',
+	primaryAPI.changePasswordAdmin
+);
+
+/* View Admins */
 router.get
 (
 	'/admin/admins',
-	primaryAPI.listAdmins
+	primaryAPI.viewAdmins
 );
 
-/* View Admin */
-router.get
-(
-	'/admin/admins/:id',
-	primaryAPI.viewAdmin
-);
 
 /*--																					--*\
 						SECONDARY ADMIN API ROUTES
 \*--																					--*/
+
+/* Change Password*/
+router.put
+(
+	'/admin/password',
+	secondaryAPI.changePassword
+);
 
 /* View Change Requests (created by that admin) */
 router.get

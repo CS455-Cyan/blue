@@ -13,7 +13,7 @@
     "mongoose": "4.4.x",
     "multer": "^1.0.6",
     "mysql": "2.9.x",
-		"phantom-html2pdf": "2.0.x",
+		"phantom-html2pdf": "*",
     "xlsx": "0.8.x"
   },
   "engine": "node >= 0.10.40"
