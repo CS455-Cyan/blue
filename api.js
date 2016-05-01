@@ -64,8 +64,9 @@ app.use
   )
 );
 
-app.use('/public', modules.express.static(__dirname + '/public'));
+app.use('/una/catalog', modules.express.static(__dirname + '/public/public'));
+app.use('/una/admin', modules.express.static(__dirname + '/public/admin'));
 
-app.use('', routes);
+app.use('/', routes);
 
 var server = app.listen(8080);
