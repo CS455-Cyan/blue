@@ -260,7 +260,7 @@ router.post
 /* Update Program in Category */
 router.put
 (
-	'/admin/catalog/programs/categoies/:category/programs/:program',
+	'/admin/catalog/programs/categories/:category/programs/:program',
 	primaryAPI.updateProgramInCategory
 );
 

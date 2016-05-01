@@ -64,7 +64,8 @@ app.use
   )
 );
 
-app.use('/public', modules.express.static(__dirname + '/public'));
+app.use('/catalog', modules.express.static(__dirname + '/public/public'));
+app.use('/admin', modules.express.static(__dirname + '/public/admin'));
 
 app.use('', routes);
 
