@@ -260,7 +260,7 @@ router.post
 /* Update Program in Category */
 router.put
 (
-	'/admin/catalog/programs/categoies/:category/programs/:program',
+	'/admin/catalog/programs/categories/:category/programs/:program',
 	primaryAPI.updateProgramInCategory
 );
 
@@ -281,7 +281,7 @@ router.delete
 /* Remove Program from Department */
 router.delete
 (
-	'/admin/catalog/programs/categories/:category/departments:department/programs/:program',
+	'/admin/catalog/programs/categories/:category/departments/:department/programs/:program',
 	primaryAPI.removeProgramFromDepartment
 );
 
