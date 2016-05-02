@@ -1,13 +1,14 @@
-/***																					***\
+/***																		***\
 
 	Filename: routes/primary.js
 	Authors:
 			Kaitlin Snyder
+			John Batson
 
 \***
-/*--																					--*\
-						PRIMARY ADMIN API ROUTES
-\*--																					--*/
+/*--																		--*\
+							PRIMARY ADMIN API ROUTES
+\*--																		--*/
 
 // housekeeping
 var globals = require('../global');
@@ -23,6 +24,10 @@ var appname = definitions.appname;
 
 var primaryExports = {};
 
+/*----------------------------------------------------------------------------*\
+								TEXT SECTION ROUTES
+\*----------------------------------------------------------------------------*/
+
 /*
 	Route: Add textSection
 	Input:
@@ -32,16 +37,74 @@ var primaryExports = {};
 	Created: 03/24/2016 Tyler Yasaka
 	Modified:
 */
-primaryExports.addTextSection = function(req, res){
+primaryExports.addTextSection = function(req, res) {
 	// restrict this to primary admins
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.TextSection.findOne(function(err, textSections){
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.TextSection.findOne(function(err, textSections) {
 			textSections.sections.push(req.body);
-			textSections.save(function(err){
+			textSections.save(function(err) {
 				var success = err ? false : true;
 				res.send({success: success});
 			});
+		});
+	}
+};
+
+/*
+	Route: Remove textSection
+	Input:
+		url parameters:
+			id: id of textSection
+	Output:
+		{"success": Boolean}
+	Created: 03/24/2016 Tyler Yasaka
+	Modified:
+*/
+primaryExports.removeTextSection = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.TextSection.findOne(function(err, textSections) {
+			var section = textSections.sections.id(req.params.id);
+			if (section) {
+				section.remove();
+				textSections.save(function(err) {
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			} else {
+				res.send({success: false, error: 'Text Section does not exist'});
+			}
+		});
+	}
+};
+
+/*
+	Route: Update textSection
+	Input:
+		url parameters:
+			id: id of textSection
+		payload: {"title": String, "content": String}
+	Output:
+		{"success": Boolean}
+	Created: 03/24/2016 Tyler Yasaka
+	Modified:
+*/
+primaryExports.updateTextSection = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.TextSection.findOne(function(err, textSections) {
+			var section = textSections.sections.id(req.params.id);
+			if (section) {
+				for (var attribute in req.body) {
+					section[attribute] = req.body[attribute];
+				}
+				textSections.save(function(err) {
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			} else {
+				res.send({success: false, error: 'Text Section does not exist'});
+			}
 		});
 	}
 };
@@ -59,27 +122,26 @@ primaryExports.addTextSection = function(req, res){
 	Created: 04/24/2016 Tyler Yasaka
 	Modified:
 */
-primaryExports.reorderTextSections = function(req, res){
+primaryExports.reorderTextSections = function(req, res) {
 	// restrict this to primary admins
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.TextSection.findOne(function(err, doc){
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.TextSection.findOne(function(err, doc) {
 			var reordered = [];
-			for(i in req.body) {
+			for (i in req.body) {
 				var id = req.body[i]._id;
-				for(var j in doc.sections) {
+				for (var j in doc.sections) {
 					var textSection = doc.sections[j];
-					if(id == textSection._id) {
+					if (id == textSection._id) {
 						reordered.push(textSection);
 					}
 				}
 			}
 			// Make sure the length of the original array and the reordered array are the same
 			// If they're not the same, an error must have occured and we will probably lose data.
-			if(doc.sections.length == reordered.length) {
+			if (doc.sections.length == reordered.length) {
 				doc.sections = reordered;
 			}
-			doc.save(function(err){
+			doc.save(function(err) {
 				var success = err ? false : true;
 				res.send({success: success});
 			});
@@ -87,67 +149,9 @@ primaryExports.reorderTextSections = function(req, res){
 	}
 };
 
-/*
-	Route: Update textSection
-	Input:
-		url parameters:
-			id: id of textSection
-		payload: {"title": String, "content": String}
-	Output:
-		{"success": Boolean}
-	Created: 03/24/2016 Tyler Yasaka
-	Modified:
-*/
-primaryExports.updateTextSection = function(req, res){
-	// restrict this to primary admins
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.TextSection.findOne(function(err, textSections){
-			var section = textSections.sections.id(req.params.id);
-			if(section) {
-				for(var attribute in req.body) {
-					section[attribute] = req.body[attribute];
-				}
-				textSections.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
-			}
-			else {
-				res.send({success: false, error: 'Text Section does not exist'});
-			}
-		});
-	}
-};
-
-/*
-	Route: Remove textSection
-	Input:
-		url parameters:
-			id: id of textSection
-	Output:
-		{"success": Boolean}
-	Created: 03/24/2016 Tyler Yasaka
-	Modified:
-*/
-primaryExports.removeTextSection = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.TextSection.findOne(function(err, textSections){
-			var section = textSections.sections.id(req.params.id);
-			if(section) {
-				section.remove();
-				textSections.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
-			}
-			else {
-				res.send({success: false, error: 'Text Section does not exist'});
-			}
-		});
-	}
-};
+/*----------------------------------------------------------------------------*\
+							GENERAL REQUIREMENT ROUTES
+\*----------------------------------------------------------------------------*/
 
 /*
 	Route: Add requirement to area
@@ -161,20 +165,53 @@ primaryExports.removeTextSection = function(req, res){
 	Modified:
 		04/17/2016 Tyler Yasaka
 */
-primaryExports.addRequirementToArea = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.GeneralRequirement.findOne({area: req.params.area}).exec(function(err, area){
-			if(area) {
-				if(area.requirements) {
+primaryExports.addRequirementToArea = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.GeneralRequirement.findOne({area: req.params.area}).exec(function(err, area) {
+			if (area) {
+				if (area.requirements) {
 					area.requirements.push(req.body);
 				}
-				area.save(function(err){
+				area.save(function(err) {
 					var success = err ? false : true;
 					res.send({success: success});
 				});
+			} else {
+				res.send({success: false, error: 'Area does not exist'});
 			}
-			else {
+		});
+	}
+};
+
+/*
+	Route: Remove general requirement from area
+	Input:
+		url parameters:
+			area: id of area containing requirement
+			requirement: id of requirement
+	Output:
+		{"success": Boolean}
+	Created: 04/16/2016 John Batson
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
+primaryExports.removeGeneralRequirementFromArea = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.GeneralRequirement.findOne({area: req.params.area}).exec(function(err, area) {
+			if (area) {
+				if (area.requirements) {
+					var requirement = area.requirements.id(req.params.requirement);
+					if (requirement) {
+						requirement.remove();
+					}
+				}
+				area.save(function(err) {
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			} else {
 				res.send({success: false, error: 'Area does not exist'});
 			}
 		});
@@ -194,66 +231,33 @@ primaryExports.addRequirementToArea = function(req, res){
 	Modified:
 		04/17/2016 Tyler Yasaka
 */
-primaryExports.updateRequirementInArea = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.GeneralRequirement.findOne({area: req.params.area}).exec(function(err, area){
-			if(area) {
-				if(area.requirements) {
+primaryExports.updateRequirementInArea = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.GeneralRequirement.findOne({area: req.params.area}).exec(function(err, area) {
+			if (area) {
+				if (area.requirements) {
 					var requirement = area.requirements.id(req.params.requirement);
-					if(requirement) {
-						for(var attribute in req.body) {
+					if (requirement) {
+						for (var attribute in req.body) {
 							requirement[attribute] = req.body[attribute];
 						}
 					}
 				}
-				area.save(function(err){
+				area.save(function(err) {
 					var success = err ? false : true;
 					res.send({success: success});
 				});
-			}
-			else {
+			} else {
 				res.send({success: false, error: 'Area does not exist'});
 			}
 		});
 	}
 };
 
-/*
-	Route: Remove general requirement from area
-	Input:
-		url parameters:
-			area: id of area containing requirement
-			requirement: id of requirement
-	Output:
-		{"success": Boolean}
-	Created: 04/16/2016 John Batson
-	Modified:
-		04/17/2016 Tyler Yasaka
-*/
-primaryExports.removeGeneralRequirementFromArea = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.GeneralRequirement.findOne({area: req.params.area}).exec(function(err, area){
-			if(area) {
-				if(area.requirements) {
-					var requirement = area.requirements.id(req.params.requirement);
-					if(requirement) {
-						requirement.remove();
-					}
-				}
-				area.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
-			}
-			else {
-				res.send({success: false, error: 'Area does not exist'});
-			}
-		});
-	}
-};
-
+/*----------------------------------------------------------------------------*\
+								CATEGORY ROUTES
+\*----------------------------------------------------------------------------*/
 /*
 	Route: Add category
 	Input:
@@ -264,12 +268,39 @@ primaryExports.removeGeneralRequirementFromArea = function(req, res){
 	Modified:
 		04/17/2016 Tyler Yasaka
 */
-primaryExports.addCategory = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.Program(req.body).save(function(err){
+primaryExports.addCategory = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.Program(req.body).save(function(err) {
 			var success = err ? false : true;
 			res.send({success: success});
+		});
+	}
+};
+
+/*
+	Route: Remove category
+	Input:
+		url parameters:
+			category: id of category to update
+	Output:
+		{"success": Boolean}
+	Created: 04/15/2016 Kaitlin Snyder
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
+primaryExports.removeCategory = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category) {
+			if (category) {
+				category.remove(function(err) {
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			} else {
+				res.send({success: false, error: 'Category does not exist'});
+			}
 		});
 	}
 };
@@ -286,54 +317,28 @@ primaryExports.addCategory = function(req, res){
 	Modified:
 		04/17/2016 Tyler Yasaka
 */
-primaryExports.updateCategory = function(req, res){
-
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-			if(category) {
-				for(var attribute in req.body) {
+primaryExports.updateCategory = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category) {
+			if (category) {
+				for (var attribute in req.body) {
 					category[attribute] = req.body[attribute];
 				}
-				category.save(function(err){
+				category.save(function(err) {
 					var success = err ? false : true;
 					res.send({success: success});
 				});
-			}
-			else {
+			} else {
 				res.send({success: false, error: 'Category does not exist'});
 			}
 		});
 	}
 };
 
-/*
-	Route: Remove category
-	Input:
-		url parameters:
-			category: id of category to update
-	Output:
-		{"success": Boolean}
-	Created: 04/15/2016 Kaitlin Snyder
-	Modified:
-		04/17/2016 Tyler Yasaka
-*/
-primaryExports.removeCategory = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-			if(category) {
-				category.remove(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
-			}
-			else {
-				res.send({success: false, error: 'Category does not exist'});
-			}
-		});
-	}
-};
+/*----------------------------------------------------------------------------*\
+								DEPARTMENT ROUTES
+\*----------------------------------------------------------------------------*/
 
 /*
 	Route: Add department
@@ -347,18 +352,49 @@ primaryExports.removeCategory = function(req, res){
 	Modified:
 		04/17/2016 Tyler Yasaka
 */
-primaryExports.addDepartment = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-			if(category) {
+primaryExports.addDepartment = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category) {
+			if (category) {
 				category.departments.push(req.body);
-				category.save(function(err){
+				category.save(function(err) {
 					var success = err ? false : true;
 					res.send({success: success});
 				});
+			} else {
+				res.send({success: false, error: 'Category does not exist'});
 			}
-			else {
+		});
+	}
+};
+
+/*
+	Route: Remove department
+	Input:
+		url parameters:
+			category: id of category that department is in
+			department: id of department
+	Output:
+		{"success": Boolean}
+	Created: 04/9/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
+primaryExports.removeDepartment = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category) {
+			if (category) {
+				var department = category.departments.id(req.params.department);
+				if (department) {
+					department.remove();
+				}
+				category.save(function(err) {
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			} else {
 				res.send({success: false, error: 'Category does not exist'});
 			}
 		});
@@ -378,61 +414,31 @@ primaryExports.addDepartment = function(req, res){
 	Modified:
 		04/17/2016 Tyler Yasaka
 */
-primaryExports.updateDepartment = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-			if(category) {
+primaryExports.updateDepartment = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category) {
+			if (category) {
 				var department = category.departments.id(req.params.department);
-				if(department) {
-					for(var attribute in req.body) {
+				if (department) {
+					for (var attribute in req.body) {
 						department[attribute] = req.body[attribute];
 					}
 				}
-				category.save(function(err){
+				category.save(function(err) {
 					var success = err ? false : true;
 					res.send({success: success});
 				});
-			}
-			else {
+			} else {
 				res.send({success: false, error: 'Category does not exist'});
 			}
 		});
 	}
 };
 
-/*
-	Route: Remove department
-	Input:
-		url parameters:
-			category: id of category that department is in
-			department: id of department
-	Output:
-		{"success": Boolean}
-	Created: 04/9/2016 Tyler Yasaka
-	Modified:
-		04/17/2016 Tyler Yasaka
-*/
-primaryExports.removeDepartment = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-			if(category) {
-				var department = category.departments.id(req.params.department);
-				if(department) {
-					department.remove();
-				}
-				category.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
-			}
-			else {
-				res.send({success: false, error: 'Category does not exist'});
-			}
-		});
-	}
-};
+/*----------------------------------------------------------------------------*\
+								PROGRAM ROUTES
+\*----------------------------------------------------------------------------*/
 
 /*
 	Route: Add program to category
@@ -446,18 +452,17 @@ primaryExports.removeDepartment = function(req, res){
 	Modified:
 		04/17/2016 Tyler Yasaka
 */
-primaryExports.addProgramToCategory = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-			if(category) {
+primaryExports.addProgramToCategory = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category) {
+			if (category) {
 				category.programs.push(req.body);
-				category.save(function(err){
+				category.save(function(err) {
 					var success = err ? false : true;
 					res.send({success: success});
 				});
-			}
-			else {
+			} else {
 				res.send({success: false, error: 'Category does not exist'});
 			}
 		});
@@ -477,92 +482,17 @@ primaryExports.addProgramToCategory = function(req, res){
 	Modified:
 		04/17/2016 Tyler Yasaka
 */
-primaryExports.addProgramToDepartment = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
+primaryExports.addProgramToDepartment = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
 	{
-		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-			if(category) {
+		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category) {
+			if (category) {
 				var department = category.departments.id(req.params.department);
-				if(department){
+				if (department) {
 					department.programs.push(req.body);
 				}
-				category.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
-			}
-			else {
-				res.send({success: false, error: 'Category does not exist'});
-			}
-		});
-	}
-};
-
-/*
-	Route: Update program in category
-	Input:
-		url parameters:
-			category: id of category containing department
-			program: id of program
-		payload: {"type": String, "name": String, "description": String, requirements: []}
-	Output:
-		{"success": Boolean}
-	Created: 04/11/2016 Tyler Yasaka
-	Modified:
-		04/17/2016 Tyler Yasaka
-*/
-primaryExports.updateProgramInCategory = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-			if(category) {
-				var program = category.programs.id(req.params.program);
-				if(program) {
-					for(var attribute in req.body) {
-						program[attribute] = req.body[attribute];
-					}
-				}
-				category.save(function(err){
-					var success = err ? false : true;
-					res.send({success: success});
-				});
-			}
-			else {
-				res.send({success: false, error: 'Category does not exist'});
-			}
-		});
-	}
-};
-
-/*
-	Route: Update program in department
-	Input:
-		url parameters:
-			category: id of category containing department
-			department: id of department containing program
-			program: id of program
-		payload: {"type": String, "name": String, "description": String, requirements: []}
-	Output:
-		{"success": Boolean}
-	Created: 04/11/2016 Tyler Yasaka
-	Modified:
-		04/17/2016 Tyler Yasaka
-*/
-primaryExports.updateProgramInDepartment = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-			if(category) {
-				var department = category.departments.id(req.params.department);
-				if(department) {
-					var program = department.programs.id(req.params.program);
-					if(program) {
-						for(var attribute in req.body) {
-							program[attribute] = req.body[attribute];
-						}
-					}
-				}
-				category.save(function(err){
+				category.save(function(err) {
 					var success = err ? false : true;
 					res.send({success: success});
 				});
@@ -586,21 +516,20 @@ primaryExports.updateProgramInDepartment = function(req, res){
 	Modified:
 		04/17/2016 Tyler Yasaka
 */
-primaryExports.removeProgramFromCategory = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-			if(category) {
+primaryExports.removeProgramFromCategory = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category) {
+			if (category) {
 				var program = category.programs.id(req.params.program);
-				if(program) {
+				if (program) {
 					program.remove();
 				}
-				category.save(function(err){
+				category.save(function(err) {
 					var success = err ? false : true;
 					res.send({success: success});
 				});
-			}
-			else {
+			} else {
 				res.send({success: false, error: 'Category does not exist'});
 			}
 		});
@@ -620,29 +549,106 @@ primaryExports.removeProgramFromCategory = function(req, res){
 	Modified:
 		04/17/2016 Tyler Yasaka
 */
-primaryExports.removeProgramFromDepartment = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category){
-			if(category) {
+primaryExports.removeProgramFromDepartment = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category) {
+			if (category) {
 				var department = category.departments.id(req.params.department);
-				if(department) {
+				if (department) {
 					var program = department.programs.id(req.params.program);
-					if(program) {
+					if (program) {
 						program.remove();
 					}
 				}
-				category.save(function(err){
+				category.save(function(err) {
 					var success = err ? false : true;
 					res.send({success: success});
 				});
-			}
-			else {
+			} else {
 				res.send({success: false, error: 'Category does not exist'});
 			}
 		});
 	}
 };
+
+/*
+	Route: Update program in category
+	Input:
+		url parameters:
+			category: id of category containing department
+			program: id of program
+		payload: {"type": String, "name": String, "description": String, requirements: []}
+	Output:
+		{"success": Boolean}
+	Created: 04/11/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
+primaryExports.updateProgramInCategory = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category) {
+			if (category) {
+				var program = category.programs.id(req.params.program);
+				if (program) {
+					for (var attribute in req.body) {
+						program[attribute] = req.body[attribute];
+					}
+				}
+				category.save(function(err) {
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			} else {
+				res.send({success: false, error: 'Category does not exist'});
+			}
+		});
+	}
+};
+
+/*
+	Route: Update program in department
+	Input:
+		url parameters:
+			category: id of category containing department
+			department: id of department containing program
+			program: id of program
+		payload: {"type": String, "name": String, "description": String, requirements: []}
+	Output:
+		{"success": Boolean}
+	Created: 04/11/2016 Tyler Yasaka
+	Modified:
+		04/17/2016 Tyler Yasaka
+*/
+primaryExports.updateProgramInDepartment = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.Program.findOne({_id: req.params.category}).exec(function(err, category) {
+			if (category) {
+				var department = category.departments.id(req.params.department);
+				if (department) {
+					var program = department.programs.id(req.params.program);
+					if (program) {
+						for (var attribute in req.body) {
+							program[attribute] = req.body[attribute];
+						}
+					}
+				}
+				category.save(function(err) {
+					var success = err ? false : true;
+					res.send({success: success});
+				});
+			} else {
+				res.send({success: false, error: 'Category does not exist'});
+			}
+		});
+	}
+};
+
+/*----------------------------------------------------------------------------*\
+							COURSE SUBJECT ROUTES
+\*----------------------------------------------------------------------------*/
 
 /*
 	Route: Add course subject
@@ -656,10 +662,30 @@ primaryExports.removeProgramFromDepartment = function(req, res){
 		05/01/2016 	Andrew Fisher
 
 */
-primaryExports.addCourseSubject = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		new db.models.Subject(req.body).save(function(err, subjects){
+primaryExports.addCourseSubject = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		new db.models.Subject(req.body).save(function(err, subjects) {
+			var success = err ? false : true;
+			res.send({success: success});
+		});
+	}
+};
+
+/*
+	Route: Remove course subject
+	Input:
+		url parameters:
+			id: id of subject
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Kaitlin Snyder
+	Modified:
+*/
+primaryExports.removeCourseSubject = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.Subject.remove({_id: req.params.id}).exec(function(err) {
 			var success = err ? false : true;
 			res.send({success: success});
 		});
@@ -678,37 +704,21 @@ primaryExports.addCourseSubject = function(req, res){
 	Modified:
 			05/01/2016 Andrew Fisher
 */
-primaryExports.updateCourseSubject = function(req, res){
+primaryExports.updateCourseSubject = function(req, res) {
 	// restrict this to primary admins
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.Subject.update({_id: req.params.id},{ $set: req.body}).exec(
-			function(err){
+
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.Subject.findOne({_id: req.params.id}).update({},{ $set: req.body}).exec(
+			function(err) {
 				var success = err ? false : true;
 				res.send({success: success});
 			});
 	}
 };
 
-/*
-	Route: Remove course subject
-	Input:
-		url parameters:
-			id: id of subject
-	Output:
-		{"success": Boolean}
-	Created: 04/23/2016 Kaitlin Snyder
-	Modified:
-*/
-primaryExports.removeCourseSubject = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.Subject.remove({_id: req.params.id}).exec(function(err){
-			var success = err ? false : true;
-			res.send({success: success});
-		});
-	}
-};
+/*----------------------------------------------------------------------------*\
+								COURSE ROUTES
+\*----------------------------------------------------------------------------*/
 
 /*
 	Route: Add course
@@ -721,10 +731,30 @@ primaryExports.removeCourseSubject = function(req, res){
 	Modified:
 
 */
-primaryExports.addCourse = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		new db.models.Course(req.body).populate('subject').save(function(err){
+primaryExports.addCourse = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		new db.models.Course(req.body).populate('subject').save(function(err) {
+			var success = err ? false : true;
+			res.send({success: success});
+		});
+	}
+};
+
+/*
+	Route: Remove course
+	Input:
+		url parameters:
+			id: id of course
+	Output:
+		{"success": Boolean}
+	Created: 04/23/2016 Kaitlin Snyder
+	Modified:
+*/
+primaryExports.removeCourse = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.Course.remove({_id: req.params.id}).exec(function(err) {
 			var success = err ? false : true;
 			res.send({success: success});
 		});
@@ -744,37 +774,20 @@ primaryExports.addCourse = function(req, res){
 	Modified:
 
 */
-primaryExports.updateCourse = function(req, res){
+primaryExports.updateCourse = function(req, res) {
 	// restrict this to primary admins
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
 		db.models.Course.findOne({_id: req.params.id}).update({},{ $set: req.body}).exec(
-			function(err){
+			function(err) {
 				var success = err ? false : true;
 				res.send({success: success});
 			});
 	}
 };
 
-/*
-	Route: Remove course
-	Input:
-		url parameters:
-			id: id of course
-	Output:
-		{"success": Boolean}
-	Created: 04/23/2016 Kaitlin Snyder
-	Modified:
-*/
-primaryExports.removeCourse = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.Course.remove({_id: req.params.id}).exec(function(err){
-			var success = err ? false : true;
-			res.send({success: success});
-		});
-	}
-};
+/*----------------------------------------------------------------------------*\
+							FACULTY AND STAFF ROUTES
+\*----------------------------------------------------------------------------*/
 
  /*
 	Route: Update facultyAndStaff
@@ -785,21 +798,21 @@ primaryExports.removeCourse = function(req, res){
 	Created: 04/11/2016 Tyler Yasaka
 	Modified:
 */
-primaryExports.updateFacultyAndStaff = function(req, res){
+primaryExports.updateFacultyAndStaff = function(req, res) {
 	// restrict this to primary admins
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.FacultyAndStaff.update(
-			{},
-			{ $set: req.body}
-		).exec(
-			function(err){
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.FacultyAndStaff.update({},
+			{$set: req.body}).exec(function(err) {
 				var success = err ? false : true;
 				res.send({success: success});
 			}
 		);
 	}
 };
+
+/*----------------------------------------------------------------------------*\
+								CATALOG ROUTES
+\*----------------------------------------------------------------------------*/
 
  /*
 	Route: Publish Catalog
@@ -810,16 +823,15 @@ primaryExports.updateFacultyAndStaff = function(req, res){
 	Created: 04/29/2016 Tyler Yasaka
 	Modified:
 */
-primaryExports.publishCatalog = function(req, res){
+primaryExports.publishCatalog = function(req, res) {
 	// restrict this to primary admins
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
 		// check if catalog has already been published
 		db.models.CatalogYear.find(
 			{beginYear: req.body.beginYear, endYear: req.body.endYear}
 		).exec(function(err, matches) {
 			// Don't allow duplicate publishing of the same academic year
-			if(matches.length > 0) {
+			if (matches.length > 0) {
 				res.send({success: false, error: "This academic year has already been published."});
 			}
 			// Make sure the years are consequtive
@@ -844,7 +856,7 @@ primaryExports.publishCatalog = function(req, res){
 						async.eachSeries(
 							modelsToCopy,
 							// execute this function on each model
-							function(model, cb){
+							function(model, cb) {
 								definitions.copyCollection(db.models, db.publicModels, model, cb);
 							},
 							// execute this function after all collections have been copied
@@ -868,14 +880,13 @@ primaryExports.publishCatalog = function(req, res){
 				// execute after other functions have completed
 				function(err) {
 					var success = err ? false : true;
-					if(success) {
+					if (success) {
 						// save record of published pdf to database
 						new db.models.CatalogYear(req.body).save(function(err) {
 							res.send({success: true});
 						})
-					}
-					else {
-						  res.send({success: false, error: err});
+					} else {
+						res.send({success: false, error: err});
 					}
 				});
 
@@ -884,6 +895,10 @@ primaryExports.publishCatalog = function(req, res){
 
 	}
 }
+
+/*----------------------------------------------------------------------------*\
+							CHANGE REQUEST ROUTES
+\*----------------------------------------------------------------------------*/
 
 /*
 	Route: View change request queue
@@ -931,9 +946,9 @@ primaryExports.publishCatalog = function(req, res){
 	Modified:
 		04/25/2016 John Batson
  */
-primaryExports.viewChangeRequestQueue = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
+primaryExports.viewChangeRequestQueue = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
 		db.models.ChangeRequest.find({status: "pending"}).exec(function(err, results) {
 			var success = err ? false : true;
 			res.send({
@@ -956,26 +971,24 @@ primaryExports.viewChangeRequestQueue = function(req, res){
 	Modified:
 		04/30/2016 John Batson
  */
-primaryExports.approveChangeRequest = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.ChangeRequest.findOne({_id: req.params.id}).exec(function(err, request){
-			if(request){
-				if(request.status === "pending"){
+primaryExports.approveChangeRequest = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.ChangeRequest.findOne({_id: req.params.id}).exec(function(err, request) {
+			if (request) {
+				if (request.status === "pending") {
 					request.status = "approved";
 					request.timeOfApproval = Date.now();
 					request.comment = (req.body.comment);
 					
-					request.save(function(err){
+					request.save(function(err) {
 						var success = err ? false : true;
 						res.send({success: success});
 					});
-				}
-				else {
+				} else {
 					res.send({success: false, error: 'Change request is not pending.'});
 				}
-			}
-			else{
+			} else {
 				res.send({success: false, error: 'Change request does not exist.'});
 			}
 		});
@@ -994,31 +1007,33 @@ primaryExports.approveChangeRequest = function(req, res){
 	Modified:
 		04/30/2016 John Batson
  */
-primaryExports.denyChangeRequest = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.ChangeRequest.findOne({_id: req.params.id}).exec(function(err, request){
-			if(request){
-				if(request.status === "pending"){
+primaryExports.denyChangeRequest = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.ChangeRequest.findOne({_id: req.params.id}).exec(function(err, request) {
+			if (request) {
+				if (request.status === "pending") {
 					request.status = "denied";
 					request.timeOfApproval = Date.now();
 					request.comment = (req.body.comment);
 						
-					request.save(function(err){
+					request.save(function(err) {
 						var success = err ? false : true;
 						res.send({success: success});
 					});
-				}
-				else {
+				} else {
 					res.send({success: false, error: 'Change request is not pending.'});
 				}
-			}
-			else{
+			} else {
 				res.send({success: false, error: 'Change request does not exist.'});
 			}
 		});
 	}
 };
+
+/*----------------------------------------------------------------------------*\
+							ADMIN MANAGEMENT ROUTES
+\*----------------------------------------------------------------------------*/
 
  /*
 	Route: Add secondary admin
@@ -1031,18 +1046,17 @@ primaryExports.denyChangeRequest = function(req, res){
 			04/30/2016 Andrew Fisher
 			04/30/2016 John Batson
 */
-primaryExports.addAdmin = function(req, res){
+primaryExports.addAdmin = function(req, res) {
 	// restrict this to primary admins
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
 		req.body.privilege = 2;
 		req.body.apps = ['catalog'];
 		req.body.password = crypto.createHash('md5').update(req.body.password).digest('hex');
 		
-		new db.models.Admin(req.body).save(function(err){
-				var success = err ? false : true;
-				res.send({success: success});
-			});
+		new db.models.Admin(req.body).save(function(err) {
+			var success = err ? false : true;
+			res.send({success: success});
+		});
 	}
 };
 
@@ -1057,22 +1071,20 @@ primaryExports.addAdmin = function(req, res){
 	Modified:
 		04/30/2016 John Batson
 */
-primaryExports.removeAdmin = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
-		db.models.Admin.findOne({_id: req.params.id}).exec(function(err, user){
-			if(user){
-				if(user.privilege < 5){
+primaryExports.removeAdmin = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+		db.models.Admin.findOne({_id: req.params.id}).exec(function(err, user) {
+			if (user) {
+				if (user.privilege < 5) {
 					user.remove();
 					
 					var success = err ? false : true;
 					res.send({success: success});
-				}
-				else{
+				} else {
 					res.send({success: false, error: 'Primary admins cannot be removed.'});
 				}
-			}
-			else{
+			} else {
 				res.send({success: false, error: 'Specified admin was not found.'});
 			}
 		});
@@ -1091,25 +1103,23 @@ primaryExports.removeAdmin = function(req, res){
 	Modified:
 		04/30/2016 John Batson
  */
-primaryExports.changePasswordAdmin = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
+primaryExports.changePasswordAdmin = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
 		req.body.password = crypto.createHash('md5').update(req.body.password).digest('hex');
-		db.models.Admin.findOne({_id: req.params.id}).exec(function(err, user){
-			if(user){
-				if (user.username !== req.session.username){
+		db.models.Admin.findOne({_id: req.params.id}).exec(function(err, user) {
+			if (user) {
+				if (user.username !== req.session.username) {
 					user.password = req.body.password;
 					
-					user.save(function(err){
+					user.save(function(err) {
 						var success = err ? false : true;
 						res.send({success: success});
 					});
-				}
-				else{
+				} else {
 					res.send({success: false, error: 'Cannot change own password through this route.'});
 				}
-			}
-			else{
+			} else {
 				res.send({success: false, error: 'Specified admin was not found.'});
 			}
 		});
@@ -1131,9 +1141,9 @@ primaryExports.changePasswordAdmin = function(req, res){
 	Modified:
 		04/30/2016 John Batson
 */
-primaryExports.viewAdmins = function(req, res){
-	if(isAuthenticated(appname, privilege.primaryAdmin, req.session, res))
-	{
+primaryExports.viewAdmins = function(req, res) {
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
 		db.models.Admin.find().exec( function(err, results) {
 			var success = err ? false : true;
 			res.send({
