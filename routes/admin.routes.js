@@ -43,8 +43,32 @@ router.post
 		var success = false;
 		var username = req.body.username;
 		var password = req.body.password;
-		password = modules['crypto'].createHash('md5').update(password).digest('hex');
-
+		password = modules['crypto'].createHash('md5').update(password).digest('hex');;
+		var currentTime = Date.now();
+		var allow = true;
+		
+		/*	Limits Login Attempts	
+			Authors: 05/02/2016 Andrew Fisher
+					 05/02/2016 John Batson
+		*/
+		if(req.session.attempts < 3)
+		{
+			req.session.attempts += 1;
+			req.session.first = Date.now();
+			allow = true;
+		}
+		else if(req.session.attempts >= 3 && (currentTime - req.session.first) > 60000)
+		{
+			req.session.first = Date.now();
+			allow = true;
+		}
+		else
+		{
+			allow = false;
+		}
+		console.log(req.session.attempts);
+		console.log(currentTime - req.session.first);
+		
 		if(db.admins)
 		{
 			db.admins.find
@@ -59,7 +83,7 @@ router.post
 				{
 					var apps = [];
 
-					if(records.length > 0)
+					if(records.length > 0 && allow)
 					{
 						var privilege = records[0].privilege;
 						var id = records[0]._id;
@@ -87,10 +111,12 @@ router.post
 						req.session.privilege = privilege;
 						req.session.apps = apps;
 						req.session._id = id;
-
+						req.session.attempts = 0;
+						req.session.first = Date.now()
+						
 						success = true;
 					}
-
+					
 					res.send
 					(
 						{
