@@ -128,7 +128,7 @@ primaryExports.reorderTextSections = function(req, res) {
 		db.models.TextSection.findOne(function(err, doc) {
 			var reordered = [];
 			for (i in req.body) {
-				var id = req.body[i]._id;
+				var id = req.body[i];
 				for (var j in doc.sections) {
 					var textSection = doc.sections[j];
 					if (id == textSection._id) {
@@ -979,7 +979,7 @@ primaryExports.approveChangeRequest = function(req, res) {
 					request.status = "approved";
 					request.timeOfApproval = Date.now();
 					request.comment = (req.body.comment);
-					
+
 					request.save(function(err) {
 						var success = err ? false : true;
 						res.send({success: success});
@@ -1015,7 +1015,7 @@ primaryExports.denyChangeRequest = function(req, res) {
 					request.status = "denied";
 					request.timeOfApproval = Date.now();
 					request.comment = (req.body.comment);
-						
+
 					request.save(function(err) {
 						var success = err ? false : true;
 						res.send({success: success});
@@ -1051,7 +1051,7 @@ primaryExports.addAdmin = function(req, res) {
 		req.body.privilege = 2;
 		req.body.apps = ['catalog'];
 		req.body.password = crypto.createHash('md5').update(req.body.password).digest('hex');
-		
+
 		new db.models.Admin(req.body).save(function(err) {
 			var success = err ? false : true;
 			res.send({success: success});
@@ -1077,7 +1077,7 @@ primaryExports.removeAdmin = function(req, res) {
 			if (user) {
 				if (user.privilege < 5) {
 					user.remove();
-					
+
 					var success = err ? false : true;
 					res.send({success: success});
 				} else {
@@ -1110,7 +1110,7 @@ primaryExports.changePasswordAdmin = function(req, res) {
 			if (user) {
 				if (user.username !== req.session.username) {
 					user.password = req.body.password;
-					
+
 					user.save(function(err) {
 						var success = err ? false : true;
 						res.send({success: success});
