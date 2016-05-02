@@ -359,10 +359,22 @@ async.waterfall([
 				password: crypto.createHash('md5').update("punchcards_rock").digest('hex')
 			},
 			{
+				privilege: 5,
+				username: "primary",
+				apps: ['catalog'],
+				password: crypto.createHash('md5').update("Primary1").digest('hex')
+			},
+			{
 				privilege: 2,
 				username: "secondaryAdmin",
 				apps: ['catalog'],
 				password: crypto.createHash('md5').update("punchcards_rock").digest('hex')
+			},
+			{
+				privilege: 2,
+				username: "secondary",
+				apps: ['catalog'],
+				password: crypto.createHash('md5').update("Secondary1").digest('hex')
 			}
 		];
 		for(var i in admins){
