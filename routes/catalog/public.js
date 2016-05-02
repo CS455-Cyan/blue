@@ -116,7 +116,7 @@ publicExports.listGeneralRequirements = function(req, res)
 		04/17/2016 Tyler Yasaka
 */
 publicExports.listProgramCategories = function(req, res) {
-	db.models.Program.find().select('name').exec(function(err, results) {
+	db.models.Program.find().exec(function(err, results) {
 		var success = err ? false : true;
 		res.send({
 			success: success,
