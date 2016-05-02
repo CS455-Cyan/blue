@@ -47,12 +47,8 @@ router.post
 		var password = req.body.password;
 		password = modules['crypto'].createHash('md5').update(password).digest('hex');;
 		
-		/*	Limits Login Attempts	
-			Authors: 05/02/2016 Andrew Fisher
-					 05/02/2016 John Batson
-		*/
 		var currentTime = Date.now();
-		var allow = loginAttempt(req, res, currentTime);
+		var allowed = loginAttempt(req, res, currentTime);
 		
 		if(db.admins)
 		{
@@ -68,7 +64,7 @@ router.post
 				{
 					var apps = [];
 
-					if(records.length > 0 && allow)
+					if(records.length > 0 && allowed)
 					{
 						var privilege = records[0].privilege;
 						var id = records[0]._id;
@@ -97,7 +93,7 @@ router.post
 						req.session.apps = apps;
 						req.session._id = id;
 						req.session.attempts = 0;
-						req.session.first = Date.now()
+						req.session.lastTime = Date.now()
 						
 						success = true;
 					}
@@ -173,31 +169,32 @@ router.get
 	}
 );
 
+/*	Limits Login Attempts	
+	Authors: 05/02/2016 Andrew Fisher
+			 05/02/2016 John Batson
+*/
 function loginAttempt(req, res, current)
 {
-	var allow = true;
+	var allowed = false;
+	
 	if(!req.session.attempts)
 	{
 		req.session.attempts = 0;
 	}
+	
 	if(req.session.attempts < 3)
 	{
 		req.session.attempts += 1;
-		req.session.first = Date.now();
-		allow = true;
+		req.session.lastTime = Date.now();
+		allowed = true;
 	}
-	else if(req.session.attempts >= 3 && (current - req.session.first) > 60000)
+	else if(++req.session.attempts >= 3 && (current - req.session.lastTime) > 60000)
 	{
-		req.session.first = Date.now();
-		allow = true;
+		req.session.lastTime = Date.now();
+		allowed = true;
 	}
-	else
-	{
-		allow = false;
-	}
-	console.log(req.session.attempts);
-	console.log(current - req.session.first);
-	return allow;
+	
+	return allowed;
 };
 
 module.exports = router;
