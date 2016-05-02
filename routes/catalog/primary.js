@@ -833,7 +833,7 @@ primaryExports.publishCatalog = function(req, res) {
 			if (matches.length > 0) {
 				res.send({success: false, error: "This academic year has already been published."});
 			}
-			// Make sure the years are consequtive
+			// Make sure the years are consecutive
 			else if (Number(req.body.beginYear) + 1 != Number(req.body.endYear)) {
 				res.send({success: false, error: "Invalid year received."});
 			}
@@ -893,7 +893,42 @@ primaryExports.publishCatalog = function(req, res) {
 		});
 
 	}
-}
+};
+
+ /*
+	Route: Preview Catalog
+	Input:
+		payload: {"beginYear": String, "endYear": String}
+	Output:
+		{"success": Boolean}
+	Created: 05/02/2016 Andrew Fisher
+	Modified:
+*/
+primaryExports.previewCatalog = function(req,res){
+	// restrict this to primary admins
+	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
+
+		db.models.CatalogYear.find(
+			{beginYear: req.body.beginYear, endYear: req.body.endYear}
+		).exec(function(err, matches) {
+
+			// Make sure the years are consecutive
+			if (Number(req.body.beginYear) + 1 != Number(req.body.endYear)) {
+				res.send({success: false, error: "Invalid year received."});
+			}
+			else {
+				function(callback) {
+					// generate pdf
+					var year = {
+						start: req.body.beginYear,
+						end: req.body.endYear
+					};
+					definitions.generateCatalogPDF(year, callback);
+				}
+			}
+		});
+	}
+};
 
 /*----------------------------------------------------------------------------*\
 							CHANGE REQUEST ROUTES
