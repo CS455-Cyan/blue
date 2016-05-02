@@ -47,10 +47,6 @@ router.post
 		var password = req.body.password;
 		password = modules['crypto'].createHash('md5').update(password).digest('hex');;
 		
-		/*	Limits Login Attempts	
-			Authors: 05/02/2016 Andrew Fisher
-					 05/02/2016 John Batson
-		*/
 		var currentTime = Date.now();
 		var allow = loginAttempt(req, res, currentTime);
 		
@@ -173,6 +169,10 @@ router.get
 	}
 );
 
+/*	Limits Login Attempts	
+	Authors: 05/02/2016 Andrew Fisher
+			 05/02/2016 John Batson
+*/
 function loginAttempt(req, res, current)
 {
 	var allow = true;

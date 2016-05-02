@@ -334,11 +334,18 @@ router.put
 	primaryAPI.updateFacultyAndStaff
 );
 
-/* Update Faculty and Staff */
+/* Publish Catalog */
 router.post
 (
 	'/admin/catalog/publish',
 	primaryAPI.publishCatalog
+);
+
+/* Preview Catalog */
+router.post
+(
+	'/admin/catalog/preview',
+	primaryAPI.previewCatalog
 );
 
 /* View Change Request Queue */
