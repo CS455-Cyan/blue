@@ -62,6 +62,7 @@ router.post
 					if(records.length > 0)
 					{
 						var privilege = records[0].privilege;
+						var id = records[0]._id;
 						var apps = [];
 
 						if(privilege >= 10)
@@ -85,6 +86,7 @@ router.post
 						req.session.username = username;
 						req.session.privilege = privilege;
 						req.session.apps = apps;
+						req.session._id = id;
 
 						success = true;
 					}
@@ -93,7 +95,9 @@ router.post
 					(
 						{
 							'success': success,
-							'apps': apps
+							'apps': apps,
+							'username': username,
+							'_id': id
 						}
 					);
 				}
@@ -140,7 +144,9 @@ router.get
 			(
 				{
 					'authenticated': true,
-					'apps': req.session.apps
+					'apps': req.session.apps,
+					'username': req.session.username,
+					'_id': req.session._id
 				}
 			);
 		}
