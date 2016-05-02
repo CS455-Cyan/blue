@@ -1,10 +1,11 @@
-/***																					***\
+/***																		***\
 
 	Filename: routes/public.js
 	Authors:
 			Andrew Fisher
+			John Batson
 
-\***																					***/
+\***																		***/
 
 // housekeeping
 var globals = require('../global');
@@ -19,9 +20,9 @@ var orderPrograms = definitions.orderPrograms;
 
 var publicExports = {};
 
-/*--																					--*\
+/*--																		--*\
 								PUBLIC API ROUTES
-\*--																					--*/
+\*--																		--*/
 
 /*
 	Route: List textSections
@@ -32,7 +33,7 @@ var publicExports = {};
 	Modified:
 */
 publicExports.getTextSections = function(req, res) {
-	db.models.TextSection.findOne().select('sections.title sections._id').exec( function(err, results) {
+	db.models.TextSection.findOne().select('sections.title sections._id').exec(function(err, results) {
 		var success = err ? false : true;
 		res.send({
 			success: success,
@@ -88,7 +89,7 @@ publicExports.listGeneralRequirements = function(req, res)
 		populate: {
 			path: 'subject'
 		}
-	}).exec( function(err, results) {
+	}).exec(function(err, results) {
 		// we need to make sure they are in order (they may not be)
 		var sorted = definitions.orderGeneralRequirements(results);
 		var success = err ? false : true;
@@ -114,9 +115,8 @@ publicExports.listGeneralRequirements = function(req, res)
 		04/08/2016 Tyler Yasaka
 		04/17/2016 Tyler Yasaka
 */
-publicExports.listProgramCategories = function(req, res)
-{
-	db.models.Program.find().select('name').exec( function(err, results) {
+publicExports.listProgramCategories = function(req, res) {
+	db.models.Program.find().select('name').exec(function(err, results) {
 		var success = err ? false : true;
 		res.send({
 			success: success,
@@ -148,8 +148,7 @@ publicExports.listProgramCategories = function(req, res)
 		04/08/2016 Tyler Yasaka
 		04/17/2016 Tyler Yasaka
 */
-publicExports.viewCategoryDetails = function(req, res)
-{
+publicExports.viewCategoryDetails = function(req, res) {
 	db.models.Program.findOne({_id: req.params.category})
 	.populate({
 		path: 'departments.programs.requirements.items.courses',
@@ -161,9 +160,9 @@ publicExports.viewCategoryDetails = function(req, res)
 		populate: {
 			path: 'subject'
 		}
-	}).exec( function(err, category) {
-		if(category) {
-			for(var d in category.departments) {
+	}).exec(function(err, category) {
+		if (category) {
+			for (var d in category.departments) {
 				category.departments[d].programs = orderPrograms(category.departments[d].programs);
 			}
 			category.programs = orderPrograms(category.programs);
@@ -197,14 +196,13 @@ publicExports.viewCategoryDetails = function(req, res)
 	Created: 04/19/2016 Tyler Yasaka
 	Modified:
 */
-publicExports.viewDepartment = function(req, res)
-{
+publicExports.viewDepartment = function(req, res) {
 	db.models.Program.findOne({_id: req.params.category})
 	.select('name departments')
-	.exec( function(err, result) {
-		if(result) {
+	.exec(function(err, result) {
+		if (result) {
 			var department, category;
-			if(result.departments) {
+			if (result.departments) {
 				department = result.departments.id(req.params.department);
 			}
 			category = {
@@ -238,36 +236,35 @@ publicExports.viewDepartment = function(req, res)
 	Modified:
 		04/17/2016 Tyler Yasaka
 */
-publicExports.searchPrograms = function(req, res)
-{
+publicExports.searchPrograms = function(req, res) {
 	db.models.Program.find(function(err, categories) {
 		var term = req.body.term.toLowerCase();
 		var programsArr = [];
-		for(var c in categories){
-			for(var p in categories[c].programs){
+		for (var c in categories) {
+			for (var p in categories[c].programs) {
 				var match = false;
 				var program = categories[c].programs[p];
-				if( program.name.toLowerCase().indexOf(term) > -1) {
+				if (program.name.toLowerCase().indexOf(term) > -1) {
 					match = true;
 				}
-				if( program.description.toLowerCase().indexOf(term) > -1) {
+				if (program.description.toLowerCase().indexOf(term) > -1) {
 					match = true;
 				}
-				if(match) {
+				if (match) {
 					programsArr.push(program);
 				}
 			}
-			for(var d in categories[c].departments){
-				for(var p in categories[c].departments[d].programs){
+			for (var d in categories[c].departments) {
+				for (var p in categories[c].departments[d].programs) {
 					var match = false;
 					var program = categories[c].departments[d].programs[p];
-					if( program.name.toLowerCase().indexOf(term) > -1) {
+					if (program.name.toLowerCase().indexOf(term) > -1) {
 						match = true;
 					}
-					if( program.description.toLowerCase().indexOf(term) > -1) {
+					if (program.description.toLowerCase().indexOf(term) > -1) {
 						match = true;
 					}
-					if(match) {
+					if (match) {
 						programsArr.push(program);
 					}
 				}
@@ -301,19 +298,18 @@ publicExports.searchPrograms = function(req, res)
 	Created: 04/17/2016 Tyler Yasaka
 	Modified: 04/19/2016 Tyler Yasaka
 */
-publicExports.viewProgramsInCategory = function(req, res)
-{
+publicExports.viewProgramsInCategory = function(req, res) {
 	db.models.Program.findOne({_id: req.params.category}).select('name programs')
 	.populate({
 		path: 'programs.requirements.items.courses',
 		populate: {
 			path: 'subject'
 		}
-	}).exec( function(err, result) {
+	}).exec(function(err, result) {
 		var program, category;
-		if(result) {
+		if (result) {
 			program = result.programs.id(req.params.program);
-			if(program) {
+			if (program) {
 				calculateCredit(program.requirements);
 				category = {
 					_id: result._id,
@@ -357,21 +353,20 @@ publicExports.viewProgramsInCategory = function(req, res)
 	Created: 04/17/2016 Tyler Yasaka
 	Modified:
 */
-publicExports.viewProgramsInDepartment = function(req, res)
-{
+publicExports.viewProgramsInDepartment = function(req, res) {
 	db.models.Program.findOne({_id: req.params.category}).select('name departments')
 	.populate({
 		path: 'departments.programs.requirements.items.courses',
 		populate: {
 			path: 'subject'
 		}
-	}).exec( function(err, result) {
+	}).exec(function(err, result) {
 		var program, department, category;
-		if(result) {
+		if (result) {
 			var dept = result.departments.id(req.params.department);
-			if(dept) {
+			if (dept) {
 				program = dept.programs.id(req.params.program);
-				if(program) {
+				if (program) {
 					calculateCredit(program.requirements);
 					department = {
 						_id: dept._id,
@@ -413,9 +408,8 @@ publicExports.viewProgramsInDepartment = function(req, res)
 		04/08/2016 Tyler Yasaka
 		04/17/2016 Tyler Yasaka
 */
-publicExports.listCourses = function(req, res)
-{
-	db.models.Course.find().populate('subject').exec( function(err, results) {
+publicExports.listCourses = function(req, res) {
+	db.models.Course.find().populate('subject').exec(function(err, results) {
 		var success = err ? false : true;
 		res.send({
 			success: success,
@@ -445,9 +439,8 @@ publicExports.listCourses = function(req, res)
 	Created: 04/17/2016 Tyler Yasaka
 	Modified:
 */
-publicExports.viewCourses = function(req, res)
-{
-	db.models.Course.findOne({_id: req.params.id}).populate('subject').exec( function(err, result) {
+publicExports.viewCourses = function(req, res) {
+	db.models.Course.findOne({_id: req.params.id}).populate('subject').exec(function(err, result) {
 		var success = err ? false : true;
 		res.send({
 			success: success,
@@ -474,34 +467,33 @@ publicExports.viewCourses = function(req, res)
 	Modified:
 		04/17/2016 Tyler Yasaka
 */
-publicExports.searchCourses = function(req, res)
-{
+publicExports.searchCourses = function(req, res) {
 	db.models.Course.find().populate('subject').exec(function(err, courses) {
 		var term = req.body.term.toLowerCase();
 		var courseArr = [];
-		for(var c in courses){
+		for (var c in courses) {
 			var match = false;
 			// match title
-			if( courses[c].title.toLowerCase().indexOf(term) > -1) {
+			if (courses[c].title.toLowerCase().indexOf(term) > -1) {
 				match = true;
 			}
 			// match number
-			if( courses[c].number.toLowerCase().indexOf(term) > -1) {
+			if (courses[c].number.toLowerCase().indexOf(term) > -1) {
 				match = true;
 			}
 			// match description
-			if( courses[c].description.toLowerCase().indexOf(term) > -1) {
+			if (courses[c].description.toLowerCase().indexOf(term) > -1) {
 				match = true;
 			}
 			// match subject name
-			if( courses[c].subject.name.toLowerCase().indexOf(term) > -1) {
+			if (courses[c].subject.name.toLowerCase().indexOf(term) > -1) {
 				match = true;
 			}
 			// match subject abbreviation
-			if( courses[c].subject.abbreviation.toLowerCase().indexOf(term) > -1) {
+			if (courses[c].subject.abbreviation.toLowerCase().indexOf(term) > -1) {
 				match = true;
 			}
-			if(match) {
+			if (match) {
 				courseArr.push(courses[c]);
 			}
 		}
@@ -522,9 +514,8 @@ publicExports.searchCourses = function(req, res)
 	Created: 04/17/2016 Tyler Yasaka
 	Modified:
 */
-publicExports.listSubjects = function(req, res)
-{
-	db.models.Subject.find().exec( function(err, results) {
+publicExports.listSubjects = function(req, res) {
+	db.models.Subject.find().exec(function(err, results) {
 		var sorted = definitions.sortAlphabeticallyByProperty(results, 'abbreviation');
 		var success = err ? false : true;
 		res.send({
@@ -557,10 +548,9 @@ publicExports.listSubjects = function(req, res)
 	Created: 04/17/2016 Tyler Yasaka
 	Modified:
 */
-publicExports.listCoursesForSubject = function(req, res)
-{
+publicExports.listCoursesForSubject = function(req, res) {
 	db.models.Subject.findOne({_id: req.params.id}).exec(function(subjectErr, subject) {
-		db.models.Course.find({subject: req.params.id}).exec( function(coursesErr, courses) {
+		db.models.Course.find({subject: req.params.id}).exec(function(coursesErr, courses) {
 			var success = (subjectErr || coursesErr) ? false : true;
 			res.send({
 				success: success,
@@ -578,8 +568,7 @@ publicExports.listCoursesForSubject = function(req, res)
 	Created: 04/11/2016 Tyler Yasaka
 	Modified:
 */
-publicExports.getFacultyAndStaff = function(req, res)
-{
+publicExports.getFacultyAndStaff = function(req, res) {
 	db.models.FacultyAndStaff.findOne().exec(function(err, result) {
 		var success = err ? false : true;
 		res.send({
@@ -606,9 +595,8 @@ publicExports.getFacultyAndStaff = function(req, res)
 	Created: 04/02/2016 Tyler Yasaka
 	Modified:
 */
-publicExports.listArchivedPDFs = function(req, res)
-{
-	db.models.CatalogYear.find().exec( function(err, results) {
+publicExports.listArchivedPDFs = function(req, res) {
+	db.models.CatalogYear.find().exec(function(err, results) {
 		var success = err ? false : true;
 		res.send({
 			success: success,
