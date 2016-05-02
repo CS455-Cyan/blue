@@ -13,7 +13,7 @@ var db = require('../models/catalog.model');
 
 console.log("Alright. One sec...");
 
-// Clear public databae
+// Clear public database
 // This can be done asynchronously
 db.connection.on('public', function() {
 	db.publicModels.TextSection.remove();
