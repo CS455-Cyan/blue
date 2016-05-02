@@ -128,7 +128,7 @@ primaryExports.reorderTextSections = function(req, res) {
 		db.models.TextSection.findOne(function(err, doc) {
 			var reordered = [];
 			for (i in req.body) {
-				var id = req.body[i];
+				var id = req.body[i]._id;
 				for (var j in doc.sections) {
 					var textSection = doc.sections[j];
 					if (id == textSection._id) {
