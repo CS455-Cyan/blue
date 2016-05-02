@@ -2,7 +2,9 @@
 
 	Filename: admin.js
 	Author: Mitchel R Moon
-
+	Modified By:	Andrew Fisher
+					John Batson
+	
 	Copyright (c) 2015 University of North Alabama
 
 \***																					***/
@@ -44,30 +46,13 @@ router.post
 		var username = req.body.username;
 		var password = req.body.password;
 		password = modules['crypto'].createHash('md5').update(password).digest('hex');;
-		var currentTime = Date.now();
-		var allow = true;
 		
 		/*	Limits Login Attempts	
 			Authors: 05/02/2016 Andrew Fisher
 					 05/02/2016 John Batson
 		*/
-		if(req.session.attempts < 3)
-		{
-			req.session.attempts += 1;
-			req.session.first = Date.now();
-			allow = true;
-		}
-		else if(req.session.attempts >= 3 && (currentTime - req.session.first) > 60000)
-		{
-			req.session.first = Date.now();
-			allow = true;
-		}
-		else
-		{
-			allow = false;
-		}
-		console.log(req.session.attempts);
-		console.log(currentTime - req.session.first);
+		var currentTime = Date.now();
+		var allow = loginAttempt(req, res, currentTime);
 		
 		if(db.admins)
 		{
@@ -187,5 +172,32 @@ router.get
 		}
 	}
 );
+
+function loginAttempt(req, res, current)
+{
+	var allow = true;
+	if(!req.session.attempts)
+	{
+		req.session.attempts = 0;
+	}
+	if(req.session.attempts < 3)
+	{
+		req.session.attempts += 1;
+		req.session.first = Date.now();
+		allow = true;
+	}
+	else if(req.session.attempts >= 3 && (current - req.session.first) > 60000)
+	{
+		req.session.first = Date.now();
+		allow = true;
+	}
+	else
+	{
+		allow = false;
+	}
+	console.log(req.session.attempts);
+	console.log(current - req.session.first);
+	return allow;
+};
 
 module.exports = router;
