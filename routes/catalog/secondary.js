@@ -3,6 +3,7 @@
 	Filename: routes/secondary.js
 	Authors:
 			Kaitlin Snyder
+			John Batson
 
 \***	
 /*--																					--*\
@@ -33,21 +34,19 @@ var secondaryExports = {};
 		04/30/2016 Andrew Fisher
 		04/30/2016 John Batson
 */
-secondaryExports.changePassword = function(req, res){
+secondaryExports.changePassword = function(req, res) {
 	// restrict this to primary and secondary admins
-	if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
-	{
+	if (isAuthenticated(appname, privilege.secondaryAdmin, req.session, res)) {
 		req.body.password = crypto.createHash('md5').update(req.body.password).digest('hex');
-		db.models.Admin.findOne({username: req.session.username}).exec(function(err, user){
-			if(user){
+		db.models.Admin.findOne({username: req.session.username}).exec(function(err, user) {
+			if (user) {
 				user.password = req.body.password;
-				user.save(function(err){
+				user.save(function(err) {
 					var success = err ? false : true;
 					res.send({success: success});
 				});
 			}
 		});
-		
 	}
 };
 
@@ -97,13 +96,12 @@ secondaryExports.changePassword = function(req, res){
 	Modified:
 		04/30/2016 John Batson
  */
-secondaryExports.viewChangeRequests = function(req, res){
+secondaryExports.viewChangeRequests = function(req, res) {
 	// restrict this to primary and secondary admins
-	if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
-	{
-		db.models.ChangeRequest.find({username: req.session.username}).exec(function(err, results){
-				var success = err ? false : true;
-				res.send({success: success, data: results});
+	if (isAuthenticated(appname, privilege.secondaryAdmin, req.session, res)) {
+		db.models.ChangeRequest.find({username: req.session.username}).exec(function(err, results) {
+			var success = err ? false : true;
+			res.send({success: success, data: results});
 		});
 	}
 };
@@ -149,15 +147,13 @@ secondaryExports.viewChangeRequests = function(req, res){
 	Modified:
 		04/30/2016 John Batson
  */
-secondaryExports.createChangeRequest = function(req, res){
+secondaryExports.createChangeRequest = function(req, res) {
 	// restrict this to primary and secondary admins
-	if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
-	{
-		if(req.session.privilege >= privilege.primaryAdmin){
+	if (isAuthenticated(appname, privilege.secondaryAdmin, req.session, res)) {
+		if (req.session.privilege >= privilege.primaryAdmin) {
 			req.body.status = "approved";
 			req.body.timeOfApproval = Date.now();
-		}
-		else{
+		} else {
 			req.body.status = "pending";
 			req.body.timeOfApproval = null;
 			req.body.comment = null;
@@ -165,7 +161,7 @@ secondaryExports.createChangeRequest = function(req, res){
 		req.body.timeOfRequest = Date.now();
 		req.body.username = req.session.username;
 		
-		new db.models.ChangeRequest(req.body).save(function(err){
+		new db.models.ChangeRequest(req.body).save(function(err) {
 			var success = err ? false : true;
 			res.send({success: success});
 		});
@@ -184,12 +180,10 @@ secondaryExports.createChangeRequest = function(req, res){
 	Created: 04/24/2016 Andrew Fisher
 	Modified:
  */
-secondaryExports.editChangeRequest = function(req, res){
+secondaryExports.editChangeRequest = function(req, res) {
 	// restrict this to primary and secondary admins
-	if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
-	{
-		db.models.ChangeRequest.update({_id: req.params.id, status: "pending"},
-		{ $set: req.body }).exec(function(err){
+	if (isAuthenticated(appname, privilege.secondaryAdmin, req.session, res)) {
+		db.models.ChangeRequest.update({_id: req.params.id, status: "pending"}, {$set: req.body}).exec(function(err) {
 			var success = err ? false : true;
 			res.send({success: success});
 		});
@@ -206,13 +200,12 @@ secondaryExports.editChangeRequest = function(req, res){
 	Created: 04/24/2016 Andrew Fisher
 	Modified:
  */
-secondaryExports.removeChangeRequest = function(req, res){
+secondaryExports.removeChangeRequest = function(req, res) {
 	// restrict this to primary and secondary admins
-	if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
-	{
-		db.models.ChangeRequest.remove({_id: req.params.id, status: "pending"}).exec(function(err){
-				var success = err ? false : true;
-				res.send({success: success});
+	if (isAuthenticated(appname, privilege.secondaryAdmin, req.session, res)) {
+		db.models.ChangeRequest.remove({_id: req.params.id, status: "pending"}).exec(function(err) {
+			var success = err ? false : true;
+			res.send({success: success});
 		});
 	}
 };
@@ -262,13 +255,12 @@ secondaryExports.removeChangeRequest = function(req, res){
 	Created: 04/24/2016 Andrew Fisher
 	Modified:
  */
-secondaryExports.viewChangeLog = function(req, res){
+secondaryExports.viewChangeLog = function(req, res) {
 	// restrict this to primary and secondary admins
-	if(isAuthenticated(appname, privilege.secondaryAdmin, req.session, res))
-	{
-		db.models.ChangeRequest.find({status: "approved"}).exec(function(err, results){
-				var success = err ? false : true;
-				res.send({success: success, data: results});
+	if (isAuthenticated(appname, privilege.secondaryAdmin, req.session, res)) {
+		db.models.ChangeRequest.find({status: "approved"}).exec(function(err, results) {
+			var success = err ? false : true;
+			res.send({success: success, data: results});
 		});
 	}
 };
