@@ -706,9 +706,8 @@ primaryExports.removeCourseSubject = function(req, res) {
 */
 primaryExports.updateCourseSubject = function(req, res) {
 	// restrict this to primary admins
-
 	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
-		db.models.Subject.findOne({_id: req.params.id}).update({},{ $set: req.body}).exec(
+		db.models.Subject.findOne({_id: req.params.id}).update({}, { $set: req.body}).exec(
 			function(err) {
 				var success = err ? false : true;
 				res.send({success: success});
