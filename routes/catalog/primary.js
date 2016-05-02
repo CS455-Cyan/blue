@@ -917,14 +917,12 @@ primaryExports.previewCatalog = function(req,res){
 				res.send({success: false, error: "Invalid year received."});
 			}
 			else {
-				function(callback) {
-					// generate pdf
-					var year = {
-						start: req.body.beginYear,
-						end: req.body.endYear
-					};
-					definitions.generateCatalogPDF(year, callback);
-				}
+				// generate pdf
+				var year = {
+					start: req.body.beginYear,
+					end: req.body.endYear
+				};
+				definitions.generateCatalogPDF(year, callback);
 			}
 		});
 	}
