@@ -4,7 +4,7 @@
 	Author: Mitchel R Moon
 	Modified By:	Andrew Fisher
 					John Batson
-	
+
 	Copyright (c) 2015 University of North Alabama
 
 \***																					***/
@@ -46,10 +46,10 @@ router.post
 		var username = req.body.username;
 		var password = req.body.password;
 		password = modules['crypto'].createHash('md5').update(password).digest('hex');;
-		
+
 		var currentTime = Date.now();
 		var allowed = loginAttempt(req, res, currentTime);
-		
+
 		if(db.admins)
 		{
 			db.admins.find
@@ -94,15 +94,16 @@ router.post
 						req.session._id = id;
 						req.session.attempts = 0;
 						req.session.lastTime = Date.now()
-						
+
 						success = true;
 					}
-					
+
 					res.send
 					(
 						{
 							'success': success,
 							'apps': apps,
+							'privilege': privilege,
 							'username': username,
 							'_id': id
 						}
@@ -152,6 +153,7 @@ router.get
 				{
 					'authenticated': true,
 					'apps': req.session.apps,
+					'privilege': req.session.privilege,
 					'username': req.session.username,
 					'_id': req.session._id
 				}
@@ -169,19 +171,19 @@ router.get
 	}
 );
 
-/*	Limits Login Attempts	
+/*	Limits Login Attempts
 	Authors: 05/02/2016 Andrew Fisher
 			 05/02/2016 John Batson
 */
 function loginAttempt(req, res, current)
 {
 	var allowed = false;
-	
+
 	if(!req.session.attempts)
 	{
 		req.session.attempts = 0;
 	}
-	
+
 	if(req.session.attempts < 3)
 	{
 		req.session.attempts += 1;
@@ -193,7 +195,7 @@ function loginAttempt(req, res, current)
 		req.session.lastTime = Date.now();
 		allowed = true;
 	}
-	
+
 	return allowed;
 };
 

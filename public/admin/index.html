@@ -525,7 +525,7 @@
                     <p class="impact">
 
                     </p>
-                    <div class="list-group">
+                    <div class="list-group" ng-show="privilege >= 5">
                         <a href="#/catalog/change-requests" ng-class="{active: isActivePath('/catalog/change-requests')}" class="list-group-item" data-parent="#MainMenu">Change Requests</a>
                         <a href="#/catalog/text-sections" ng-class="{active: isActivePath('/catalog/text-sections')}" class="list-group-item" data-parent="#MainMenu">Custom Text Sections</a>
                         <a href="#/catalog/general-requirements" ng-class="{active: isActivePath('/catalog/general-requirements')}" class="list-group-item" data-parent="#MainMenu">General Education Requirements</a>
@@ -534,6 +534,9 @@
                         <a href="#/catalog/faculty-and-staff" ng-class="{active: isActivePath('/catalog/faculty-and-staff')}" class="list-group-item" data-parent="#MainMenu">Faculty and Staff</a>
                         <a href="#/catalog/account" ng-class="{active: isActivePath('/catalog/account')}" class="list-group-item" data-parent="#MainMenu">Account</a>
 												<a href="#/catalog/publish" ng-class="{active: isActivePath('/catalog/publish')}" class="list-group-item" data-parent="#MainMenu">Publish</a>
+                    </div>
+                    <div class="list-group" ng-show="privilege < 5">
+                        <a href="#/catalog/change-requests" ng-class="{active: isActivePath('/catalog/change-requests')}" class="list-group-item" data-parent="#MainMenu">Change Requests</a>
                     </div>
                 </aside>
 

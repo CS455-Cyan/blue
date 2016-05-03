@@ -80,6 +80,7 @@
 									else{
 										$rootScope.isLoggedIn = true;
 										$rootScope.apps = apiSession.apps;
+										$rootScope.privilege = apiSession.privilege;
 										$rootScope.username = apiSession.username;
 										$rootScope._id = apiSession._id;
 									}
