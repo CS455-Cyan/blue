@@ -18,7 +18,7 @@ angular.module('Catalog')
         '$sanitize',
 		function($scope, $rootScope, CatalogAPI, $sanitize)
 		{
-			$rootScope.breadcrumbs = [{text: 'About UNA Catalog'}];
+			$rootScope.breadcrumbs = [{text: 'Undergraduate Catalog'}];
 		}
 	]
 ).controller
@@ -271,6 +271,28 @@ angular.module('Catalog')
 			$rootScope.breadcrumbs = [{text: 'Faculty and Staff'}];
 			CatalogAPI.getFacultyAndStaff(function(facultyAndStaff) {
 				$scope.facultyAndStaff = facultyAndStaff;
+				$scope.$apply();
+			});
+		}
+	]
+).controller
+(
+	'ArchivesCtrl',
+	[
+		'$scope',
+		'$rootScope',
+		'$routeParams',
+		'CatalogAPI',
+        '$sanitize',
+		function($scope, $rootScope, $routeParams, CatalogAPI, $sanitize)
+		{
+			$rootScope.breadcrumbs = [{text: 'Archives'}];
+			CatalogAPI.getHTTP('/catalog/archives', function(res) {
+				var archives = res.data;
+				for(var i in archives) {
+					archives[i].link = '/una/catalog/archives/undergraduate_catalog_' + archives[i].beginYear + '-' + archives[i].endYear + '.pdf';
+				}
+				$scope.archives = archives;
 				$scope.$apply();
 			});
 		}

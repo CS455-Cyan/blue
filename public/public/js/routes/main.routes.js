@@ -116,6 +116,13 @@
 							templateUrl: 'views/faculty-and-staff.html',
 							controller: 'FacultyAndStaffCtrl'
 						}
+					).when
+					(
+						'/archives',
+						{
+							templateUrl: 'views/archives.html',
+							controller: 'ArchivesCtrl'
+						}
 					);
 				}
 			]

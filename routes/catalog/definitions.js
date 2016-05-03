@@ -152,6 +152,7 @@ definitionExports.formatCredit = function(hours) {
 	Created: Tyler Yasaka 04/17/2016
 	Modified:
 		04/23/2016 Andrew Fisher
+		05/03/2016 Tyler Yasaka
 */
 definitionExports.calculateCredit = function(requirements) {
 	for(var r in requirements) {
@@ -176,17 +177,24 @@ definitionExports.calculateCredit = function(requirements) {
 			else if(item.separator == 'AND') {
 				for(var c in item.courses) {
 					var course = item.courses[c];
-					subtotal.min += course.hours.min;
-					subtotal.max += course.hours.max;
+					if(course.hours) {
+						subtotal.min += course.hours.min;
+						subtotal.max += course.hours.max;
+					}
 				}
 			}
 			else if (item.separator == 'OR' && item.courses.length) {
-				subtotal.min = item.courses[0].hours.min;
-				subtotal.max = item.courses[0].hours.max;
+				if(item.courses[0].hours) {
+					subtotal.min = item.courses[0].hours.min;
+					subtotal.max = item.courses[0].hours.max;
+				}
+
 				for(var c = 1; c < item.courses.length; c++) {
 					var course = item.courses[c];
-					subtotal.min = Math.min(subtotal.min, course.hours.min);
-					subtotal.max = Math.max(subtotal.max, course.hours.max);
+					if(course.hours) {
+						subtotal.min = Math.min(subtotal.min, course.hours.min);
+						subtotal.max = Math.max(subtotal.max, course.hours.max);
+					}
 				}
 			}
 			var credit = definitionExports.formatCredit(subtotal);

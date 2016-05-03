@@ -640,13 +640,16 @@
 						if($scope.selectedYear) {
 							var year = $scope.selectedYear + '-' + ($scope.selectedYear + 1);
 							var message = "Publish the catalog for " + year + "?";
-							var payload = {beginYear: year, endYear: year+1};
+							var payload = {
+								beginYear: $scope.selectedYear, endYear: $scope.selectedYear+1
+							};
 							if(confirm(message)) {
 								CatalogAPI.publishCatalog(payload, function(success) {
 									var message = "Catalog published successfully.";
 									if(!success) {
 										message = "There was an error publishing the catalog.";
 									}
+									alert(message);
 									$scope.$apply();
 								});
 							}
@@ -657,7 +660,12 @@
 					}
 					
 					$scope.preview = function() {
-						CatalogAPI.previewCatalog(function(success) {
+						var year = $scope.selectedYear + '-' + ($scope.selectedYear + 1);
+						var message = "Publish the catalog for " + year + "?";
+						var payload = {
+							beginYear: $scope.selectedYear, endYear: $scope.selectedYear+1
+						};
+						CatalogAPI.previewCatalog(payload, function(success) {
 							$scope.showPreview = true;
 							$scope.$apply();
 						});
