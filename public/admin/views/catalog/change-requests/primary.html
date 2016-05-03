@@ -174,10 +174,10 @@
         <label>Description: </label> {{todo.description}}
         <br/>
         <form>
-            <input type="text" class="form-control" ng-model="comment" placeholder="Add Comment here">
+            <input ng-show="todo.status == pending"  type="text" class="form-control" ng-model="comment" placeholder="Add Comment here">
             <p></p>
-            <button class="btn btn-success" ng-click="acceptTodo(todo._id, comment)">Accept</button>
-            <button class="btn btn-warning" ng-click="denyTodo(todo._id, 'blah')">Deny</button>
+            <button ng-show="todo.status == pending" class="btn btn-success" ng-click="acceptTodo(todo._id, comment)">Accept</button>
+            <button ng-show="todo.status == pending"  class="btn btn-warning" ng-click="denyTodo(todo._id, 'blah')">Deny</button>
         </form>
     </li>
 </ul>
