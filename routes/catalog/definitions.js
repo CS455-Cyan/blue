@@ -256,8 +256,8 @@ definitionExports.copyCollection = function(fromDB, toDB, modelName, callback){
 	Modified:
 */
 definitionExports.generateCatalogPDF = function(year, fileName, callback) {
-	var htmlPath = __dirname + fileName;
-	var pdfPath = __dirname + fileName;
+	var htmlPath = __dirname + fileName + '.html';
+	var pdfPath = __dirname + fileName + '.pdf';
 	async.waterfall([
 		function(cb) {
 			// Generate HTML of catalog
@@ -275,8 +275,9 @@ definitionExports.generateCatalogPDF = function(year, fileName, callback) {
 				html: htmlPath,
 			};
 			phantomPDF.convert(options, function(result) {
+			console.log(result);
 				result.toFile(pdfPath, cb);
-			})
+			});
 		}
 	], callback);
 }

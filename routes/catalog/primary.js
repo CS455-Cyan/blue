@@ -825,7 +825,7 @@ primaryExports.updateFacultyAndStaff = function(req, res) {
 primaryExports.publishCatalog = function(req, res) {
 	// restrict this to primary admins
 	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
-		var fileName = '/../../public/public_archives/catalog_' +  req.body.beginYear + '-' + req.body.endYear + '.pdf';
+		var fileName = '/../../public/public_archives/catalog_' +  req.body.beginYear + '-' + req.body.endYear;
 		// check if catalog has already been published
 		db.models.CatalogYear.find(
 			{beginYear: req.body.beginYear, endYear: req.body.endYear}
@@ -908,7 +908,7 @@ primaryExports.publishCatalog = function(req, res) {
 primaryExports.previewCatalog = function(req,res){
 	// restrict this to primary admins
 	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
-		var fileName = '/../../private/preview/catalog-preview.pdf';
+		var fileName = '/../../private/preview/catalog-preview';
 		db.models.CatalogYear.find(
 			{beginYear: req.body.beginYear, endYear: req.body.endYear}
 		).exec(function(err, matches) {
