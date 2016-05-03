@@ -16,11 +16,14 @@ console.log("Alright. One sec...");
 // Clear public database
 // This can be done asynchronously
 db.connection.on('public', function() {
-	db.publicModels.TextSection.remove();
-	db.publicModels.GeneralRequirement.remove();
-	db.publicModels.Program.remove();
-	db.publicModels.Course.remove();
-	db.publicModels.FacultyAndStaff.remove();
+	var cb = function() {};
+	db.publicModels.TextSection.remove({}, cb);
+	db.publicModels.GeneralRequirement.remove({}, cb);
+	db.publicModels.Program.remove({}, cb);
+	db.publicModels.Course.remove({}, cb);
+	db.publicModels.Subject.remove({}, cb);
+	db.publicModels.FacultyAndStaff.remove({}, cb);
+	db.publicModels.CatalogYear.remove({}, cb);
 });
 
 //Async allows us to simulate asynchronous behavior in javascript. That way these database queries execute one by one, in order.

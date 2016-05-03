@@ -828,7 +828,7 @@ primaryExports.publishCatalog = function(req, res) {
 	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
 		var fileName = '/../../public/public/archives/undergraduate_catalog_' +  req.body.beginYear + '-' + req.body.endYear;
 		// check if catalog has already been published
-		db.models.CatalogYear.find(
+		db.publicModels.CatalogYear.find(
 			{beginYear: req.body.beginYear, endYear: req.body.endYear}
 		).exec(function(err, matches) {
 			// Don't allow duplicate publishing of the same academic year
@@ -883,7 +883,7 @@ primaryExports.publishCatalog = function(req, res) {
 					var success = err ? false : true;
 					if (success) {
 						// save record of published pdf to database
-						new db.models.CatalogYear(req.body).save(function(err) {
+						new db.publicModels.CatalogYear(req.body).save(function(err) {
 							res.send({success: true});
 						})
 					} else {
@@ -910,7 +910,7 @@ primaryExports.previewCatalog = function(req,res){
 	// restrict this to primary admins
 	if (isAuthenticated(appname, privilege.primaryAdmin, req.session, res)) {
 		var fileName = '/../../public/admin/preview/undergraduate_catalog_preview';
-		db.models.CatalogYear.find(
+		db.publicModels.CatalogYear.find(
 			{beginYear: req.body.beginYear, endYear: req.body.endYear}
 		).exec(function(err, matches) {
 			// Make sure the years are consecutive
