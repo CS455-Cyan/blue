@@ -181,7 +181,7 @@
                     };
                     $scope.createCategory = function (category) {
                         console.log("createCategory");
-                        CatalogAPI.createDepartment(category, function (success) {
+                        CatalogAPI.createCategory(category, function (success) {
                             if (success) {
                                 $scope.refresh();
                             } else {

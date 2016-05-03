@@ -222,7 +222,7 @@ var CatalogAPIService = function() {
 	*/
 	this.removeCategory = function(categoryID, callback) {
 		deleteHTTP(
-			'/admin/catalog/programs/categories',
+			'/admin/catalog/programs/categories/' +
             categoryID,
 			function(res) {
 				callback(res.success);
