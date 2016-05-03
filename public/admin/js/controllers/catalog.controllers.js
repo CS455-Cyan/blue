@@ -179,6 +179,17 @@
                             $scope.$apply();
                         });
                     };
+                    $scope.createCategory = function (category) {
+                        console.log("createCategory");
+                        CatalogAPI.createDepartment(category, function (success) {
+                            if (success) {
+                                $scope.refresh();
+                            } else {
+                                //send a flag
+                            }
+                            $scope.$apply();
+                        });
+                    };
                     $scope.createDepartment = function (category, department) {
                         console.log("createDepartment");
                         CatalogAPI.createDepartment(category._id, department, function (success) {
