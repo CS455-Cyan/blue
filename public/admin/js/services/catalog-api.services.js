@@ -400,8 +400,8 @@ var CatalogAPIService = function() {
 		});
 	};
 
-	this.deleteProgram = function(categoryID, departmentID, programID, callback) {
-		var url = '/admin/catalog/programs/categoies/' + categoryID;
+	this.removeProgram = function(categoryID, departmentID, programID, callback) {
+		var url = '/admin/catalog/programs/categories/' + categoryID;
 		if(departmentID) {
 			url += '/departments/' + departmentID;
 		}

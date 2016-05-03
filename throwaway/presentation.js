@@ -79,20 +79,116 @@ async.waterfall([
 		// create some sample subjects
 		var subjects = [
 			{
+				name: 'Accounting',
+				abbreviation: 'AC'
+			},
+			{
+				name: "Art",
+				abbreviation: "AR"
+			},
+			{
+				name: 'American Sign Language',
+				abbreviation: 'ASL'
+			},
+			{
+				name: "Biology",
+				abbreviation: "BI"
+			},
+			{
+				name: "Business Law",
+				abbreviation: "BL"
+			},
+			{
+				name: "Chemistry",
+				abbreviation: "CH"
+			},
+			{
 				name: "Computer Information Systems",
 				abbreviation: "CIS"
+			},
+			{
+				name: "Criminal Justice",
+				abbreviation: "CJ"
+			},
+			{
+				name: "Communication",
+				abbreviation: "COM"
+			},
+			{
+				name: "Cooperative Education",
+				abbreviation: "COM"
 			},
 			{
 				name: "Computer Science",
 				abbreviation: "CS"
 			},
 			{
+				name: "Economics",
+				abbreviation: "EC"
+			},
+			{
+				name: "Early Childhood Education",
+				abbreviation: "ECE"
+			},
+			{
+				name: "Education",
+				abbreviation: "ED"
+			},
+			{
+				name: "Elementary Education",
+				abbreviation: "EED"
+			},
+			{
+				name: "Special Education",
+				abbreviation: "EEX"
+			},
+			{
+				name: "Pre-Engineering",
+				abbreviation: "EG"
+			},
+			{
 				name: "English",
 				abbreviation: "EN"
 			},
 			{
-				name: "Psychology",
-				abbreviation: "PY"
+				name: "Entertainment Industry",
+				abbreviation: "ENT"
+			},
+			{
+				name: "Earth Science",
+				abbreviation: "ES"
+			},
+			{
+				name: "Exit Examination",
+				abbreviation: "EXIT"
+			},
+			{
+				name: "Finance",
+				abbreviation: "FI"
+			},
+			{
+				name: "Foreign Languages",
+				abbreviation: "FL"
+			},
+			{
+				name: "French",
+				abbreviation: "FR"
+			},
+			{
+				name: "Family Studies",
+				abbreviation: "FS"
+			},
+			{
+				name: "First-Year Experience",
+				abbreviation: "FYE"
+			},
+			{
+				name: "Geography",
+				abbreviation: "GE"
+			},
+			{
+				name: "German",
+				abbreviation: "GR"
 			}
 		];
 		db.models.Subject(subjects[1]).save(function(err, result){

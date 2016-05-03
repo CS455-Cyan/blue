@@ -223,6 +223,17 @@
                             $scope.$apply();
                         });
                     };
+                    $scope.removeProgram = function (categoryID, programID) {
+                        console.log("removeProgram");
+                        CatalogAPI.removeProgram(categoryID, null, programID, function (success) {
+                            if (success) {
+                                $scope.refresh();
+                            } else {
+                                //send a flag
+                            }
+                            $scope.$apply();
+                        });
+                    };
 				}
 			]
             )
@@ -268,11 +279,17 @@
                             });
                             $scope.$apply();
                         };
-                        $scope.createProgram = function(category, department, program){
-                            console.log("createProgram");
-                            
-                            
-                        };
+                        $scope.removeProgram = function (categoryID, departmentID, programID) {
+                        console.log("removeProgram");
+                        CatalogAPI.removeProgram(categoryID, departmentID, programID, function (success) {
+                            if (success) {
+                                $scope.refresh();
+                            } else {
+                                //send a flag
+                            }
+                            $scope.$apply();
+                        });
+                    };
 				}
 			]
             )
@@ -342,7 +359,7 @@
                     , function ($scope, $rootScope, $location, CatalogAPI)
                     {
                         $scope.form = {}
-						
+						$scope.data = {};
                         $scope.selectedSubject = null;
                         $scope.subjects = [];
                         CatalogAPI.getHTTP('/catalog/subjects', function(result){
@@ -380,9 +397,12 @@
                             $scope.courseNumber = course.number
                             $scope.courseDescription = course.description
              				
-                            $scope.hours = course.hours
+                            $scope.hoursMax = course.hours.max
+							$scope.hoursMin = course.hours.min
                             $scope.courseFee = course.fee
-                            $scope.selectedSubject = course.subject
+							console.log(course.subject);
+                            $scope.data.selectedSubject = course.subject
+							
                         }
                         $scope.Addcourse = function () {
                             $scope.Addform = true;
@@ -402,9 +422,10 @@
                             $scope.courseNumber = null
                             $scope.courseDescription = null
              				
-                            $scope.hours = null
+                            $scope.hoursMax = null
+							$scope.hoursMin = null
                             $scope.courseFee = null
-                            $scope.selectedSubject = null
+                            $scope.data.selectedSubject = null
 						}
                         
                         $scope.submitForm = function (){
@@ -424,12 +445,19 @@
                                 "number" : $scope.courseNumber,
                                 "description" : $scope.courseDescription,
                                 "offerings" : offeringSemesters,
-                                "hours" : $scope.hours,
+                                "hours" : {"min" :   $scope.hoursMin, "max": $scope.hoursMax},
                                 "fee" : $scope.courseFee,
-                                "subject" : $scope.selectedSubject
+                                "subject" : $scope.data.selectedSubject._id 
                             };
-                            
-                            CatalogAPI.postHTTP('/admin/catalog/courses', $scope.courseObj, function(){location.reload(true);})
+							
+							console.log($scope.courseObj);
+                           
+							if($scope.adding == true)
+                            	CatalogAPI.postHTTP('/admin/catalog/courses', $scope.courseObj, function(){location.reload(true);})
+							else if($scope.editing == true)
+								CatalogAPI.putHTTP('/admin/catalog/courses/'+$scope.editId, $scope.courseObj, function(){location.reload(true);})
+						
+								
                         }
 
 				}

@@ -23,9 +23,13 @@
     
     <div class="form-group">
         <label for="subject">Subject:</label>
-    <select  ng-model="selectedSubject" id="subject"  class="form-control">
-        <option ng-repeat="item in subjects" value="{{item._id}}">{{item.abbreviation}}</option>
-    </select>
+   <!-- <select  ng-model="selectedSubject" id="subject"  class="form-control">
+        <option ng-repeat="item in subjects" value="{{item._id}}">{{item.abbreviation}}</option> -->
+		
+	<select class="form-control" ng-model="data.selectedSubject" ng-options="subject as subject.abbreviation for subject in subjects">
+		<option value=""></option>
+	</select>
+   
     
     </div>
     
@@ -62,9 +66,15 @@
     </div>
     
     <div class="form-group">
-		 <label for="hours">Hours:</label>
-		<input type="text" class="form-control" ng-model="hours" placeholder="hours">
+		 <label for="hours">Minimum Hours:</label>
+		<input type="text" class="form-control" ng-model="hoursMin" placeholder="Minimum Hours">
 	</div>
+	
+	    <div class="form-group">
+		 <label for="hours">Maximum Hours:</label>
+		<input type="text" class="form-control" ng-model="hoursMax" placeholder =" Maximum Hours">
+	</div>
+    
     
     <div class="form-group">
 		 <label for="courseFee">Course Fee:</label>
