@@ -324,6 +324,29 @@ var CatalogAPIService = function() {
 			}
 		);
 	};
+    
+    /*
+		Function: API.removeDepartment
+		Description: Remove a Department
+		Input:
+			department: the depart to be removed
+			callback: function to execute once the department is removed
+		Output:
+			callback is called when department is removed, with a boolean flag passed in as a parameter
+		Created: Graem Cook 4/28/2016
+		Modified:
+	*/
+	this.removeDepartment = function(categoryID, departmentID, callback) {
+		deleteHTTP(
+			'/admin/catalog/programs/categories/' +
+            categoryID +
+            "/departments/" +
+            departmentID,
+			function(res) {
+				callback(res.success);
+			}
+		);
+	};
 
 	/*
 		Function: API.getProgram
@@ -338,8 +361,10 @@ var CatalogAPIService = function() {
 		Created: Tyler Yasaka 04/17/2016
 		Modified:
 	*/
+    
+    
 	this.getProgram = function(categoryID, departmentID, programID, callback) {
-		var url = '/catalog/programs/categories/' + categoryID;
+		var url = '/admin/catalog/programs/categories/' + categoryID;
 		if(departmentID) {
 			url += '/departments/' + departmentID;
 		}

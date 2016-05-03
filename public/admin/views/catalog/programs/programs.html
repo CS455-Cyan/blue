@@ -10,7 +10,7 @@
         <a class="glyphicon glyphicon-edit btn btn-default" ng-click="editName = !editName" ng-show="!editName"> Edit Name</a>
         <textarea ng-model="program.name"  ng-show="editName==true"></textarea>
         <div ng-show="editName==true">Management</div>
-        <a class="glyphicon glyphicon-ok btn btn-success" ng-click="editName=!editName; updateProgram()" ng-show="editName"></a>
+        <a class="glyphicon glyphicon-ok btn btn-success" ng-click="editName=!editName; updateP()" ng-show="editName"></a>
         <a class="glyphicon glyphicon-remove btn btn-danger" ng-click="editName=!editName; refresh()" ng-show="editName"></a>
     </h2>
 
@@ -18,7 +18,7 @@
     <p ng-if="editDescription==false">{{program.description}}</p>
     <a class="glyphicon glyphicon-edit btn btn-default" ng-click="editDescription = !editDescription" ng-show="!editDescription"> Edit description</a>
     <textarea ng-model="program.description" ng-show="editDescription==true"></textarea>
-    <a class="glyphicon glyphicon-ok btn btn-success" ng-click="editDescription=!editDescription; updateProgram(category, department, program)" ng-show="editDescription"></a>
+    <a class="glyphicon glyphicon-ok btn btn-success" ng-click="editDescription=!editDescription; updateP()" ng-show="editDescription"></a>
     <a class="glyphicon glyphicon-remove btn btn-danger" ng-click="editDescription=!editDescription; refresh()" ng-show="editDescription"></a>
 </div>
 <catalog-requirements refresh-requirements="refresh" requirements="program.requirements" remove-requirement="updateProgram" update-requirement="updateProgram" add-requirement="updateProgram"></catalog-requirements>

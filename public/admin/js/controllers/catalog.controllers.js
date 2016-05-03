@@ -212,6 +212,17 @@
                             $scope.$apply();
                         });
                     };
+                    $scope.removeDepartment = function (categoryID, departmentID) {
+                        console.log("removeDepartment");
+                        CatalogAPI.removeDepartment(categoryID, departmentID, function (success) {
+                            if (success) {
+                                $scope.refresh();
+                            } else {
+                                //send a flag
+                            }
+                            $scope.$apply();
+                        });
+                    };
 				}
 			]
             )

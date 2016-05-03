@@ -33,14 +33,24 @@
           <a class="glyphicon glyphicon-ok btn btn-success" ng-click="editDescription=!editDescription; updateCategory(category)" ng-show="editDescription"></a>
           <a class="glyphicon glyphicon-remove btn btn-danger" ng-click="editDescription=!editDescription; refresh()" ng-show="editDescription"></a>
           
-        <a ng-repeat="department in category.departments" href="index.html#/catalog/programs/departments/{{category._id}}/{{department._id}}"><p>{{department.name}}</p></a>
-        <a ng-repeat="program in category.programs" href="index.html#/catalog/programs/programs/{{category._id}}/{{program._id}}"><p>{{program.name}}</p></a>
+        <h3><p>Departments</p></h3>
+        <div ng-repeat="department in category.departments">
+        <a href="index.html#/catalog/programs/departments/{{category._id}}/{{department._id}}" >
+        {{department.name}}</a>
+        <div class="glyphicon glyphicon-trash btn btn-danger" ng-click="removeDepartment(category._id, department._id)"></div>
+        </div>
           
          <a class="glyphicon glyphicon-plus btn btn-default" ng-click="addDepartment=!addDepartment; addProgram=false" ng-show="!addDepartment">New Department</a>
          <textarea placeholder="Add Department Name" ng-model="department.name"  ng-show="addDepartment==true"></textarea>
          <textarea placeholder="Add Department Description" ng-model="department.description"  ng-show="addDepartment==true"></textarea>
          <a class="glyphicon glyphicon-ok btn btn-success" ng-click="addDepartment=!addDepartment; createDepartment(category, department)" ng-show="addDepartment"></a>
          <a class="glyphicon glyphicon-remove btn btn-danger" ng-click="addDepartment=!addDepartment" ng-show="addDepartment"></a>
+          
+        <h3><p>Programs</p></h3>
+        <div ng-repeat="program in category.programs">
+        <a href="index.html#/catalog/programs/programs/{{category._id}}/{{program._id}}">{{program.name}}</a>
+        <div class="glyphicon glyphicon-trash btn btn-danger" ng-click="removeProgram(category._id, program._id)"></div>
+        </div>
           
          <a class="glyphicon glyphicon-plus btn btn-default" href="index.html#/catalog/programs/programs/{{category._id}}/new" ng-show="!addProgram">New Non-Departmental Program</a>
           
