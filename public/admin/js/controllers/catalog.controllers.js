@@ -223,6 +223,17 @@
                             $scope.$apply();
                         });
                     };
+                    $scope.removeProgram = function (categoryID, programID) {
+                        console.log("removeProgram");
+                        CatalogAPI.removeProgram(categoryID, null, programID, function (success) {
+                            if (success) {
+                                $scope.refresh();
+                            } else {
+                                //send a flag
+                            }
+                            $scope.$apply();
+                        });
+                    };
 				}
 			]
             )
