@@ -235,7 +235,30 @@ var CatalogAPIService = function() {
 		);
 	};
 
-			/*
+     /*
+		Function: API.createDepartment
+		Description: Create a department
+		Input:
+			category: the specific department's category
+			callback: function to execute once the department is created
+		Output:
+			callback is called when department is changed, with a boolean flag passed in as a parameter
+		Created: Graem Cook 4/28/2016
+		Modified:
+	*/
+	this.createDepartment = function(categoryID, department, callback) {
+		putHTTP(
+			'/admin/catalog/programs/categories/' +
+			categoryID +
+            "/departments",
+            department,
+			function(res) {
+				callback(res.success);
+			}
+		);
+	};
+    
+    /*
 		Function: API.updateDepartment
 		Description: Update a department by ID
 		Input:
@@ -250,9 +273,9 @@ var CatalogAPIService = function() {
 	this.updateDepartment = function(categoryID, departmentID, department, callback) {
 		putHTTP(
 			'/admin/catalog/programs/categories/' +
-			categoryId +
+			categoryID +
 			'/departments/' +
-			departmentId,
+			departmentID,
 			department,
 			function(res) {
 				callback(res.success);

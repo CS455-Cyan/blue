@@ -18,7 +18,7 @@
         </a>
             <a class="glyphicon glyphicon-edit btn" ng-click="editName = !editName" ng-show="!editName"></a>
             <textarea ng-model="category.name"  ng-show="editName==true"></textarea>
-            <a class="glyphicon glyphicon-ok btn btn-success" ng-click="editName=!editName; pushCategoryChange(category)" ng-show="editName"></a>
+            <a class="glyphicon glyphicon-ok btn btn-success" ng-click="editName=!editName; updateCategory(category)" ng-show="editName"></a>
             <a class="glyphicon glyphicon-remove btn btn-danger" ng-click="editName=!editName; refresh()" ng-show="editName"></a>
       </h4>
     </div>
@@ -28,19 +28,19 @@
         <div ng-if="editDescription==false">{{category.description}}</div>
           <a class="glyphicon glyphicon-edit btn btn-default" ng-click="editDescription = !editDescription" ng-show="!editDescription"> Edit description</a>
           <textarea ng-model="category.description" ng-show="editDescription==true"></textarea>
-          <a class="glyphicon glyphicon-ok btn btn-success" ng-click="editDescription=!editDescription; pushCategoryChange(category)" ng-show="editDescription"></a>
+          <a class="glyphicon glyphicon-ok btn btn-success" ng-click="editDescription=!editDescription; updateCategory(category)" ng-show="editDescription"></a>
           <a class="glyphicon glyphicon-remove btn btn-danger" ng-click="editDescription=!editDescription; refresh()" ng-show="editDescription"></a>
           
         <a ng-repeat="department in category.departments" href="index.html#/catalog/programs/departments/{{category._id}}/{{department._id}}"><p>{{department.name}}</p></a>
         <a ng-repeat="program in category.programs" href="index.html#/catalog/programs/programs/{{category._id}}/{{program._id}}"><p>{{program.name}}</p></a>
           
-         <a ng-click="addDepartment=!addDepartment; addProgram=false" ng-show="!addDepartment"><p>Add new department</p></a>
+         <a class="glyphicon glyphicon-plus btn btn-default" ng-click="addDepartment=!addDepartment; addProgram=false" ng-show="!addDepartment">New Department</a>
          <textarea placeholder="Add Department Name" ng-model="department.name"  ng-show="addDepartment==true"></textarea>
          <textarea placeholder="Add Department Description" ng-model="department.description"  ng-show="addDepartment==true"></textarea>
-         <a class="glyphicon glyphicon-ok btn btn-success" ng-click="addDepartment=!addDepartment; pushDepartmentChange(category, department)" ng-show="addDepartment"></a>
+         <a class="glyphicon glyphicon-ok btn btn-success" ng-click="addDepartment=!addDepartment; createDepartment(category, department)" ng-show="addDepartment"></a>
          <a class="glyphicon glyphicon-remove btn btn-danger" ng-click="addDepartment=!addDepartment" ng-show="addDepartment"></a>
           
-         <a ng-click="addProgram=!addProgram; addDepartment=false" ng-show="!addProgram"><p>Add new non-departmental program</p></a>
+         <a  class="glyphicon glyphicon-plus btn btn-default" ng-click="addProgram=!addProgram; addDepartment=false" ng-show="!addProgram">New Non-Departmental Program</a>
          <textarea placeholder="Add Program Name" ng-model="program.name"  ng-show="addProgram==true"></textarea>
          <textarea placeholder="Add Program Description" ng-model="program.description"  ng-show="addProgram==true"></textarea>
          <a class="glyphicon glyphicon-ok btn btn-success" ng-click="addProgram=!addProgram; pushChange(program)" ng-show="addProgram"></a>

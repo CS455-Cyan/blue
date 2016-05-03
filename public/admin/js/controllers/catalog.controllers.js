@@ -152,7 +152,7 @@
 				, 'CatalogAPI'
 				, '$sanitize'
 				, function ($scope, $rootScope, $location, CatalogAPI, $sanitize)
-                    {
+                {
                         $scope.editName = false;
                         $scope.editDescription = false;
                         $scope.addCategory = false;
@@ -168,8 +168,8 @@
                         $scope.refresh = function () {
                             CatalogAPI.listCategories(callback);
                         };
-                        $scope.pushCategoryChange = function (category) {
-                            console.log("pushCategoryChange");
+                        $scope.updateCategory = function (category) {
+                            console.log("updateCategory");
                             CatalogAPI.updateCategory(category._id, category, function (success) {
                                 if (success) {
                                     $scope.refresh();
@@ -179,9 +179,9 @@
                                 $scope.$apply();
                             });
                         };
-                        $scope.pushDepartmentChange = function (category, department) {
-                            console.log("pushDepartmentChange");
-                            CatalogAPI.updateDepartment(category.id, department._id, department, function (success) {
+                        $scope.createDepartment = function (category, department) {
+                            console.log("createDepartment");
+                            CatalogAPI.createDepartment(category._id, department, function (success) {
                                 if (success) {
                                     $scope.refresh();
                                 } else {
@@ -217,9 +217,9 @@
                             $scope.category = category;
                             $scope.$apply();
                         });
-                        $scope.pushDepartmentChange = function (category, department) {
-                            console.log("pushDepartmentChange");
-                            CatalogAPI.updateDepartment(category.id, department._id, department, function (success) {
+                        $scope.updateDepartment = function (category, department) {
+                            console.log("updateDepartment");
+                            CatalogAPI.updateDepartment(category._id, department._id, department, function (success) {
                                 if (success) {
                                     $scope.refresh();
                                 } else {
@@ -234,6 +234,11 @@
                                 $scope.category = category;
                             });
                             $scope.$apply();
+                        };
+                        $scope.createProgram = function(category, department, program){
+                            console.log("createProgram");
+                            
+                            
                         };
 				}
 			]
