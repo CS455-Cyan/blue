@@ -672,13 +672,14 @@
 					
 					$scope.preview = function() {
 						var year = $scope.selectedYear + '-' + ($scope.selectedYear + 1);
-						var message = "Publish the catalog for " + year + "?";
 						var payload = {
 							beginYear: $scope.selectedYear, endYear: $scope.selectedYear+1
 						};
 						CatalogAPI.previewCatalog(payload, function(success) {
-							$scope.showPreview = true;
-							$scope.$apply();
+							setTimeout(function() {
+								$scope.showPreview = true;
+								$scope.$apply();
+							}, 3000);
 						});
 					}
 				}

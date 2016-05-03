@@ -138,12 +138,14 @@
 						Modified:
 					*/
 					$rootScope.formatCredit = function(hours) {
-						var credit;
-						if(hours.min == hours.max) {
-							credit = String(hours.min);
-						}
-						else {
-							credit = hours.min + ' - ' + hours.max;
+						var credit = 0;
+						if(hours) {
+							if(hours.min == hours.max) {
+								credit = String(hours.min);
+							}
+							else {
+								credit = hours.min + ' - ' + hours.max;
+							}
 						}
 						return credit;
 					}

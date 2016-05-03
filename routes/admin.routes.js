@@ -21,7 +21,8 @@ var db = {};
 
 mongoClient.connect
 (
-	'mongodb://cyan:8029df8b@ds035603.mongolab.com:35603/apps',
+	//'mongodb://cyan:8029df8b@ds035603.mongolab.com:35603/apps',
+	'mongodb://localhost:27017/apps',
 	function(err, database)
 	{
 		if(!err)
@@ -45,7 +46,7 @@ router.post
 		var success = false;
 		var username = req.body.username;
 		var password = req.body.password;
-		password = modules['crypto'].createHash('md5').update(password).digest('hex');;
+		password = modules['crypto'].createHash('md5').update(password).digest('hex');
 
 		var currentTime = Date.now();
 		var allowed = loginAttempt(req, res, currentTime);

@@ -13,8 +13,10 @@ var events = require('events');
 var connectionEmitter = new events.EventEmitter();
 
 var connection = {
-	admin: mongoose.createConnection('mongodb://cyan:8029df8b@ds035603.mongolab.com:35603/apps'),
-	public: mongoose.createConnection('mongodb://cyan:8029df8b@ds019471.mlab.com:19471/catalogpublic')
+	//admin: mongoose.createConnection('mongodb://cyan:8029df8b@ds035603.mongolab.com:35603/apps'),
+	//public: mongoose.createConnection('mongodb://cyan:8029df8b@ds019471.mlab.com:19471/catalogpublic')
+	admin: mongoose.createConnection('mongodb://localhost:27017/apps'),
+	public: mongoose.createConnection('mongodb://localhost:27017/catalogpublic')
 }
 
 connection.admin.once('open', function() {
