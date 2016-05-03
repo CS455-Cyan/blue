@@ -193,9 +193,9 @@ var CatalogAPIService = function() {
 		Description: Create a Category
 		Input:
 			category: the category to be created
-			callback: function to execute once the department is created
+			callback: function to execute once the category is created
 		Output:
-			callback is called when department is changed, with a boolean flag passed in as a parameter
+			callback is called when category is changed, with a boolean flag passed in as a parameter
 		Created: Graem Cook 4/28/2016
 		Modified:
 	*/
@@ -203,6 +203,27 @@ var CatalogAPIService = function() {
 		postHTTP(
 			'/admin/catalog/programs/categories',
             category,
+			function(res) {
+				callback(res.success);
+			}
+		);
+	};
+    
+    /*
+		Function: API.removeCategory
+		Description: Remove a Category
+		Input:
+			category: the category to be removed
+			callback: function to execute once the category is removed
+		Output:
+			callback is called when category is removed, with a boolean flag passed in as a parameter
+		Created: Graem Cook 4/28/2016
+		Modified:
+	*/
+	this.removeCategory = function(categoryID, callback) {
+		deleteHTTP(
+			'/admin/catalog/programs/categories/' +
+            categoryID,
 			function(res) {
 				callback(res.success);
 			}

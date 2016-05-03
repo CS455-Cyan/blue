@@ -21,7 +21,7 @@
             <div class="glyphicon glyphicon-ok btn btn-success" ng-click="editName=!editName; updateCategory(category)" ng-show="editName"></div>
             <div class="glyphicon glyphicon-remove btn btn-danger" ng-click="editName=!editName; refresh()" ng-show="editName"></div>
             
-            <div class="glyphicon glyphicon-trash btn btn-danger" ng-show="!editName" style="float: right;"> Remove Category</div>
+            <div class="glyphicon glyphicon-trash btn btn-danger" ng-click="removeCategory(category._id)" ng-show="!editName" style="float: right;"> Remove Category</div>
       </h4>
     </div>
       
@@ -42,11 +42,7 @@
          <a class="glyphicon glyphicon-ok btn btn-success" ng-click="addDepartment=!addDepartment; createDepartment(category, department)" ng-show="addDepartment"></a>
          <a class="glyphicon glyphicon-remove btn btn-danger" ng-click="addDepartment=!addDepartment" ng-show="addDepartment"></a>
           
-         <a class="glyphicon glyphicon-plus btn btn-default" ng-click="addProgram=!addProgram; addDepartment=false" ng-show="!addProgram">New Non-Departmental Program</a>
-         <textarea placeholder="Add Program Name" ng-model="program.name"  ng-show="addProgram==true"></textarea>
-         <textarea placeholder="Add Program Description" ng-model="program.description"  ng-show="addProgram==true"></textarea>
-         <a class="glyphicon glyphicon-ok btn btn-success" ng-click="addProgram=!addProgram; createProgram(category, program)" ng-show="addProgram"></a>
-         <a class="glyphicon glyphicon-remove btn btn-danger" ng-click="addProgram=!addProgram" ng-show="addProgram"></a>
+         <a class="glyphicon glyphicon-plus btn btn-default" href="index.html#/catalog/programs/programs/{{category._id}}/new" ng-show="!addProgram">New Non-Departmental Program</a>
           
     </div>
    </div>

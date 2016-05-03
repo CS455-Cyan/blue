@@ -181,7 +181,7 @@
                     };
                     $scope.createCategory = function (category) {
                         console.log("createCategory");
-                        CatalogAPI.createDepartment(category, function (success) {
+                        CatalogAPI.createCategory(category, function (success) {
                             if (success) {
                                 $scope.refresh();
                             } else {
@@ -193,6 +193,17 @@
                     $scope.createDepartment = function (category, department) {
                         console.log("createDepartment");
                         CatalogAPI.createDepartment(category._id, department, function (success) {
+                            if (success) {
+                                $scope.refresh();
+                            } else {
+                                //send a flag
+                            }
+                            $scope.$apply();
+                        });
+                    };
+                    $scope.removeCategory = function (categoryID) {
+                        console.log("removeCategory");
+                        CatalogAPI.removeCategory(categoryID, function (success) {
                             if (success) {
                                 $scope.refresh();
                             } else {
@@ -267,6 +278,12 @@
                         $scope.programID = $routeParams.programID;
                         $scope.departmentID = $routeParams.departmentID;
                         $scope.categoryID = $routeParams.categoryID;
+                        $scope.editName = false;
+                        $scope.editDescription = false;
+                        $scope.addDepartment = false;
+                        $scope.addProgram = false;
+                        $scope.save = false;
+                        $scope.discard = false;
 
                         $scope.refresh = function () {
                             CatalogAPI.getProgram($scope.categoryID, $scope.departmentID, $scope.programID, function (category, department, program) {
@@ -275,6 +292,16 @@
                             });
                         }
 
+                        $scope.updateP = function(){
+                            $scope.updateProgram(null, function(success){
+                                if (success) {
+                                    $scope.refresh();
+                                } else {
+                                    //send a flag
+                                }
+                                $scope.$apply();
+                            });
+                        }
                         $scope.updateProgram = function (group, callback) {
                             CatalogAPI.updateProgram(
                                 $scope.categoryID
@@ -292,62 +319,32 @@
 				}
 			]
             ).controller(
-                'Catalog-General-RequirementsCtrl', [
-					'$scope'
-					, '$rootScope'
-					, '$location'
-					, 'CatalogAPI'
-					, '$sanitize'
-					, function ($scope, $rootScope, $location, CatalogAPI, $sanitize)
-                    {
-                        $scope.currentlySelected = {
-                            area: null
-                        }
-
-                        $scope.refreshRequirements = function () {
-                            CatalogAPI.listGeneralRequirements(function (areas) {
-                                $scope.areas = areas;
-                                $scope.$apply();
-                            });
-                        }
-
-                        $scope.removeRequirement = function (requirements, id, callback) {
-                            CatalogAPI.removeGeneralRequirement($scope.currentlySelected.area.area, id, function (success) {
-                                callback(success);
-                                $scope.$apply();
-                            });
-                        }
-
-                        $scope.addRequirement = function (group, callback) {
-                            CatalogAPI.addGeneralRequirement($scope.currentlySelected.area.area, group, function (success) {
-                                callback(success);
-                                $scope.$apply();
-                            });
-                        }
-
-                        $scope.updateRequirement = function (group, callback) {
-                            CatalogAPI.updateGeneralRequirement($scope.currentlySelected.area.area, group, function (success) {
-                                callback(success);
-                                $scope.$apply();
-                            });
-                        }
-
-					}
-				]
-            ).controller(
                 'Catalog-CoursesCtrl', [
 				'$scope'
-				, '$rootScope'
-				, '$location'
-				, 'CatalogAPI'
-				, function ($scope, $rootScope, $location, CatalogAPI)
+				
+                    , '$rootScope'
+				
+                    , '$location'
+				
+                    , 'CatalogAPI'
+				
+                    , function ($scope, $rootScope, $location, CatalogAPI)
                     {
                         $scope.form = {}
-                        $scope.Besure = function () {
+						
+                        $scope.selectedSubject = null;
+                        $scope.subjects = [];
+                        CatalogAPI.getHTTP('/catalog/subjects', function(result){
+                              $scope.subjects = result.data;
+                            $scope.$apply;
+                        });
+
+
+                        $scope.Besure = function (id) {
                             var x;
                             var r = confirm("Are you sure you want to delete this item?");
                             if (r == true) {
-                                x = "Delete";
+                                CatalogAPI.deleteHTTP('/admin/catalog/courses/' + id)
                             } else {
                                 x = "Cancel Delete";
                             }
@@ -357,17 +354,71 @@
                             $scope.courses = data;
                             $scope.$apply();
                         });
-
+						
+						$scope.adding = false;
+						$scope.editing = false;
                         $scope.Addform = false
                         $scope.add_offering = false
                         $scope.Edit = function (course) {
-                            $scope.Addform = true;
+                            $scope.editing = true;
+							$scope.adding = false;
+							$scope.editId = course._id;
                             $scope.form = course
                             $scope.formTitle = "Edit"
+							$scope.courseTitle = course.title
+                            $scope.courseNumber = course.number
+                            $scope.courseDescription = course.description
+             				
+                            $scope.hours = course.hours
+                            $scope.courseFee = course.fee
+                            $scope.selectedSubject = course.subject
                         }
                         $scope.Addcourse = function () {
                             $scope.Addform = true;
+							$scope.adding = true;
+							$scope.editing = false;
                             $scope.form = {}
+                        }
+						
+						$scope.close = function(){
+							$scope.adding = false;
+							$scope.editing = false;
+							$scope.Addform = false;
+							$scope.editId = null;
+                            $scope.form = null
+                            $scope.formTitle = null
+							$scope.courseTitle = null
+                            $scope.courseNumber = null
+                            $scope.courseDescription = null
+             				
+                            $scope.hours = null
+                            $scope.courseFee = null
+                            $scope.selectedSubject = null
+						}
+                        
+                        $scope.submitForm = function (){
+                            var offeringSemesters = [];
+                            
+                            if($scope.spring == true)
+                                offeringSemesters.push("spring");
+                             if($scope.summer == true)
+                                 offeringSemesters.push("summer");
+                             if($scope.fall == true)
+                                 offeringSemesters.push("fall");
+                             if($scope.textbox == true)
+                                 offeringSemesters.push($scope.textboxContent);
+                            
+                            $scope.courseObj = {
+                                "title" : $scope.courseTitle,
+                                "number" : $scope.courseNumber,
+                                "description" : $scope.courseDescription,
+                                "offerings" : offeringSemesters,
+                                "hours" : $scope.hours,
+                                "fee" : $scope.courseFee,
+                                "subject" : $scope.selectedSubject
+                            };
+                            
+                            CatalogAPI.postHTTP('/admin/catalog/courses', $scope.courseObj, function(){location.reload(true);})
                         }
 
 				}
