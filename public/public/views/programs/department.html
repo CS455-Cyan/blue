@@ -1,0 +1,13 @@
+<h1>Department of  {{department.name}}</h1>
+
+<div ng-bind-html="department.description"></div>
+
+<h3>Programs</h3>
+
+<ul>
+	<li ng-repeat="program in department.programs">
+		<a ng-href="#/programs/category/{{category._id}}/department/{{department._id}}/program/{{program._id}}">
+			{{programTitle(program)}}
+		</a>
+	</li>
+</ul>

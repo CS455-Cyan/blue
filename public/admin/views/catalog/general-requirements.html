@@ -1,0 +1,43 @@
+<!--
+    Description: Display general requirements as drop down boxes divided by Area
+		Input: 
+		  area: Label for a section of general requirements fitting under and "Area" requirement 				set;
+		  area.area: Stores the Area to which a set of requirements belongs;
+		Output:
+			area: Currently displays all data stored under the broad label "areas";
+		Created: Seth Putman 04/22/2016
+			With assistance from: Graem Cook;
+		Modified:
+			04/23/2016:
+				Added "groups" accordion inside "areas" accordion;
+				Modified names in "areas" accordian for clarity;
+				"Area" label changed to "generalRequirements";
+				"groups" accordion:
+					Uses the scope "generalRequirements.requirements";
+					Performs the same function as "areas" accordion, except it pulls data from the "requirements" array inside the the "generalRequirements" array;
+				Inserted "items" accordion inside "groups" accordion;
+				"items" accordion:
+					Currently non-functional;
+			04/27/2016:
+				Modified "requirements" and "items" accordions to properly display hours
+			04/28/2016:
+				Major restructuring to everything under the "items" accordion:
+					"items" is not longer an accordion;
+					"item" field now displayed under "requirements" dropdown;
+					radio buttons now displayed inside "requirements" dropdown;
+					radio buttons now appropriately display "isWriteIn" and "separator" status;
+					Placeholder for edit buttons, remove buttons, and add buttons added;
+-->
+
+<h2>Manage General Education Requirements</h2>
+
+<div class="form-group">
+	<label>Select an area:</label>
+	<select class="form-control" ng-model="currentlySelected.area" ng-options="area as ('Area ' + area.area + ': ' + area.name) for area in areas">
+		<option value=""></option>
+	</select>
+</div>
+
+<div ng-show="currentlySelected.area">
+	<catalog-requirements refresh-requirements="refreshRequirements" requirements="currentlySelected.area.requirements" remove-requirement="removeRequirement" update-requirement="updateRequirement" add-requirement="addRequirement"></catalog-requirements>
+</div>

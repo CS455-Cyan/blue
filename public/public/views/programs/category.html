@@ -1,0 +1,46 @@
+<div class="input-group input-group-lg col-md-12">
+	<div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+		<input type="text" class="form-control input-lg" placeholder="Search all programs" ng-model="query"/>
+	</div>
+	<a class="input-group-addon btn" id="sizing-addon1" ng-click="searchPrograms(query)">
+		<span class="glyphicon glyphicon-search">
+		</span>
+	</a>
+</div>
+
+
+<h1>{{category.name}}</h1>
+<!--This will be centered, maybe bold-->
+
+<div ng-bind-html="category.description"></div>
+
+<h2>Programs</h2>
+<!--Should be indented, but not centered-->
+
+<div ng-repeat="department in category.departments">
+	<!--The list of departments should be indented hyperlinks-->
+	<h4>
+		<a ng-href="#/programs/category/{{category._id}}/department/{{department._id}}">
+			Department of {{department.name}}
+		</a>
+	</h4>
+	<ul>
+		<li ng-repeat="program in department.programs">
+			<a  ng-href="#/programs/category/{{category._id}}/department/{{department._id}}/program/{{program._id}}">
+				{{programTitle(program)}}
+			</a>
+		</li>
+	</ul>
+	<br>
+</div>
+
+<div ng-if="category.programs.length">
+	<h4>Other Programs</h4>
+	<ul>
+		<li ng-repeat="program in category.programs">
+			<a  ng-href="#/programs/category/{{category._id}}/program/{{program._id}}">
+				{{programTitle(program)}}
+			</a>
+		</li>
+	</ul>
+</div>

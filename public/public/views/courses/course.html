@@ -1,0 +1,18 @@
+<h1>{{course.subject.abbreviation}}{{course.number}} {{course.title}}</h1>
+
+<p>
+	<strong>Subject: </strong>
+	<a ng-href="#/courses/subject/{{course.subject._id}}">
+		{{course.subject.name}}
+	</a>
+	<br>
+	<strong>Offered:</strong>
+	<span ng-repeat="(o, offering) in course.offerings">
+		{{offering}}<span ng-if="o < course.offerings.length - 1">,</span>
+	</span>
+	<br>
+	<strong>Credit:</strong>
+	{{formatCredit(course.hours)}}
+</p>
+
+<div ng-bind-html="course.description"></div>

@@ -1,0 +1,399 @@
+<!--																						->
+
+	Filename: index.html
+	Author: CS455 Cyan
+
+	Copyright (c) 2015 University of North Alabama
+
+<-																						 -->
+
+<!doctype html>
+<html lang="en" id="ng-app" xmlns:ng="https://angularjs.org" data-ng-app="Catalog">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta property="twitter:account_id" content="16582790" />
+		<meta name="keywords" content="university, college, alabama, southern, florence, shoals, alabama university, public, academics, degree, major, southeast, lions" />
+		<meta name="description" content="The University of North Alabama is an accredited, comprehensive regional state university offering undergraduate and graduate degree programs." />
+		<meta name="author" content="University of North Alabama" />
+
+		<meta name="google-translate-customization" content="9e8df25739c8ec6d-33c4032e53fe30ea-gc5c3eb5dfc23324a-b" />
+
+		<link rel="icon" type="image/png" href="/images/favicon.png" />
+		<link rel="shortcut icon" href="/images/favicon.ico" />
+		<link rel="image_src" href="/images/shared.png" />
+		<meta property="og:image" content="/images/shared.png" />
+		<meta name="p:domain_verify" content="d2b0ac2cbc4f81bdbd3fa3236e52c849" />
+
+		<title>
+			Catalog - University of North Alabama
+		</title>
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
+
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-chart.js/0.8.8/angular-chart.min.css" />
+
+		<link rel="stylesheet" href="https://una.edu/css/lion-styles.css" />
+
+		<link rel="stylesheet" href="css/app.css" />
+
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 10]>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-route.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-resource.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-cookies.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.5.5/angular-sanitize.min.js"></script>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.2/ui-bootstrap-tpls.min.js"></script>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/danialfarid-angular-file-upload/10.1.7/ng-file-upload.js"></script>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-chart.js/0.8.8/angular-chart.min.js"></script>
+
+		<script src="/una/admin/js/services/catalog-api.services.js"></script>
+		<script src="js/app.js"></script>
+		<script src="js/controllers/main.controllers.js"></script>
+		<script src="js/routes/main.routes.js"></script>
+		    
+		<base target="_top"/>
+	</head>
+	<body id="inside">
+
+		<!--[if lt IE 10]>
+			<div id="oldIE">
+				<a href="//windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+					<img src="/images/warning_bar_0000_us.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today." />
+				</a>
+			</div>
+		<![endif]-->
+
+	<header>
+		<div class="header-auxiliary">
+			<div class="container">
+				<div class="utility-group">
+					<nav class="utility">
+						<ul>
+							<li>
+								<a id="QuickButton" onclick="_sz.push(['event', 'HomePage', 'click', 'Quick Links']);">
+										Quick Links
+								</a>
+							</li>
+							<li>
+								<a href="https://una.instructure.com/">
+									Canvas
+								</a>
+							</li>
+							<li>
+								<a href="http://unaportal.una.edu/">
+									Portal
+								</a>
+							</li>
+							<li>
+								<a href="/library/">Library</a></li><li><a href="/directory/" target="_self">
+										Directory
+								</a>
+							</li>
+						</ul>
+					</nav>
+					<div class="header-search">
+						<form action="/search/index.html" id="cse-search-box" method="get" name="searchForm" novalidate="novalidate" role="form" target="_self">
+							<div class="form-group has-feedback">
+								<input name="cx" type="hidden" value="008648181134270135183:nghw5cw5fq0"/>
+								<input name="cof" type="hidden" value="FORID:11"/>
+								<input class="form-control" id="q" name="q" placeholder="Search UNA.edu" style="height: 25px; margin-top: 4px;padding-bottom:0;padding-top:0;" title="Search UNA.edu" type="search"/>
+								<button type="submit">
+									<span								 class="glyphicon glyphicon-search" style="top:-9px;"></span>
+									<span class="btn-search-label">
+											Go
+									</span>
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="QuickMenu" style="display: none;">
+			
+			<div class="container-fluid"><div class="container"><div class="row"><div class="col-md-3"><h3>
+									About UNA
+								</h3><ul><li><a href="/administration/index.html">
+											President's Message
+										</a></li><li><a href="/visit/index.html">
+											About the Shoals
+										</a></li><li><a href="/visit/directions-to-campus.html">
+											Directions
+										</a></li><li><a href="/visit/where-to-stay-eat.html">
+											Where to stay &amp; eat
+										</a></li><li><a href="/about/index.html">
+											UNA By the Numbers
+										</a></li><li><a href="/administration/accreditation.html">
+											Accreditation
+										</a></li><li><a href="/about/address.html">
+											Contact UNA
+										</a></li></ul></div><div class="col-md-3"><h3>
+									Work with UNA
+								</h3><ul><li><a href="//jobs.una.edu/">
+											Employment at UNA
+										</a></li><li><a href="/career/employers.html">
+											Employer Development
+										</a></li><li><a href="/humanresources/index.html">
+											Human Resources
+										</a></li><li><a href="/career/index.html">
+											Career Planning &amp; Development
+										</a></li><li><a href="https://una-csm.symplicity.com/students/index.php">
+											Student Jobs on campus
+										</a></li></ul></div><div class="col-md-3"><h3>
+									Safety &amp; Wellness
+								</h3><ul><li><a href="/manesafety/index.html">
+											MANE Safety
+										</a></li><li><a href="/police/index.html">
+											University Police
+										</a></li><li><a href="/counseling/index.html">
+											Counseling Services
+										</a></li><li><a href="/healthservices/index.html">
+											Health Services
+										</a></li><li><a href="/titleix/index.html">
+											Title IX
+										</a></li><li><a href="/alcoholEDU/index.html">
+											AlcoholEDU
+										</a></li></ul></div><div class="col-md-3"><h3>
+									Student Resources
+								</h3><ul><li><a href="http://www.una.bkstr.com/">
+											Bookstore
+										</a></li><li><a href="/catalog/index.html">
+											Catalog
+										</a></li><li><a href="/liveon/index.html">
+											Residence Halls
+										</a></li><li><a href="/tuition/index.html">
+											Pay Tuition
+										</a></li><li><a href="/successcenter/index.html">
+											Success Center
+										</a></li><li><a href="/its/index.html">
+                                            ITS Help Desk
+                                        </a></li></ul></div></div></div></div><div class="clear">
+					&#160;
+				</div></div><div class="header-primary" role="banner"><div class="container"><h1 class="logo"><a href="/" target="_self">
+							University of North Alabama
+						</a></h1><ul class="mobile-nav-toggle-list"><li class="my hidden-xs"><a class="navbar-link ui-link" href="https://una.instructure.com" target="_self"><span class="glyphicon glyphicon-book"></span><small class="hidden-xs" style="font-size: 50%; top: -10px; position: relative;">
+									Canvas
+								</small></a></li><li class="my hidden-xs"><a class="navbar-link ui-link" href="http://unaportal.una.edu" target="_self"><span class="glyphicon glyphicon-envelope"></span><small class="hidden-xs" style="font-size: 50%; top: -10px; position: relative;">
+									Portal
+								</small></a></li><li class="my hidden-xs"><a class="navbar-link ui-link" href="http://una.transloc.com/m/" target="_self"><span class="glyphicon glyphicon-road"></span><small class="hidden-xs" style="font-size: 50%; top: -10px; position: relative;">
+									Shuttles
+								</small></a></li><li class="my hidden-xs"><a class="navbar-link ui-link" href="/map/index.html" target="_self"><span class="glyphicon glyphicon-map-marker"></span><small class="hidden-xs" style="font-size: 50%; top: -10px; position: relative;">
+									Map
+								</small></a></li><li class="my hidden-xs"><a class="navbar-link ui-link" href="/lioncam/index.html" target="_self"><span class="glyphicon glyphicon-facetime-video"></span><small class="hidden-xs" style="font-size: 50%; top: -10px; position: relative;">
+    								LionCam
+								</small></a></li><li><button class="mobile-nav-toggle"><i class="fa fa-bars"> </i><span>
+									Toggle Navigation
+								</span></button></li></ul><nav class="site-navigation"><div class="mobile-auxiliary"><div class="header-search"><form action="/search/index.html" id="cse-search-box" method="get" name="searchForm" novalidate="novalidate" role="form" target="_self"><div><input name="cx" type="hidden" value="008648181134270135183:nghw5cw5fq0"/><input name="cof" type="hidden" value="FORID:11"/><input class="form-control" id="q" name="q" placeholder="Search UNA.edu" title="Search UNA.edu" type="search"/><button type="submit"><span class="glyphicon glyphicon-search hidden-xs hidden-sm"></span><span class="btn-search-label">
+												Go
+											</span></button></div></form></div><nav class="utility"><ul><li><a href="/humanresources/employment.html">
+											Employment
+										</a></li><li class="hidden-xs"><a href="/library/index.html">
+											Library
+										</a></li><li class="hidden-xs"><a href="/administration/index.html">
+											Administration
+										</a></li><li><a href="/directory/">
+											Directory
+										</a></li><li><a href="//www.una.edu/calendar/#/academic">
+											Academic Calendar
+										</a></li><li class="hidden-xs"><a href="/registrar/student-information/schedule.html">
+											Class Schedule
+										</a></li></ul></nav><p class="visible-xs"><a class="navbar-link recruit col-xs-6" href="https://una.instructure.com" target="_self"><span class="glyphicon glyphicon-book"></span>
+									Canvas
+								</a><a class="navbar-link recruit col-xs-6" href="http://unaportal.una.edu" target="_self"><span class="glyphicon glyphicon-download-alt"></span>
+									Portal
+								</a><a class="navbar-link recruit col-xs-6" href="http://una.transloc.com/m/" target="_self"><span class="glyphicon glyphicon-road"></span>
+									Shuttles
+								</a><a class="navbar-link recruit col-xs-6" href="/map/index.html" target="_self"><span class="glyphicon glyphicon-map-marker"></span>
+									Map
+								</a></p></div><ul class="nav navbar-nav navbar-right" id="main-nav"><li class="dropdown"><a class="dropdown-toggle ui-link" data-toggle="dropdown">
+									Apply 
+									<span class="glyphicon glyphicon-chevron-down"></span></a><ul class="dropdown-menu"><li class="dropdown-header"><strong>
+											GET STARTED!
+										</strong></li><li><a class="ui-link" href="/apply/index.html" target="_self"><strong>
+												APPLY NOW
+											</strong></a></li><li><a class="ui-link" href="/admissions/costs-expenses.html" target="_self">
+											Costs/Expenses
+										</a></li><li><a class="ui-link" href="/financial-aid/index.html" target="_self">
+											Financial Aid
+										</a></li><li><a class="ui-link" href="/request/index.html" target="_self">
+											Request Information
+										</a></li><li class="divider"/><li class="dropdown-header"><strong>
+											HOW TO APPLY
+										</strong></li><li><a class="ui-link" href="/admissions/apply-to-una/new-freshmen.html" target="_self">
+											New Students
+										</a></li><li><a class="ui-link" href="/graduate/index.html" target="_self">
+											Graduate Students
+										</a></li><li><a class="ui-link" href="/international/admissions/index.html" target="_self">
+											International Students
+										</a></li><li><a class="ui-link" href="/admissions/apply-to-una/transfer-students.html" target="_self">
+											Transfer Students
+										</a></li><li class="divider"/><li><a class="ui-link" href="/admissions/index.html" target="_self"><strong>
+												Office of Admissions
+											</strong></a></li></ul></li><li class="dropdown"><a class="dropdown-toggle ui-link" data-toggle="dropdown">
+									Learn 
+									<span class="glyphicon glyphicon-chevron-down"></span></a><ul class="dropdown-menu"><li class="dropdown-header"><strong>
+											STUDY AT UNA
+										</strong></li><li><a class="ui-link" href="/academics/majors/" target="_self">
+											Majors &amp; Minors
+										</a></li><li><a class="ui-link" href="//www.campusce.net/una/category/category.aspx" target="_self">
+											Continuing Education
+										</a></li><li><a class="ui-link" href="/distance/index.html" target="_self">
+											Distance Learning
+										</a></li><li><a class="ui-link" href="/graduate/index.html" target="_self">
+											Graduate Studies
+										</a></li><li class="divider"/><li class="dropdown-header"><strong>
+											COLLEGES
+										</strong></li><li><a class="ui-link" href="/artsandsciences/index.html" target="_self">
+											Arts &amp; Sciences
+										</a></li><li><a class="ui-link" href="/business/index.html" target="_self">
+											Business
+										</a></li><li><a class="ui-link" href="/education/index.html" target="_self">
+											Education &amp; Human Sciences
+										</a></li><li><a class="ui-link" href="/nursing/index.html" target="_self">
+											Nursing
+										</a></li><li class="divider"/><li><a class="ui-link" href="/academics/index.html" target="_self"><strong>
+												Academic Affairs
+											</strong></a></li></ul></li><li class="dropdown"><a class="dropdown-toggle ui-link" data-toggle="dropdown">
+									Connect 
+									<span class="glyphicon glyphicon-chevron-down"></span></a><ul class="dropdown-menu"><li class="dropdown-header"><strong>
+											GET INVOLVED
+										</strong></li><li><a class="ui-link" href="/greeklife/" target="_self">
+											Greek Life
+										</a></li><li><a class="ui-link" href="http://una.orgsync.com/org/leadershipvolunteerism" target="_self">
+											Leadership &amp; Volunteerism
+										</a></li><li><a class="ui-link" href="/liveon/" target="_self">
+											University Residences
+										</a></li><li><a class="ui-link" href="/calendar/" target="_self">
+											Student Calendar
+										</a></li><li><a class="ui-link" href="/sga/" target="_self">
+											Student Government
+										</a></li><li><a class="ui-link" href="/upc/" target="_self">
+											University Program Council
+										</a></li><li class="divider"/><li><a class="ui-link" href="/student-engagement/" target="_self"><strong>
+												Office of Student Engagement
+											</strong></a></li></ul></li><li class="dropdown"><a class="dropdown-toggle ui-link" data-toggle="dropdown">
+									Sports 
+									<span class="glyphicon glyphicon-chevron-down"></span></a><ul class="dropdown-menu"><li class="dropdown-header"><strong>
+											ATHLETICS
+										</strong></li><li><a class="ui-link" href="http://www.roarlions.com/sports/2015/6/2/GEN_0602151134.aspx" target="_self">
+											Get Tickets
+										</a></li><li><a class="ui-link" href="http://www.roarlions.com/calendar.aspx" target="_self">
+											Game Schedules
+										</a></li><li><a class="ui-link" href="http://www.roarlions.com/hof.aspx" target="_self">
+											Hall of Fame
+										</a></li><li><a class="ui-link" href="http://portal.stretchinternet.com/una/" target="_self">
+											Lion Vision
+										</a></li><li class="divider"/><li class="dropdown-header"><strong>
+											RECREATIONAL SPORTS
+										</strong></li><li><a class="ui-link" href="/recsports/club-sports/index.html" target="_self">
+											Club Sports
+										</a></li><li><a class="ui-link" href="/recsports/fitness-programs/index.html" target="_self">
+											Fitness Programs
+										</a></li><li><a class="ui-link" href="/recsports/intramural/index.html" target="_self">
+											Intramural Sports
+										</a></li><li><a class="ui-link" href="/oac/" target="_self">
+											Outdoor Adventure Program
+										</a></li><li class="divider"/><li><a class="ui-link" href="http://www.roarlions.com" target="_self"><strong>
+												University Athletics
+											</strong></a></li></ul></li><li class="dropdown"><a class="dropdown-toggle ui-link" data-toggle="dropdown">
+									Alumni 
+									<span class="glyphicon glyphicon-chevron-down"></span></a><ul class="dropdown-menu"><li class="dropdown-header"><strong>
+											RECONNECT
+										</strong></li><li><a class="ui-link" href="https://alumni.una.edu/alumniclubs" target="_self">
+											Alumni Clubs
+										</a></li><li><a class="ui-link" href="https://alumni.una.edu/sslpage.aspx?pid=250" target="_self">
+											Alumni Events
+										</a></li><li><a class="ui-link" href="/career/alumni-spotlight.html" target="_self">
+											Alumni Spotlight
+										</a></li><li><a class="ui-link" href="http://alumni.una.edu/page.aspx?pid=193" target="_self">
+											Update your records
+										</a></li><li><a class="ui-link" href="/career/index.html" target="_self">
+											Career Planning &amp; Development
+										</a></li><li class="divider"/><li><a class="ui-link" href="http://alumni.una.edu" target="_self"><strong>
+												Alumni Relations
+											</strong></a></li><li><a class="ui-link" href="/advancement/index.html" target="_self"><strong>
+												University Advancement
+											</strong></a></li></ul></li><li><a class="ui-link" href="/giftbay/index.html" target="_self">
+									Give
+								</a></li><li class="hidden-sm"><a class="ui-link" href="/lioncam/index.html" target="_self">
+                                    LionCam <span class="glyphicon glyphicon-facetime-video" style="color:#db9f11;"></span></a></li></ul></nav></div>
+		</div>
+	</header>
+
+		<div class="container-fluid" id="college">
+			<div class="container">
+				<p class="pull-left col-md-4 col-sm-4 col-xs-12">
+					Undergraduate Catalog
+				</p>
+			</div>
+		</div>
+
+		<!-- #programs-calendar -->
+        <!-- #programs-calendar -->
+        <div class="container-fluid" id="programs-calendar">
+            <div class="container">
+                <div class="row row-offcanvas row-offcanvas-left">
+                    <p class="pull-left visible-xs visible-sm">
+                        <button class="btn btn-primary btn-xs" data-toggle="offcanvas" type="button">&gt;</button>
+                    </p>
+                    <!-- .sidebar-module -->
+                    <aside class="sidebar-module col-xs-12 col-md-3 sidebar-offcanvas">
+                        <p class="impact">
+                            
+                        </p>
+                        <div class="list-group">
+													 <a ng-repeat="t in textSections"  ng-href="#/section/{{t._id}}" ng-class="{active: isActivePath('/section/'+t._id)}" class="list-group-item" data-parent="#MainMenu">{{t.title}}</a>
+													 <a href="#/general-requirements" ng-class="{active: isActivePath('/general-requirements')}" class="list-group-item" data-parent="#MainMenu">General Education Requirements</a>
+													<a data-target="#demo4" class="list-group-item" data-toggle="collapse" data-parent="#MainMenu"><span class='
+			glyphicon glyphicon-chevron-down'></span> &nbsp Colleges and Programs</a>
+													<div class="collapse" id="demo4">
+															<a ng-repeat="c in categories" ng-href="#programs/category/{{c._id}}" ng-class="{active: isActivePath('/programs/category/'+c._id)}" class="list-group-item">{{c.name}}</a>
+													</div>
+													<a href="#/courses" ng-class="{active: isActivePath('/courses')}" class="list-group-item" data-parent="#MainMenu">Courses</a>
+													<a href="#/faculty-and-staff" ng-class="{active: isActivePath('/faculty-and-staff')}" class="list-group-item" data-parent="#MainMenu">Faculty and Staff</a>
+													<a href="#/archives" ng-class="{active: isActivePath('/archives')}" class="list-group-item" data-parent="#MainMenu">Archives</a>
+                    		</div>
+                    </aside>
+									
+                    <!-- /.sidebar-module -->
+                    <!-- .mainContent -->
+                    <div class="mainContent col-xs-12 col-sm-12 col-md-9">
+											
+											<ol class="breadcrumb">
+												<li ng-repeat="(b, breadcrumb) in breadcrumbs" ng-class="{active: b == breadcrumbs.length - 1}">
+													<a ng-if="b < breadcrumbs.length - 1" ng-href="{{breadcrumb.url}}">
+														{{breadcrumb.text}}
+													</a>
+													<span ng-if="b == breadcrumbs.length - 1">{{breadcrumb.text}}</span>
+												</li>
+											</ol>
+											
+											<div ng-view></div>
+											
+                    </div>
+                    <!-- /.mainContent -->
+                </div>
+            </div>
+        </div>
+        <!-- /#programs-calendar -->
+		<!-- /#programs-calendar -->
+
+<system-region name="DEFAULT"><footer class="container-fluid"><div class="container"><div class="row"><div class="social-foot col-xs-12 col-md-12"><div class="col-xs-12 col-sm-6 col-md-6"><span class="btn-lg glyphicon glyphicon-globe pull-left"></span><address>Florence, AL 35632<br/>(256) 765-4100<br/>1 (800) TALK-UNA</address></div><div class="col-xs-12 col-sm-6 col-md-6"><div class="btn-group pull-right"><a class="btn btn-default btn-md ui-link" href="http://www.facebook.com/northalabama" target="_blank"><i class="fa-lg fa-facebook fa"> </i></a><a class="btn btn-default btn-md ui-link hidden-xs" href="https://plus.google.com/111961480250852007759/posts" target="_blank"><i class="fa-lg fa-google-plus fa"> </i></a><a class="btn btn-default btn-md ui-link" href="http://www.instagram.com/north_alabama" target="_blank"><i class="fa-lg fa-instagram fa"> </i></a><a class="btn btn-default btn-md ui-link hidden-xs" href="https://www.linkedin.com/company/39835" target="_blank"><i class="fa-lg fa-linkedin fa"> </i></a><a class="btn btn-default btn-md ui-link" href="http://www.twitter.com/north_alabama" target="_blank"><i class="fa-lg fa-twitter fa"> </i></a><a class="btn btn-default btn-md ui-link" href="http://www.youtube.com/unaroarlions" target="_blank"><i class="fa-lg fa-youtube fa"> </i></a></div></div></div></div><div class="row"><div class="col-xs-12 col-sm-3 col-md-3"><a href="/map/index.html" target="_self" title="View Campus Maps"><img alt="Map of University of North Alabama Campus" class="img-responsive" src="//www.una.edu/about/images/proximity-map.png" pagespeed_url_hash="2882918269" onload="pagespeed.CriticalImages.checkImageForCriticality(this);"/></a></div><div class="col-xs-12 col-sm-3 col-md-3 hidden-xs"><ul><li><a href="/administration/accreditation.html" target="_self">Accreditation</a></li><li><a href="/administration/index.html" target="_self">Administration</a></li><li><a href="https://alumni.una.edu/sslpage.aspx?pid=193" target="_self">Alumni OnLION</a></li><li><a href="/pressroom/" target="_self">Campus News</a></li></ul></div><div class="col-xs-12 col-sm-3 col-md-3 hidden-xs"><ul><li><a href="/police/index.html" target="_self">Campus Police</a></li><li><a href="/emergency-management/index.html" target="_self">Emergency Info</a></li><li><a href="https://jobs.una.edu/" target="_self">Employment</a></li><li><a href="http://www.florala.net/" target="_self">The Flor-Ala</a></li></ul></div><div class="col-xs-12 col-sm-3 col-md-3 hidden-xs"><ul><li><a href="/giftbay/index.html" target="_self">Give to UNA</a></li><li><a href="/lionalert/index.html" target="_self">Lion Alert</a></li><li><a href="/map/index.html" target="_self">Map/Directions</a></li><li><a href="/administration/mission-statement.html" target="_self">Mission Statement</a></li></ul></div></div><div class="row"><div class="copyright col-xs-12 col-md-12"><small><span class="pull-left">Copyright © 2015 | University of North Alabama | All rights reserved.</span><span class="pull-right"><a href="/web/cascade/find-your-web-lion.html" target="_self">Website Feedback</a></span></small></div></div></div></footer><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script><script src="//www.una.edu/js/offcanvas.js"></script><script src="//www.una.edu/js/nav.js"></script><script type="text/javascript">(function()
+{var sz=document.createElement('script');sz.type='text/javascript';sz.async=true;sz.src='//us1.siteimprove.com/js/siteanalyze_66357180.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(sz,s);})();</script></system-region>
+
+	</body>
+</html>

@@ -1,0 +1,98 @@
+<h2>Course Manager</h2>
+<ul class="list-group">
+    <li class="list-group-item " ng-repeat="course in courses">
+        {{course.title}}
+        <button class="btn btn-success btn-sm pull-right" ng-click="adding = true; Edit(course)" ng-model="form_fieldname">
+            <span class="glyphicon glyphicon-pencil"></span>
+        </button>
+        <button class="btn btn-danger btn-sm pull-right">
+            <span class="glyphicon glyphicon-trash" ng-click="Besure(course._id)"></span>
+        </button>
+    </li>
+</ul>
+
+<ul></ul>
+
+<button class="btn btn-warning  " ng-hide="editing || adding"  ng-click="Addcourse(); adding = true">
+    <span class="glyphicon glyphicon-plus" ></span><b> Add Course</b>
+</button>
+
+<ul></ul>
+
+<div ng-show="adding || editing">
+    
+    <div class="form-group">
+        <label for="subject">Subject:</label>
+   <!-- <select  ng-model="selectedSubject" id="subject"  class="form-control">
+        <option ng-repeat="item in subjects" value="{{item._id}}">{{item.abbreviation}}</option> -->
+		
+	<select class="form-control" ng-model="data.selectedSubject" ng-options="subject as subject.abbreviation for subject in subjects">
+		<option value=""></option>
+	</select>
+   
+    
+    </div>
+    
+    <div class="form-group">
+		 <label for="courseNumber">Course Number:</label>
+        <input type="text" class="form-control" ng-model="courseNumber" placeholder="Course Number">
+    </div>
+    
+    <label>Course Offerings:</label>
+    <div class="checkbox">
+        <label>
+        <input type="checkbox" ng-model="spring" value="Spring">
+            Spring
+        </label>
+        
+        <label>
+        <input type="checkbox" ng-model="summer" value="Summer">
+            Summer
+        </label>
+        
+        <label>
+        <input type="checkbox" ng-model="fall" value="Fall">
+            Fall
+        </label>
+        
+        <label>
+        <input type="checkbox" ng-model="textbox" value="textbox">
+            Special text
+        </label>
+    </div>
+    <div ng-show="textbox" class="form-group">
+		 <label for="textbox">Specieal Offering Text:</label>
+        <input type="text" id="textbox" class="form-control" ng-model="textboxContent" placeholder="Special offerings here">
+    </div>
+    
+    <div class="form-group">
+		 <label for="hours">Minimum Hours:</label>
+		<input type="text" class="form-control" ng-model="hoursMin" placeholder="Minimum Hours">
+	</div>
+	
+	    <div class="form-group">
+		 <label for="hours">Maximum Hours:</label>
+		<input type="text" class="form-control" ng-model="hoursMax" placeholder =" Maximum Hours">
+	</div>
+    
+    
+    <div class="form-group">
+		 <label for="courseFee">Course Fee:</label>
+		<input type="text" class="form-control" ng-model="courseFee" placeholder="Course Fee">
+	</div>
+    
+     <div class="form-group">
+		  <label for="courseTitle">Course Title:</label>
+		 <input type="text" class="form-control" ng-model="courseTitle" placeholder="Course Title">
+	</div>
+    
+    
+    <div class="form-group">
+		 <label for="courseDescription">Course Description:</label>
+		<textarea type="text-area" class="form-control" ng-model="courseDescription" placeholder="Course Description"></textarea></div>
+    
+    <div class="form-group">
+    <button class="btn btn-success form-control" ng-click="submitForm()">Save</button><br/><p></p>
+     <button class="btn btn-danger form-control" ng-click="close(); Addform = false; $scope.adding = false; $scope.editing = false">Cancel</button>
+        </div>
+</div>

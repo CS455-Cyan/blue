@@ -1,0 +1,20 @@
+<h1>Account</h1>
+<h3>Change Password</h3>
+<p>Requirements:
+	<ul>
+		<li>One uppercase character minimum</li>
+		<li>One numeric character minimum</li>
+		<li>No special characters</li>
+		<li>Eight to twelve characters in length</li>
+	</ul>
+</p>
+<div class="form-group">
+	<input class="form-control" type="password" ng-model="password" placeholder="New password">
+</div>
+<div class="form-group">
+	<input class="form-control" type="password" ng-model="confirmPassword" placeholder="Confirm new password">
+</div>
+<button class="btn btn-success" ng-click="updateAccount()">
+	<span class="glyphicon glyphicon-save"></span>
+	Save changes
+</button>

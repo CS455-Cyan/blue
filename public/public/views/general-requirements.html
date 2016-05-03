@@ -1,0 +1,40 @@
+<h1>General Education Requirements</h1>
+
+<div ng-repeat="area in generalRequirements">
+	<h2>
+		Area {{area.area}} - {{area.name}}
+	</h2>
+	<div class="panel panel-default" ng-repeat="requirement in area.requirements">
+		<div class="panel-heading">
+			<h4>
+				{{requirement.name}}
+			</h4>
+		</div>
+		<table class="table">
+			<tr>
+				<th>Requirement</th>
+				<th>Credit</th>
+			</tr>
+			<tr ng-repeat="item in requirement.items">
+				<td ng-show="!!item.writeIn">
+					{{item.writeIn.content}}
+				</td>
+				<td ng-show="!item.writeIn">
+					<span ng-repeat="(c, course) in item.courses">
+						<a ng-href="#/courses/course/{{course._id}}">
+							{{course.subject.abbreviation}} {{course.number}} {{course.title}}
+						</a>
+						<div ng-if="c < item.courses.length - 1" class="course-separator">
+							<em>{{item.separator}}</em>
+						</div>
+					</span>
+				</td>
+				<td>{{item.credit}}</td>
+			</tr>
+			<tr>
+				<th>Total</th>
+				<th>{{requirement.credit}}</th>
+			</tr>
+		</table>
+	</div>
+</div>

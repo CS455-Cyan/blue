@@ -1,0 +1,9 @@
+<h2>Archives</h2>
+
+<p>Download a PDF of current and past undergraduate catalogs.</p>
+
+<ul ng-repeat="archive in archives | orderBy : 'beginYear'">
+	<li>
+		<a ng-href="{{archive.link}}" target="_blank">Undergraduate Catalog {{archive.beginYear}}-{{archive.endYear}}</a>
+	</li>
+</ul>

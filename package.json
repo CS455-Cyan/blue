@@ -1,0 +1,20 @@
+{
+  "name": "una-apps-api",
+  "description": "UNA's API for Node.js apps.",
+  "author": "Tyler Yasaka, Mitchel Moon",
+  "dependencies": {
+    "async": "1.4.x",
+    "body-parser": "1.13.x",
+    "connect-mongo": "0.8.x",
+    "express": "4.13.x",
+    "express-session": "1.11.x",
+    "fs": "0.0.x",
+    "mongodb": "2.0.x",
+    "mongoose": "4.4.x",
+    "multer": "^1.0.6",
+    "mysql": "2.9.x",
+		"phantom-html2pdf": "*",
+    "xlsx": "0.8.x"
+  },
+  "engine": "node >= 0.10.40"
+}
