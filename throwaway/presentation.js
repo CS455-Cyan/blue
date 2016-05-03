@@ -79,12 +79,20 @@ async.waterfall([
 		// create some sample subjects
 		var subjects = [
 			{
-				name: "Psychology",
-				abbreviation: "PY"
+				name: "Computer Information Systems",
+				abbreviation: "CIS"
 			},
 			{
 				name: "Computer Science",
 				abbreviation: "CS"
+			},
+			{
+				name: "English",
+				abbreviation: "EN"
+			},
+			{
+				name: "Psychology",
+				abbreviation: "PY"
 			}
 		];
 		db.models.Subject(subjects[1]).save(function(err, result){
@@ -130,60 +138,85 @@ async.waterfall([
 
 			// create some sample programs
 			var programs = [
-	      {
-	        name: "College of Business",
-	        description: "Hr Hm Business Hum",
-	        departments: [{
-	          name: "Computer Science and Information Systems",
-	          description: "CS and CIS are not the same thing",
-	          programs: [
-							{
-								type: "minor",
-								name: "Economics",
-								description: "money money money"
-							},
-							{
-								type: "major",
-								name: "Computer Science",
-								description: "not for the faint of heart",
-								requirements: [{
-									name: "Core Requirements",
-									separator: "AND",
-									items: [
-										{
-											separator: 'AND',
-											courses: [
-												results[0]
-											]
-										},
-										{
-											separator: 'AND',
-											courses: [
-												results[1]
-											]
-										}
-									]
-								}]
-							},
-							{
-								type: "minor",
-								name: "Human-Computer Interaction/User Experience",
-								description: "emotional impact cannot be designed - only experienced"
-							}
-	          ]
-	        }],
-	        programs: [{
-	          type: "type",
-	          name: "name",
-	          description: "description"
-	        }]
-	      },
-	      {
-					name: "College of Arts and Sciences",
-					departments: [],
+			{
+				name: "College of Business",
+				description: "The College of Business uses on-campus and online programs to serve 1,100 undergraduates and more than 400 graduate students. Forty highly dedicated full-time faculty staff the College—most holding PhDs from leading universities. The College of Business is accredited by the Accreditation Council for Business Schools and Programs (ACBSP) and the Computer Information Systems Program is accredited by ABET, Inc., the most recognized accrediting body for computing programs throughout the world.",
+				departments: [
+				{
+					name: "Computer Science and Information Systems",
+					description: "Student majors in CSIS programs have the significant opportunity to work closely with our faculty members for advice, support, and mentoring throughout their chosen program. There are numerous success stories of our graduates who have gone on to highly successful careers in professional work environments. Our graduates are positioned to join these alumni in significant and rewarding careers.",
+					programs: [
+						{
+							type: "major",
+							name: "Computer Information Systems",
+							description: "CIS focuses on the application of information technology in an organizational environment with an emphasis on the analysis, design, implementation, and support of business information systems. CIS students develop an in-depth understanding of the application of information technology in core business processes and functions as well as the skills necessary to effectively use technology to solve business problems. The CIS curriculum is structured to provide a strong foundation for careers in IT management, software development, systems/business analysis, web development, infrastructure design and administration, project management, and database development.",
+							requirements: [{
+								name: "Core Requirements",
+								separator: "AND",
+								items: [
+									{
+										separator: 'AND',
+										courses: [
+											results[0]
+										]
+									},
+									{
+										separator: 'AND',
+										courses: [
+											results[1]
+										]
+									}
+								]
+							}]
+						},
+						{
+							type: "major",
+							name: "Computer Science",
+							description: "The science of computational theory, algorithmic processes, and the design of hardware and software.",
+							requirements: [{
+								name: "Core Requirements",
+								separator: "AND",
+								items: [
+									{
+										separator: 'AND',
+										courses: [
+											results[0]
+										]
+									},
+									{
+										separator: 'AND',
+										courses: [
+											results[1]
+										]
+									}
+								]
+							}]
+						},
+						{
+							type: "minor",
+							name: "Human-Computer Interaction/User Experience",
+							description: "emotional impact cannot be designed - only experienced"
+						}
+					]
+				}],
+				programs: [{
+				  type: "type",
+				  name: "name",
+				  description: "description"
+				}]
+			},
+			{
+				name: "College of Arts and Sciences",
+				description: "The college of Science, Technology, Engineering, Arts and Mathematics, 19 different departments with an array of majors, minors and certificate programs working independently and together to ignite the dream that creates the steam that powers your future. Join us and get ahead!",
+				departments: [
+				{
+					name: "English",
+					description: "The student of English develops skills and insights that are valued highly by employers in virtually all professional fields. The study of English does not concern itself only with types and styles of literary endeavor; it also involves the study of humankind in relation to community, work, religion, and individual identity.",
 					programs: []
-				}
-	    ];
+				}],
+				programs: []
+			}
+			];
 			for(var i in programs){
 				db.models.Program(programs[i]).save();
 			}
@@ -196,7 +229,7 @@ async.waterfall([
 			sections: [
 				{
 					title: "University Information",
-					content: "Yolo."
+					content: "<p align=\"center\">The University of North Alabama is accredited by the Southern Association of Colleges and Schools Commission on Colleges to award bachelor&rsquo;s, master&rsquo;s and education specialist degrees. Contact the Commission on Colleges at 1866 Southern Lane, Decatur, Georgia 30033-4097 or call 404-679-4500 for questions about the accreditation of the University of North Alabama.</p>\n\n<p align=\"center\"><strong>&bull;&nbsp;&bull;&nbsp;&bull; ACCREDITED BY&nbsp;&bull;&nbsp;&bull;&nbsp;&bull;</strong></p>\n\n<p align=\"center\">The Bachelor of Arts and Bachelor of Science in Industrial Hygiene are accredited by the Applied Science Accreditation Commission (ASAC) of ABET http://www.abet.org</p>\n\n<p align=\"center\">Accreditation Council for Business Schools and Programs</p>\n\n<p align=\"center\">The Bachelor of Business Administration in Computer Information Systems is accredited by the Computing Accreditation Commission (CAC) of ABET http://www.abet.org</p>\n\n<p align=\"center\">The Bachelor of Science in Computer Science is accredited by the Computing Accreditation Commission (CAC) of ABET http://www.abet.org</p>\n\n<p align=\"center\">The College of Education and Human Sciences at the University of North Alabama is accredited by the National Council for Accreditation of Teacher Education (NCATE), www.ncate.org</p>\n\n<p align=\"center\">This accreditation covers initial teacher preparation programs and advanced educator preparation programs. However, the accreditation does not include individual education courses that the institution offers to P-12 educators for professional development, relicensure, or other purposes.</p>\n\n<p align=\"center\">The Council on Social Work Education (Baccalaureate)</p>\n\n<p align=\"center\">The National Association of Schools of Music</p>\n\n<p align=\"center\">The National Association of Schools of Art and Design Commission on Collegiate Nursing EducationOne Dupont Circle NW, Suite 530, Washington, DC 20036; Telephone (202) 463-6930</p>\n\n<p align=\"center\">The Community Counseling (M.A.) and the School Counseling (M.A.Ed.) graduate programs in the Department of Counselor Education are accredited by the Council for Accreditation of Counseling and Related Educational Programs (CACREP) under the 2001 Standards, and approved by the International Registry of Counselor Education Programs (IRCEP), an international affiliate of CACREP.</p>\n\n<p align=\"center\">The National Kitchen and Bath Association</p>\n\n<p align=\"center\"><strong>&bull;&nbsp;&bull;&nbsp;&bull;&nbsp;CERTIFIED BY &bull;&nbsp;&bull;&nbsp;&bull;</strong></p>\n\n<p align=\"center\">The American Chemical Society</p>\n\n<p align=\"center\"><strong>&bull;&nbsp;&bull;&nbsp;&bull; DESIGNATED AS&nbsp;&bull;&nbsp;&bull;&nbsp;&bull;</strong></p>\n\n<p align=\"center\">A Literary Landmark by the Friends of Libraries USA</p>\n"
 				},
 				{
 					title: "Description of the University",
@@ -303,7 +336,11 @@ async.waterfall([
 			});
 		});
 
-		db.models.FacultyAndStaff({content: "Dr. Roden..."}).save();
+		db.models.FacultyAndStaff(
+			{
+				content: "<p>The names of the faculty as of October 1, 2014, are listed below. The date in parentheses indicates the year that person joined the faculty.</p>\n\n<p>NOE A. AGUADO (2003)</p>\n\n<ul>\n\t<li>Associate Professor of Political Science B.A., 1996, M.P.A., 1998, St. Mary&rsquo;s University; Ph.D., 2003, University of Kansas.</li>\n</ul>\n\n<p>JAMES W. ALDRIDGE (2011)</p>\n\n<ul>\n\t<li>Visiting Associate Professor of Entertainment Industry B.S., 1978, University of North Alabama.</li>\n</ul>\n\n<p>PAULETTE S. ALEXANDER (1981)</p>\n\n<ul>\n\t<li>Associate Dean for the College of Business, Professor of Computer Information Systems B.S., 1969, M.A., 1970, University of Alabama; M.P.A., 1973, The University of Texas at Austin; Ph.D., 2001, The University of Memphis; C.D.P.</li>\n</ul>\n\n<p>ALEJANDRA ALVARADO-BRIZUELA (2013)</p>\n\n<ul>\n\t<li>Assistant Professor of Spanish B.A., 2002, University of Costa Rica; M.A., 2005, Ph.D., 2012, Indiana State University.</li>\n</ul>\n\n<p>DOUGLAS E. ANDREWS (2014)</p>\n\n<ul>\n\t<li>Visiting Instructor in Chemistry B.S., 1971, Florence State University; M.C.S., 1976, The University of Mississippi.</li>\n</ul>\n"
+			}
+		).save();
 
 		// create some sample changeRequests
 		var changes = [
@@ -395,6 +432,7 @@ async.waterfall([
 		}
 		callback(); // we're done. go to the next function
 	},
+	/*
   function(callback) {
     var years = [];
     for(var year = 2003; year <= 2016; year++) {
@@ -422,6 +460,7 @@ async.waterfall([
       callback();
     });
   },
+  */
 	function(callback){
 		// keep adding more functions baby...
 		callback();
