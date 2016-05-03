@@ -21,7 +21,7 @@
             <div class="glyphicon glyphicon-ok btn btn-success" ng-click="editName=!editName; updateCategory(category)" ng-show="editName"></div>
             <div class="glyphicon glyphicon-remove btn btn-danger" ng-click="editName=!editName; refresh()" ng-show="editName"></div>
             
-            <div class="glyphicon glyphicon-trash btn btn-danger" ng-show="!editName" style="float: right;"> Remove Category</div>
+            <div class="glyphicon glyphicon-trash btn btn-danger" ng-click="editName=!editName; removeCategory(category._id)" ng-show="!editName" style="float: right;"> Remove Category</div>
       </h4>
     </div>
       

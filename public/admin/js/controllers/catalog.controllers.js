@@ -201,6 +201,17 @@
                             $scope.$apply();
                         });
                     };
+                    $scope.removeCategory = function (categoryID) {
+                        console.log("removeCategory");
+                        CatalogAPI.removeCategory(categoryID, function (success) {
+                            if (success) {
+                                $scope.refresh();
+                            } else {
+                                //send a flag
+                            }
+                            $scope.$apply();
+                        });
+                    };
 				}
 			]
             )
