@@ -247,7 +247,7 @@ var CatalogAPIService = function() {
 		Modified:
 	*/
 	this.createDepartment = function(categoryID, department, callback) {
-		putHTTP(
+		postHTTP(
 			'/admin/catalog/programs/categories/' +
 			categoryID +
             "/departments",
