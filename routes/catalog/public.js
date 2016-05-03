@@ -265,9 +265,11 @@ publicExports.searchPrograms = function(req, res) {
 						match = true;
 					}
 					if (match) {
-						program.category = {_id: categories[c]._id};
-						program.department = {_id: categories[c].departments[d]._id};
-						programsArr.push(program);
+						programsArr.push({
+							program: program,
+							category: {_id: categories[c]._id},
+							department: {_id: categories[c].departments[d]._id}
+						});
 					}
 				}
 			}

@@ -110,19 +110,21 @@
 						Modified:
 					*/
 					$rootScope.programTitle = function(program) {
-						var part1 = '';
-						switch(program.type) {
-							case 'major':
-								part1 = 'Major in ';
-								break;
-							case 'minor':
-								part1 = 'Minor in ';
-								break;
-							case 'certificate':
-								part1 = 'Certificate in ';
-								break;
+						if(program) {
+							var part1 = '';
+							switch(program.type) {
+								case 'major':
+									part1 = 'Major in ';
+									break;
+								case 'minor':
+									part1 = 'Minor in ';
+									break;
+								case 'certificate':
+									part1 = 'Certificate in ';
+									break;
+							}
+							return part1 + program.name;
 						}
-						return part1 + program.name;
 					}
 					
 					/*

@@ -118,7 +118,6 @@ angular.module('Catalog')
 				$routeParams.department,
 				$routeParams.program,
 				function(category, department, program) {
-					console.log(category, department, program)
 					$scope.category = category;
 					$scope.department = department;
 					$scope.program = program;

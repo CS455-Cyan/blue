@@ -2,9 +2,9 @@
 <h2>Search results: {{programSearchKey}}</h2>
 
 <ul>
-	<li ng-repeat="program in results">
-		<a ng-href="#/programs/category/{{category._id}}/department/{{department._id}}/program/{{program._id}}">
-			{{programTitle(program)}}
+	<li ng-repeat="result in results">
+		<a ng-href="#/programs/category/{{result.category._id}}/department/{{result.department._id}}/program/{{result.program._id}}">
+			{{programTitle(result.program)}}
 		</a>
 	</li>
 </ul>
