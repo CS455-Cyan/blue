@@ -283,7 +283,6 @@ definitionExports.generateCatalogPDF = function(year, fileName, callback) {
 				html: htmlPath,
 			};
 			phantomPDF.convert(options, function(result) {
-			console.log(result);
 				result.toFile(pdfPath, cb);
 			});
 		}
@@ -531,8 +530,11 @@ definitionExports.requirementsToHTML = function(requirements) {
 		html += '<div class="panel-heading"><h4>';
 		html += group.name;
 		html += '</h4></div>';
+		if(group.separator) {
+			var separator = '<tr><th>' + group.separator + '</th><td></td></tr>';
+		}
 		// group content
-		html += '<table class="table">'
+		html += '<table class="table">';
 		html += '<tr><th>Requirement</th>';
 		html += '<th><span class="pull-right">Credit</span></th></tr>';
 		for(var i in group.items) {
@@ -557,6 +559,9 @@ definitionExports.requirementsToHTML = function(requirements) {
 			// credit column
 			html += '<td><span class="pull-right">' + item.credit + '</span></td>';
 			html += '</tr>';
+			if((i < group.items.length - 1) && (separator)) {
+				html += separator;
+			}
 		}
 		html += '<tr><th>Total</th><th><span class="pull-right">';
 		html += group.credit + '</span></th></tr>';
