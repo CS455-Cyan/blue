@@ -273,14 +273,14 @@ var CatalogAPIService = function() {
 		Created: Tyler Yasaka 04/17/2016
 		Modified:
 	*/
-	this.getProgram = function(categoryId, departmentId, programId, callback) {
-		var url = '/admin/catalog/programs/categoies/' + categoryID;
+	this.getProgram = function(categoryID, departmentID, programID, callback) {
+		var url = '/catalog/programs/categories/' + categoryID;
 		if(departmentID) {
 			url += '/departments/' + departmentID;
 		}
 		url += '/programs/' + programID;
 		getHTTP(url, function(res) {
-				callback(res.data);
+				callback(res.data.category, res.data.department, res.data.program);
 		});
 	};
 
@@ -383,7 +383,7 @@ var CatalogAPIService = function() {
 		Modified:
 	*/
 	this.getSubject = function(subjectId, callback) {
-		getHTTP('/catalog/programs/categories/' + id, function(res) {
+		getHTTP('/catalog/subjects/' + subjectId, function(res) {
 			callback(res.data.subject, res.data.courses);
 		});
 	};

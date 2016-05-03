@@ -145,6 +145,11 @@
 						}
 						return credit;
 					}
+					
+					$rootScope.searchPrograms = function(term) {
+						$rootScope.programSearchKey = term;
+						$location.url('/programs/search');
+					}
 				}
 			]
 		).service(

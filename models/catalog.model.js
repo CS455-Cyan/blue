@@ -62,8 +62,8 @@ var requirementSchema = mongoose.Schema({
 		writeIn: {
 			content: String,
 			hours: {
-				min: { type: Number, required: true },
-				max: { type: Number, required: true }
+				min: { type: Number },
+				max: { type: Number }
 			}
 		},
 		credit: String

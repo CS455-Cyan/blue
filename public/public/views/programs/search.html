@@ -1,0 +1,10 @@
+
+<h2>Search results: {{programSearchKey}}</h2>
+
+<ul>
+	<li ng-repeat="program in results">
+		<a ng-href="#/programs/category/{{category._id}}/department/{{department._id}}/program/{{program._id}}">
+			{{programTitle(program)}}
+		</a>
+	</li>
+</ul>

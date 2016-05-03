@@ -327,6 +327,7 @@ primaryExports.updateCategory = function(req, res) {
 				}
 				category.save(function(err) {
 					var success = err ? false : true;
+					console.log(err);
 					res.send({success: success});
 				});
 			} else {

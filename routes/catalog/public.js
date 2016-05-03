@@ -238,7 +238,7 @@ publicExports.viewDepartment = function(req, res) {
 */
 publicExports.searchPrograms = function(req, res) {
 	db.models.Program.find(function(err, categories) {
-		var term = req.body.term.toLowerCase();
+		var term = req.body.term ? req.body.term.toLowerCase() : '';
 		var programsArr = [];
 		for (var c in categories) {
 			for (var p in categories[c].programs) {
@@ -265,6 +265,8 @@ publicExports.searchPrograms = function(req, res) {
 						match = true;
 					}
 					if (match) {
+						program.category = {_id: categories[c]._id};
+						program.department = {_id: categories[c].departments[d]._id};
 						programsArr.push(program);
 					}
 				}

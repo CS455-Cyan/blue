@@ -76,6 +76,13 @@
 						}
 					).when
 					(
+						'/programs/search',
+						{
+							templateUrl: 'views/programs/search.html',
+							controller: 'ProgramSearchCtrl'
+						}
+					).when
+					(
 						'/courses',
 						{
 							templateUrl: 'views/courses/index.html',

@@ -141,6 +141,27 @@ angular.module('Catalog')
 	]
 ).controller
 (
+	'ProgramSearchCtrl',
+	[
+		'$scope',
+		'$rootScope',
+		'$routeParams',
+		'CatalogAPI',
+        '$sanitize',
+		function($scope, $rootScope, $routeParams, CatalogAPI, $sanitize)
+		{
+			CatalogAPI.postHTTP(
+				'/catalog/programs/search',
+				{term: $rootScope.programSearchKey},
+				function(res) {
+					$scope.results = res.data;
+					$scope.$apply();
+				}
+			);
+		}
+	]
+).controller
+(
 	'CoursesCtrl',
 	[
 		'$scope',
@@ -230,8 +251,8 @@ angular.module('Catalog')
 			$rootScope.breadcrumbs = [{text: 'Faculty and Staff'}];
 			CatalogAPI.getFacultyAndStaff(function(facultyAndStaff) {
 				$scope.facultyAndStaff = facultyAndStaff;
+				$scope.$apply();
 			});
-			$scope.$apply();
 		}
 	]
 );
