@@ -109,9 +109,9 @@
                         else {
                             CatalogAPI.getTextSection($routeParams.id, function (data) {
                                 $scope.textSection = data;
-																CKEDITOR.instances.userEditor.setData(data.content, function() {
-																	$scope.$apply();
-																});
+								CKEDITOR.instances.userEditor.setData(data.content, function() {
+								    $scope.$apply();
+								});
                             });
                         }
 
@@ -152,44 +152,44 @@
 				, 'CatalogAPI'
 				, '$sanitize'
 				, function ($scope, $rootScope, $location, CatalogAPI, $sanitize)
-                    {
-                        $scope.editName = false;
-                        $scope.editDescription = false;
-                        $scope.addCategory = false;
-                        $scope.addDepartment = false;
-                        $scope.addProgram = false;
-                        $scope.save = false;
-                        $scope.discard = false;
-                        var callback = function (categories) {
-                            $scope.categories = categories;
-                            $scope.$apply();
-                        };
+                {
+                    $scope.editName = false;
+                    $scope.editDescription = false;
+                    $scope.addCategory = false;
+                    $scope.addDepartment = false;
+                    $scope.addProgram = false;
+                    $scope.save = false;
+                    $scope.discard = false;
+                    var callback = function (categories) {
+                        $scope.categories = categories;
+                        $scope.$apply();
+                    };
+                    CatalogAPI.listCategories(callback);
+                    $scope.refresh = function () {
                         CatalogAPI.listCategories(callback);
-                        $scope.refresh = function () {
-                            CatalogAPI.listCategories(callback);
-                        };
-                        $scope.pushCategoryChange = function (category) {
-                            console.log("pushCategoryChange");
-                            CatalogAPI.updateCategory(category._id, category, function (success) {
-                                if (success) {
-                                    $scope.refresh();
-                                } else {
-                                    //send a flag
-                                }
-                                $scope.$apply();
-                            });
-                        };
-                        $scope.pushDepartmentChange = function (category, department) {
-                            console.log("pushDepartmentChange");
-                            CatalogAPI.updateDepartment(category.id, department._id, department, function (success) {
-                                if (success) {
-                                    $scope.refresh();
-                                } else {
-                                    //send a flag
-                                }
-                                $scope.$apply();
-                            });
-                        };
+                    };
+                    $scope.updateCategory = function (category) {
+                        console.log("updateCategory");
+                        CatalogAPI.updateCategory(category._id, category, function (success) {
+                            if (success) {
+                                $scope.refresh();
+                            } else {
+                                //send a flag
+                            }
+                            $scope.$apply();
+                        });
+                    };
+                    $scope.createDepartment = function (category, department) {
+                        console.log("createDepartment");
+                        CatalogAPI.createDepartment(category._id, department, function (success) {
+                            if (success) {
+                                $scope.refresh();
+                            } else {
+                                //send a flag
+                            }
+                            $scope.$apply();
+                        });
+                    };
 				}
 			]
             )
@@ -217,9 +217,9 @@
                             $scope.category = category;
                             $scope.$apply();
                         });
-                        $scope.pushDepartmentChange = function (category, department) {
-                            console.log("pushDepartmentChange");
-                            CatalogAPI.updateDepartment(category.id, department._id, department, function (success) {
+                        $scope.updateDepartment = function (category, department) {
+                            console.log("updateDepartment");
+                            CatalogAPI.updateDepartment(category._id, department._id, department, function (success) {
                                 if (success) {
                                     $scope.refresh();
                                 } else {
@@ -234,6 +234,11 @@
                                 $scope.category = category;
                             });
                             $scope.$apply();
+                        };
+                        $scope.createProgram = function(category, department, program){
+                            console.log("createProgram");
+                            
+                            
                         };
 				}
 			]
