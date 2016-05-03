@@ -255,9 +255,9 @@ definitionExports.copyCollection = function(fromDB, toDB, modelName, callback){
 	Created: Tyler Yasaka 04/29/2016
 	Modified:
 */
-definitionExports.generateCatalogPDF = function(year, callback) {
-	var htmlPath = __dirname + '/../../private/assets/catalog.html';
-	var pdfPath = __dirname + '/../../private/assets/catalog.pdf';
+definitionExports.generateCatalogPDF = function(year, fileName, callback) {
+	var htmlPath = __dirname + fileName;
+	var pdfPath = __dirname + fileName;
 	async.waterfall([
 		function(cb) {
 			// Generate HTML of catalog
