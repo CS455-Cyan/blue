@@ -1,0 +1,32 @@
+<!-- ->
+
+	Filename: departments.html
+	Author: Graem Cook
+
+<-  -->
+
+	<h2>
+        <a ng-show="editName==false">{{department.name}} Management</a>
+        <a class="glyphicon glyphicon-edit btn btn-default" ng-click="editName = !editName" ng-show="!editName"> Edit Name</a>
+        <textarea ng-model="department.name"  ng-show="editName==true"></textarea>
+        <a ng-show="editName==true">Management</a>
+        <a class="glyphicon glyphicon-ok btn btn-success" ng-click="editName=!editName; pushDepartmentChange(category,department)" ng-show="editName"></a>
+        <a class="glyphicon glyphicon-remove btn btn-danger" ng-click="editName=!editName; refresh()" ng-show="editName"></a>
+    </h2>
+
+<div >
+    <p ng-if="editDescription==false">{{department.description}}</p>
+    <a class="glyphicon glyphicon-edit btn btn-default" ng-click="editDescription = !editDescription" ng-show="!editDescription"> Edit description</a>
+    <textarea ng-model="category.description" ng-show="editDescription==true"></textarea>
+    <a class="glyphicon glyphicon-ok btn btn-success" ng-click="editDescription=!editDescription; pushDepartmentChange(category, department)" ng-show="editDescription"></a>
+    <a class="glyphicon glyphicon-remove btn btn-danger" ng-click="editDescription=!editDescription; refresh()" ng-show="editDescription"></a>
+</div>
+
+<p> </p>
+<a ng-repeat="program in department.programs" href="index.html#/catalog/programs/programs/{{category._id}}/{{department._id}}/{{program._id}}"><p>{{program.name}}</p></a>
+
+<a ng-click="addProgram=!addProgram; addDepartment=false" ng-show="!addProgram"><p>Add new program</p></a>
+<textarea placeholder="Add Program Name" ng-model="program.name"  ng-show="addProgram==true"></textarea>
+<textarea placeholder="Add Program Description" ng-model="program.description"  ng-show="addProgram==true"></textarea>
+<a class="glyphicon glyphicon-ok btn btn-success" ng-click="addProgram=!addProgram; pushChange(program)" ng-show="addProgram"></a>
+<a class="glyphicon glyphicon-remove btn btn-danger" ng-click="addProgram=!addProgram" ng-show="addProgram"></a>

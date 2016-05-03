@@ -1,0 +1,21 @@
+/***																					***\
+
+	Filename: app.css
+	Author: CS455 Cyan
+
+	Copyright (c) 2015 University of North Alabama
+
+\***																					***/
+
+#inside aside.sidebar-module > div.list-group a.list-group-item.active, #inside aside.sidebar-module > div.list-group a.list-group-item.active:hover, #inside aside.sidebar-module > div.list-group a.list-group-item.active:focus
+{
+    background-color: #cccccc;
+    border: none;
+    border-left: 4px solid #db9f11;
+    color: #444;
+    font-weight: bold;
+}
+
+.course-separator {
+	margin: 10px 0 10px 20px;
+}

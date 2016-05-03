@@ -1,0 +1,14 @@
+<h1>Edit Custom Text Section</h1>
+
+<label>Edit Title</label>
+<input ng-model="textSection.title" class="form-control">
+<br>
+<label>Edit Content</label>
+<form>
+    <textarea name="userEditor" id="userEditor" rows="10" cols="80"></textarea>
+</form>
+<br>
+<button class="btn btn-success" ng-click="updateTextSection()">
+	<span class="glyphicon glyphicon-save"></span>
+	Save changes
+</button>

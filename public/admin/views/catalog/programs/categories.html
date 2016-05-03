@@ -1,0 +1,58 @@
+<!-- ->
+
+	Filename: programs.html
+	Author: Graem Cook and Seth Putman
+
+<-  -->
+
+	<h2>
+	   Category Management
+    </h2>
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div ng-repeat="(c,category) in categories" class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a class="accordion toggle" role="button" data-toggle="collapse" data-target="#collapse{{c}}" data-parent="#accordion" ng-if="editName==false">
+          {{category.name}}
+        </a>
+            <a class="glyphicon glyphicon-edit btn" ng-click="editName = !editName" ng-show="!editName"></a>
+            <textarea ng-model="category.name"  ng-show="editName==true"></textarea>
+            <a class="glyphicon glyphicon-ok btn btn-success" ng-click="editName=!editName; pushCategoryChange(category)" ng-show="editName"></a>
+            <a class="glyphicon glyphicon-remove btn btn-danger" ng-click="editName=!editName; refresh()" ng-show="editName"></a>
+      </h4>
+    </div>
+      
+    <div id="collapse{{c}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+        <div ng-if="editDescription==false">{{category.description}}</div>
+          <a class="glyphicon glyphicon-edit btn btn-default" ng-click="editDescription = !editDescription" ng-show="!editDescription"> Edit description</a>
+          <textarea ng-model="category.description" ng-show="editDescription==true"></textarea>
+          <a class="glyphicon glyphicon-ok btn btn-success" ng-click="editDescription=!editDescription; pushCategoryChange(category)" ng-show="editDescription"></a>
+          <a class="glyphicon glyphicon-remove btn btn-danger" ng-click="editDescription=!editDescription; refresh()" ng-show="editDescription"></a>
+          
+        <a ng-repeat="department in category.departments" href="index.html#/catalog/programs/departments/{{category._id}}/{{department._id}}"><p>{{department.name}}</p></a>
+        <a ng-repeat="program in category.programs" href="index.html#/catalog/programs/programs/{{category._id}}/{{program._id}}"><p>{{program.name}}</p></a>
+          
+         <a ng-click="addDepartment=!addDepartment; addProgram=false" ng-show="!addDepartment"><p>Add new department</p></a>
+         <textarea placeholder="Add Department Name" ng-model="department.name"  ng-show="addDepartment==true"></textarea>
+         <textarea placeholder="Add Department Description" ng-model="department.description"  ng-show="addDepartment==true"></textarea>
+         <a class="glyphicon glyphicon-ok btn btn-success" ng-click="addDepartment=!addDepartment; pushDepartmentChange(category, department)" ng-show="addDepartment"></a>
+         <a class="glyphicon glyphicon-remove btn btn-danger" ng-click="addDepartment=!addDepartment" ng-show="addDepartment"></a>
+          
+         <a ng-click="addProgram=!addProgram; addDepartment=false" ng-show="!addProgram"><p>Add new non-departmental program</p></a>
+         <textarea placeholder="Add Program Name" ng-model="program.name"  ng-show="addProgram==true"></textarea>
+         <textarea placeholder="Add Program Description" ng-model="program.description"  ng-show="addProgram==true"></textarea>
+         <a class="glyphicon glyphicon-ok btn btn-success" ng-click="addProgram=!addProgram; pushChange(program)" ng-show="addProgram"></a>
+         <a class="glyphicon glyphicon-remove btn btn-danger" ng-click="addProgram=!addProgram" ng-show="addProgram"></a>
+          
+    </div>
+   </div>
+ </div>
+    
+  <a ng-click="addCategory=!addCategory" ng-show="!addCategory">Add new category</a>
+  <textarea placeholder="Add Category Name" ng-model="category.name"  ng-show="addCategory==true"></textarea>
+  <textarea placeholder="Add Category Description" ng-model="category.description"  ng-show="addCategory==true"></textarea>
+  <a class="glyphicon glyphicon-ok btn btn-success" ng-click="addCategory=!addCategory; pushChange(category)" ng-show="addCategory"></a>
+  <a class="glyphicon glyphicon-remove btn btn-danger" ng-click="addCategory=!addCategory" ng-show="addCategory"></a>
+</div>

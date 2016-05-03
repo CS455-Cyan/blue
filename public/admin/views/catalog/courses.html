@@ -1,0 +1,108 @@
+<h2>Course Manage</h2>
+<ul class="list-group">
+    <li class="list-group-item " ng-repeat="course in courses">
+        {{course.title}}
+        <a class="btn btn-info btn-xs pull-right" ng-click="Edit(course)" ng-model="form_fieldname">
+            <span class="glyphicon glyphicon-pencil" ></span>
+        </a>
+        <a class="btn btn-info btn-xs pull-right">
+        <span class="glyphicon glyphicon-trash" ng-click="Besure()"></span>
+        </a>
+    </li>
+</ul>
+
+<ul></ul>
+
+<a class="btn btn-info  ">
+    <span class="glyphicon glyphicon-plus" ng-click="Addcourse()"> Add Course</span>
+</a>
+
+<ul></ul>
+
+<div ng-show="Addform">
+    
+    <h2>{{formTitle}}</h2>
+    
+    <form class="form-inline">
+        <input class="form-control" type="text" placeholder="Course Name" size="25" ng-model="form.title">
+        <input class="form-control" type="text" placeholder="Course #"size="8" ng-model="form.number">
+        <input class="form-control" type="text" placeholder="Hours"size="4" ng-model="form.hours.min">
+    </form>
+    <ul></ul>
+
+    <form class="form-inline">
+    <div class="btn-group" >			 
+        <!--button class="btn btn-default">
+            Subject
+        </button> 
+        <!--button data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="#">Accounting</a>
+            </li>
+            <li>
+                <a href="#">Art</a>
+            </li>
+            <li>
+                <a href="#">Arabic</a>
+            </li>
+            <li>
+                <a href="#">American Sign Language</a>
+            </li>
+            <li>
+                <a href="#">Biology</a>
+            </li>
+            <li>
+                <a href="#">Business Law</a>
+            </li>
+            <li class="divider">
+            </li>
+            <li>
+                <a href="#">Others</a>
+            </li>
+        </ul-->
+        
+        <select class="form-control" ng-model="form.subject.name">
+            <option>Computer Science</option>
+            <option>Accounting</option>
+            <option>Accounting</option>
+            <option>Accounting</option>
+            <option>Accounting</option>
+            <option>Accounting</option>
+        </select>
+    </div> 
+
+    <input class="form-control" type="text" placeholder="Subject Abbreviation" ng-model="form.subject.abbreviation" >  
+    <input class="form-control" type="text" placeholder="Fee" size="8" ng-model="form.fee">
+    </form>
+    <ul></ul>
+
+    <form class="form-inline">
+    <input class="form-control" type="text" placeholder="Offerings" > ,
+    <input class="form-control" type="text" placeholder="Offerings"> 
+    <a class="btn btn-info btn-xs" ng-click="add_offering=true">
+        <span class="glyphicon glyphicon-plus"></span>
+        </a>
+    <div ng-show="add_offering">
+    <input class="form-control" type="text" placeholder="Offerings"> 
+    </div>
+    </form>
+    <ul></ul>
+
+    <form class="form-inline">    
+        <textarea class="form-control" rows="5" cols="50" ng-model="form.description">
+        </textarea>    
+    </form>
+    <ul></ul>
+
+    <form class="form-inline">
+    <button type="submit" class="btn btn-default" value="Submit" ng-click="Addform=false">Submit</button>
+    </form>
+
+</div>
+
+
+
+

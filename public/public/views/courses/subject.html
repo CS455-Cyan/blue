@@ -1,0 +1,9 @@
+<h1>{{subject.name}} ({{subject.abbreviation}})</h1>
+
+<ul>
+	<li ng-repeat="course in courses">
+		<a ng-href="#/courses/course/{{course._id}}">
+			{{course.title}}
+		</a>
+	</li>
+</ul>

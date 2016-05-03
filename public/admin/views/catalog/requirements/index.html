@@ -1,0 +1,160 @@
+<label>Select a requirement:</label>
+<div class="form-group">
+	<select class="form-control" ng-model="currentlySelected.group" ng-options="group as group.name for group in requirements">
+		<option value=""></option>
+	</select>
+</div>
+
+<div>
+	<button class="btn btn-default" ng-click="newRequirement()">
+		<span class="glyphicon glyphicon-plus"></span>
+		Add requirement
+	</button>
+</div>
+
+<br>
+
+<!--CONTENT-->
+
+<!--
+	04/23/2016 
+		Added smaller accordion within "areas" accordion
+		Editing names in "groups" accordion to remove conflict in heierarchy
+-->
+
+<!--"Requirements" accordion-->
+<div ng-show="currentlySelected.group">
+
+	<br>
+	<div class="form-inline">
+		<label>Requirement name:</label>
+		<input ng-model="currentlySelected.group.name" class="form-control" placeholder="Enter a descriptive name for this requirement">
+		<button class="btn btn-danger pull-right" ng-click="callRemoveRequirement(requirements, currentlySelected.group._id)">
+			<span class="glyphicon glyphicon-trash"></span>
+			Delete requirement
+		</button>
+	</div>
+	<!--TITLE -- courtesy of Graem Cook-->
+	<div class="clearfix"></div>
+	<br>
+
+	<!--AND/OR Toggle Buttons-->
+	<div class="form-group">
+		<div class="btn-group">
+				<label class="btn btn-default" ng-model="currentlySelected.group.separator" btn-radio="'AND'">Require all items</label>
+				<label class="btn btn-default" ng-model="currentlySelected.group.separator" btn-radio="'OR'">Require one item</label>
+		</div>
+	</div>
+
+	<p class="highlight">
+		Require
+		<strong>
+			<span ng-show="currentlySelected.group.separator == 'OR'">one item</span>
+			<span ng-show="currentlySelected.group.separator == 'AND'">all items</span>
+		</strong>
+		in the list below to satisfy this requirement:
+	</p>
+
+	<!--ITEM CONTENT - BUTTONS AND EDITS AND COURSE LIST AND STUFF-->
+	<div ng-repeat="(i, item) in currentlySelected.group.items">
+		<div class="panel panel-default" style="margin-top: 35px">
+			<div class="panel-heading">
+			<!--Course-list/write-in Buttons-->
+				<div class="form-group">
+					<strong>Item type:</strong>
+					<div class="btn-group btn-group-sm">
+							<label class="btn btn-default" ng-model="item.isWriteIn" btn-radio="false">Course List</label>
+							<label class="btn btn-default" ng-model="item.isWriteIn" btn-radio="true">Write-in</label>
+					</div>
+					<button class="btn btn-sm btn-warning pull-right" ng-click="removeItem(currentlySelected.group.items, i)">
+						<span class="glyphicon glyphicon-trash"></span>
+						Delete item
+					</button>
+				</div>
+			</div>
+			<div class="accessItems panel-body">
+
+				<form ng-show="item.isWriteIn">
+					<textarea class="form-control" ng-model="item.writeIn.content" rows="3" placeholder="Write in a custom requirement"></textarea>
+					Minimum credit hours (required): <input type="number" class="form-control" ng-model="item.writeIn.hours.min">
+					Maximum credit hours (optional): <input type="number" class="form-control">
+				</form>
+
+				<div class="coursesDisplay" ng-show="item.isWriteIn == false">
+
+					<div>
+						<div class="btn-group btn-group-sm">
+							<label class="btn btn-default" ng-model="item.separator" btn-radio="'AND'">Require all courses</label>
+							<label class="btn btn-default" ng-model="item.separator" btn-radio="'OR'">Require one course</label>
+						</div>
+					</div>
+					
+					<span class="label label-warning">
+						Require
+						<strong>
+							<span ng-show="item.separator == 'OR'">one</span>
+							<span ng-show="item.separator == 'AND'">all</span>
+						</strong>
+						of the following courses for this item:
+					</span>
+
+					<ul>
+						<li ng-repeat="(cIndex, course) in item.courses">
+							<div class="unequalHours">
+								<form class="form-inline">
+									<select class="form-control" ng-model="item.courses[cIndex]" ng-options="selectedCourse as (selectedCourse.subject.abbreviation + ' ' + selectedCourse.number + ' ' + selectedCourse.title) for selectedCourse in allCourses track by selectedCourse._id">
+										<option></option>
+									</select>
+
+									<!--input type="text" ng-model="item.courses[cIndex]" placeholder="Search for a course" typeahead="selectedCourse as (selectedCourse.subject.abbreviation + ' ' + selectedCourse.number + ' ' + selectedCourse.title) for selectedCourse in allCourses | filter:$viewValue" class="form-control" typeahead-editable="false"-->
+
+									<!--select class="form-control" ng-model="currentlySelected.group">
+										<option ng-repeat="(g, group) in area.requirements" ng-selected="g == 0" ng-value="group._id" value="">{{group.name}}</option>
+									</select-->
+
+									<a class="glyphicon glyphicon-trash btn" ng-click="removeByIndex(item.courses, cIndex)"></a>
+								</form>
+							</div>
+						</li>
+					</ul>
+
+					<div ng-show="item.courses.length == 0">
+						Add one or more courses to this item.
+					</div>
+
+					<div>
+						<button class="btn btn-default" ng-click="addCourse(item)">
+							<span class="glyphicon glyphicon-plus"></span>
+							Add course
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div ng-show="currentlySelected.group.items.length == 0">
+		Add one or more items to this requirement.
+	</div>
+
+	<div>
+		<button class="btn btn-default" ng-click="addItem()">
+			<span class="glyphicon glyphicon-plus"></span>
+			Add item
+		</button>
+	</div>
+
+	<br>
+	<br>
+	<div class="form-group">
+		<button class="btn btn-success" ng-click="callUpdateRequirement(currentlySelected.group)">
+			<span class="glyphicon glyphicon-save"></span>
+			Save changes
+		</button>
+		<button class="btn btn-warning pull-right" ng-click="cancelRequirement()">
+			<span class="glyphicon glyphicon-arrow-left"></span>
+			Cancel changes
+		</button>
+	</div>
+
+</div>

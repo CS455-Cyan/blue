@@ -1,0 +1,25 @@
+<h1>Preview/Publish Catalog</h1>
+
+<h3>Preview Catalog</h3>
+<p>Generate a PDF of the catalog to preview it. (This does not publish anything.)</p>
+<button class="btn btn-primary" ng-click="preview()">
+	<span class="glyphicon glyphicon-cog"></span>
+	Generate preview
+</button>
+<button class="btn btn-primary" ng-show="showPreview">
+	<span class="glyphicon glyphicon-save"></span>
+	Download preview
+</button>
+
+<br>
+<br>
+<h3>Publish Catalog</h3>
+<p>Publish the current state of the catalog. This publishes to the public interface as well as to a PDF document.</p>
+<p class="highlight">Warning: Publishing the catalog <strong>cannot be undone</strong>. Please download a PDF preview and review carefully before publishing.</p>
+<label>Academic Year</label>
+<div class="form-group form-inline">	
+	<select ng-options="year as (year + '-' +(year+1)) for year in years" ng-model="selectedYear" class="form-control"></select>
+</div>
+<button class="btn btn-warning" ng-click="publish()">
+	Publish
+</button>

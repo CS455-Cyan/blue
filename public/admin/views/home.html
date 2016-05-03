@@ -1,0 +1,19 @@
+<div class="container">
+	<div class="mainContent col-md-12 col-sm-12 col-xs-12">
+
+		<section class="col-md-12">
+
+			<h1>
+				Apps
+			</h1>
+			<br>
+			<p ng-repeat="app in apps">
+				<button class="btn btn-lg" ng-click="goToApp(app.url)" ng-class="{'btn-lg btn-default btn-block':!app.emergency, 'btn-danger': app.emergency}">
+					<span class="glyphicon glyphicon-warning-sign" ng-if="app.emergency"></span>
+					{{app.name}}
+				</button>
+				<br ng-if="app.emergency">
+			</p>
+		</section>
+	</div>
+</div>

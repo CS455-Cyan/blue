@@ -1,0 +1,27 @@
+
+
+
+.accepted{
+    margin: 1em;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #5cb85c;
+    padding: 2em;
+}
+
+.deny{
+    margin: 1em;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #d9534f;
+    padding: 2em;
+}
+
+.pending{
+    margin: 1em;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #f0ad4e;
+    padding: 2em;
+        
+}

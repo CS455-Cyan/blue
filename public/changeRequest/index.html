@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <link href='https://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
+    <link href='styles/main.css' rel='stylesheet' type="text/css">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</head>
+
+<body ng-app="todoListApp">
+
+
+    <div ng-controller="mainCtrl" class="container">
+        <h1>Change Request</h1>
+        <div class="form-group">
+            {{responseObj}}
+            <button ng-click="addingNew = true" ng-hide="addingNew" class="btn btn-primary form-control">+ New</button>
+            <div ng-show="addingNew">
+                <label>Request Type</label>
+                <p></p>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox"  ng-model="$root.newCourse" checklist-model="user.changes"  checklist-value="'Proposed New Course'">Propose New Course
+                    </label>
+
+                </div>
+                
+
+
+                <div ng-show="$root.newCourse ">
+                    <input type="text" class="form-control" ng-model="newTodo.newCourse.Title" placeholder="New Course Title">
+                    <br/>
+                    <input type="text" class="form-control" ng-model="newTodo.newCourse.Name" placeholder="Name">
+                    <br/>
+                    <input type="text" class="form-control" ng-model="newTodo.newCourse.Description" placeholder="Description">
+                    <br/>
+                    <input type="text" class="form-control" ng-model="newTodo.newCourse.Number" placeholder="Number">
+                    <br/>
+                    <input type="text" class="form-control" ng-model="newTodo.newCourse.CreditHours" placeholder="Credit Hours">
+                    <br/>
+                    <input type="text" class="form-control" ng-model="newTodo.newCourse.Fee" placeholder="Fee">
+                    <br/>
+                    <input type="text" class="form-control" ng-model="newTodo.newCourse.PreReq" placeholder="Prerequisites">
+                    <br/>
+                    <input type="text" class="form-control" ng-model="newTodo.newCourse.CoReq" placeholder="Co-Requisites ">
+                    <br/>
+                    <input type="text" class="form-control" ng-model="newTodo.newCourse.CourseOfferings" placeholder="Course Offerings ">
+                    <br/>
+                </div>
+                
+                                <div class="checkbox">
+                    <label>
+                        <input type="checkbox"  ng-model="$root.courseFeeChange" checklist-model="user.changes"  checklist-value="'Addition of/Change in Course Fee'">Addition of/Change in Course Fee
+                    </label>
+
+                </div>
+                <div ng-show="$root.courseFeeChange">
+                    
+                  <input type="text" class="form-control" ng-model="newTodo.justification" placeholder="Course Fee Change Justification">
+                
+                </div>
+
+
+
+
+
+
+
+
+
+                <div class="checkbox" ng-repeat="change in changes">
+                    <label>
+                        <input type="checkbox" checklist-model="user.changes" checklist-value="change"> {{change}}
+                    </label>
+                </div>
+                {{user.changes}}
+
+
+                <br/>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" ng-model="newTodo.credentials"> This proposal results in the need for a revised Faculty Credentials Certification Form
+                    </label>
+                </div>
+
+                
+                
+
+                    <textarea class="form-control" ng-show="newTodo.credentials" ng-model="newTodo.credentialsContent" maxlength="1000">
+                        Enter text here...
+                    </textarea>
+
+                
+           
+
+
+
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" ng-model="newTodo.changeCourse"> This change require additions or deletions to the Major’s Course List
+                    </label>
+                </div>
+
+              
+
+             
+
+
+                <textarea ng-show="newTodo.changeCourse" class="form-control" ng-model="newTodo.changeCourseContent" maxlength="1000">
+                    Enter text here...
+                </textarea>
+                  
+                
+
+                <label>Departments or programs on campus consulted on the issues of duplication, overlap, or impact on the program:</label>
+                <br/>
+                <textarea  ng-model="newTodo.affectedDepartments" class="form-control" rows="4" cols="50" maxlength="1000">
+                    Enter text here...
+                </textarea>
+
+                 <br/>
+
+
+
+
+                <P></P>
+
+                <p></p>
+                <label>Description: </label>
+                <textarea rows="4" cols="50" class="form-control" ng-model="newTodo.description">
+
+                </textarea>
+                <p></p>
+                <button type="submit" class="btn btn-primary form-control" ng-click="pushRequest(); addingNew = false;  ">Save</button>
+
+            </div>
+        </div>
+        <label class="">
+            <input type="radio" name="perspective" ng-model="perspective" ng-value="myName" checked> My Requests</label>
+        <label class="">
+            <input type="radio" name="perspective" ng-model="perspective" value="">All Requests</label>
+        <div ng-class="{'editing-item': editing, 'edited' : todo.edited, 'accepted' : (todo.timeOfApproval != null), 'pending' : (todo.status == 'pending')}" ng-repeat="todo in todos.data | filter:perspective:author">
+
+           <label>Author:</label> {{todo.author}}<br/>
+            
+            <Label>Type of Request:</Label><t data-ng-repeat="type in todo.requestTypes"> {{type}}</t><br/>
+            
+            <div ng-show="todo.revisedFacultyCredentials.needed == true">
+                <label>Revised Credentials: </label> {{todo.revisedFacultyCredentials.content}}
+            </div>
+            
+            
+            <div ng-show="todo.courseListChange.needed == true">
+                <label>Course List Change: </label> {{todo.courseListChange.content}}
+            </div>
+            
+            <label>Effective:</label> {{todo.effective.semester}} {{todo.effective.year}} <br/>
+            <div ng-show="todo.courseFeeChange != null"><label>Course Fee Change: </label> {{todo.courseFeeChange}}</div>
+            <label>Affected Departments Programs</label>{{todo.affectedDepartmentsPrograms}}<br/>
+            <div ng-show="todo.approvedBy != null"><label>Approved By:</label> {{todo.approvedBy}}</div>
+            <label>Description: </label> {{todo.description}}
+        </div>
+    </div>
+
+    <script src="vendor/angular.js" type="text/javascript"></script>
+    <script src="scripts/checklist-model.js" type="text/javascript"></script>
+    <script src="scripts/app.js" type="text/javascript"></script>
+</body>
+
+</html>

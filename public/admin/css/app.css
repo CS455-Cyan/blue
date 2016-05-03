@@ -1,0 +1,181 @@
+/***																					***\
+
+	Filename: app.css
+	Author: Mitchel R Moon, Tyler Yasaka
+
+	Copyright (c) 2015 University of North Alabama
+
+\***																					***/
+
+#oldIE
+{
+	clear: both;
+	height: 42px;
+	margin-top: 30px;
+	padding: 0 0 0 15px;
+	position: relative;
+	background-color: #db9f11;
+	text-align: center;
+}
+
+#approve-toggle, #feature-toggle, .icon-button
+{
+	height: 35px;
+	width: 35px;
+	padding: 5px;
+	margin: 5px;
+}
+
+span.success
+{
+	color: green;
+}
+
+span.danger
+{
+	color: red;
+}
+
+#college a
+{
+	color: #db9f11;
+}
+
+#college a:hover
+{
+	cursor: pointer;
+}
+
+table#admin-calendar-events td, .homepage-table td
+{
+	max-width: 350px;
+}
+
+table#admin-calendar-events tr td .panel
+{
+	display: none;
+}
+
+table#admin-calendar-events tr:hover td .panel
+{
+	display: block;
+}
+
+table.admin-table tr:hover td
+{
+	cursor: pointer;
+	background-color: #db9f11;
+	color: #ffffff;
+}
+
+.nav-tabs a.event-link
+{
+	background: none;
+}
+
+.nav-tabs.nav-justified > li > a
+{
+	border-radius: 0 0 0 0;
+}
+
+.cob-alumni ul.nav-tabs li
+{
+	font-size: 10px;
+	padding: 2px;
+}
+
+.cob-alumni-embed
+{
+	width: 100%;
+	height: 100px;
+}
+
+.datepicker .input-group-btn:last-child>.btn
+{
+	height: auto;
+}
+
+.timepicker
+{
+	border: none;
+	width: auto;
+	max-width: 100%;
+}
+
+table.timepicker tr:nth-child(odd)>td
+{
+	background: none;
+}
+
+table.timepicker tr > td, .calendar-datepicker tr > td
+{
+	padding: 2px;
+	border: none;
+}
+
+.timepicker .glyphicon-chevron-down:before
+{
+	font-size: 1em;
+}
+
+.line-through
+{
+	text-decoration: line-through;
+}
+
+/* Dashboard Graphs */
+
+
+/* Parking App */
+.closed
+{
+	display: none;
+}
+
+.opened
+{
+	display: block;
+}
+
+.form-control-feedback
+{
+	top: 30px;
+}
+
+#vehicle-listing .panel-heading
+{
+	height: 54px;
+}
+
+#registration-listing .list-group-item, #parking-lots .list-group-item, #officer-listing .list-group-item, #violation-listing .list-group-item
+{
+	height: 54px;
+}
+
+#registration-listing .list-group-item .panel
+{
+	display: none;
+}
+
+#registration-listing .list-group-item:hover
+{
+	height: 430px;
+}
+
+#registration-listing .list-group-item:hover .panel
+{
+	display: block;
+}
+
+/* Modified from lion-styles.css */
+.nav {margin-bottom:1px;}
+.nav>li>a:hover, .nav>li>a:focus {background-color: #db9f11;}
+.nav-tabs {border-bottom: none;}
+.nav-tabs>li>a {border-radius: 0;}
+#inside .mainContent .nav-tabs>li>a {color: #ffffff;background-color: #444;border-bottom: none;border-top: none;border-color: #EEEBE4;font-weight: bold;font-size: 1.25em;text-align:center;}
+#inside .mainContent .nav-tabs>li>a:hover{border-bottom: none; background-color: #db9f11;color: #fff;}
+#inside .mainContent .nav-tabs>li.active>a, #inside.mainContent .nav-tabs>li.active>a:hover, #inside .mainContent .nav-tabs>li.active>a:focus {color: #fff;background-color: #db9f11;}
+#inside .navbar-default .navbar-nav>.open>a, #inside .navbar-default .navbar-nav>.open>a:hover, #inside .navbar-default .navbar-nav>.open>a:focus {color: #db9f11;background-color: transparent;}
+.nav .open>a, .nav .open>a:hover, .nav .open>a:focus {background-color: transparent;}
+#inside .mainContent ul.nav-tabs{width: 100%;display: table;}
+#inside .mainContent ul.nav-tabs>li{display: table-cell;float: none;}

@@ -1,0 +1,60 @@
+<h1>Manage Secondary Admins</h1>
+
+<div ng-show="!selected">
+
+	<ul class="list-group">
+		<li class="list-group-item" ng-repeat="admin in secondaryAdmins" ng-show="admin.privilege < 5">
+			<a href="" ng-click="select(admin)">{{admin.username}}</a>
+			<button class="btn btn-danger pull-right" ng-click="removeAdmin(admin._id)">
+				<span class="glyphicon glyphicon-trash"></span>
+			</button>
+		</li>
+	</ul>
+
+	<button class="btn btn-default" ng-click="newAdmin()">
+		<span class="glyphicon glyphicon-plus"></span>
+		Add secondary admin
+	</button>
+</div>
+
+<div ng-show="selected">
+	<div ng-show="selected._id">
+		<div>
+			Edit:
+			<strong>
+				{{selected.username}}
+			</strong>
+		</div>
+		<h4>Change Password</h4>
+	</div>
+	
+	<div ng-show="!selected._id">
+		<h4>Username</h4>
+		<input ng-model="newUsername" class="form-control" placeholder="Enter a username">
+		
+		<h4>Password</h4>
+	</div>
+	
+	<p>Requirements:
+		<ul>
+			<li>One uppercase character minimum</li>
+			<li>One numeric character minimum</li>
+			<li>No special characters</li>
+			<li>Eight to twelve characters in length</li>
+		</ul>
+	</p>
+	<div class="form-group">
+		<input class="form-control" type="password" ng-model="password" placeholder="New password">
+	</div>
+	<div class="form-group">
+		<input class="form-control" type="password" ng-model="confirmPassword" placeholder="Confirm new password">
+	</div>
+	<button class="btn btn-success" ng-click="updateAdmin()">
+		<span class="glyphicon glyphicon-save"></span>
+		Save changes
+	</button>
+	<button class="btn btn-warning" ng-click="deselect()">
+		<span class="glyphicon glyphicon-remove"></span>
+		Cancel
+	</button>
+</div>
