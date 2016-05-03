@@ -1,0 +1,10 @@
+
+<h2>Search results: {{courseSearchKey}}</h2>
+
+<ul>
+	<li ng-repeat="result in results">
+		<a ng-href="#/courses/course/{{result._id}}">
+			{{result.subject.abbreviation}} {{result.number}} {{result.title}}
+		</a>
+	</li>
+</ul>
