@@ -331,7 +331,7 @@
                     , function ($scope, $rootScope, $location, CatalogAPI)
                     {
                         $scope.form = {}
-
+						
                         $scope.selectedSubject = null;
                         $scope.subjects = [];
                         CatalogAPI.getHTTP('/catalog/subjects', function(result){
@@ -365,6 +365,13 @@
 							$scope.editId = course._id;
                             $scope.form = course
                             $scope.formTitle = "Edit"
+							$scope.courseTitle = course.title
+                            $scope.courseNumber = course.number
+                            $scope.courseDescription = course.description
+             				
+                            $scope.hours = course.hours
+                            $scope.courseFee = course.fee
+                            $scope.selectedSubject = course.subject
                         }
                         $scope.Addcourse = function () {
                             $scope.Addform = true;
@@ -377,11 +384,21 @@
 							$scope.adding = false;
 							$scope.editing = false;
 							$scope.Addform = false;
+							$scope.editId = null;
+                            $scope.form = null
+                            $scope.formTitle = null
+							$scope.courseTitle = null
+                            $scope.courseNumber = null
+                            $scope.courseDescription = null
+             				
+                            $scope.hours = null
+                            $scope.courseFee = null
+                            $scope.selectedSubject = null
 						}
                         
                         $scope.submitForm = function (){
-                            
                             var offeringSemesters = [];
+                            
                             if($scope.spring == true)
                                 offeringSemesters.push("spring");
                              if($scope.summer == true)

@@ -180,7 +180,7 @@ var catalogYearSchema = mongoose.Schema({
 	beginYear: String,
 	endYear: String
 });
-models.CatalogYear = connection.admin.model('CatalogYear', catalogYearSchema);
+publicModels.CatalogYear = connection.admin.model('CatalogYear', catalogYearSchema);
 
 // export the models object for inclusion in other scripts
 module.exports = {

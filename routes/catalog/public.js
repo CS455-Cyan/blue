@@ -33,7 +33,8 @@ var publicExports = {};
 	Modified:
 */
 publicExports.getTextSections = function(req, res) {
-	db.models.TextSection.findOne().select('sections.title sections._id').exec(function(err, results) {
+	models = getModels(req.session);
+	models.TextSection.findOne().select('sections.title sections._id').exec(function(err, results) {
 		var success = err ? false : true;
 		res.send({
 			success: success,
@@ -54,7 +55,8 @@ publicExports.getTextSections = function(req, res) {
 */
 publicExports.getTextSectionsById = function(req, res)
 {
-	db.models.TextSection.findOne().exec(function(err, results) {
+	models = getModels(req.session);
+	models.TextSection.findOne().exec(function(err, results) {
 		var section = results.sections.id(req.params.id);
 		var success = err || !section ? false : true;
 		res.send({
@@ -83,7 +85,8 @@ publicExports.getTextSectionsById = function(req, res)
 */
 publicExports.listGeneralRequirements = function(req, res)
 {
-	db.models.GeneralRequirement.find()
+	models = getModels(req.session);
+	models.GeneralRequirement.find()
 	.populate({
 		path: 'requirements.items.courses',
 		populate: {
@@ -116,7 +119,8 @@ publicExports.listGeneralRequirements = function(req, res)
 		04/17/2016 Tyler Yasaka
 */
 publicExports.listProgramCategories = function(req, res) {
-	db.models.Program.find().exec(function(err, results) {
+	models = getModels(req.session);
+	models.Program.find().exec(function(err, results) {
 		var success = err ? false : true;
 		res.send({
 			success: success,
@@ -149,7 +153,8 @@ publicExports.listProgramCategories = function(req, res) {
 		04/17/2016 Tyler Yasaka
 */
 publicExports.viewCategoryDetails = function(req, res) {
-	db.models.Program.findOne({_id: req.params.category})
+	models = getModels(req.session);
+	models.Program.findOne({_id: req.params.category})
 	.populate({
 		path: 'departments.programs.requirements.items.courses',
 		populate: {
@@ -197,7 +202,8 @@ publicExports.viewCategoryDetails = function(req, res) {
 	Modified:
 */
 publicExports.viewDepartment = function(req, res) {
-	db.models.Program.findOne({_id: req.params.category})
+	models = getModels(req.session);
+	models.Program.findOne({_id: req.params.category})
 	.select('name departments')
 	.exec(function(err, result) {
 		if (result) {
@@ -237,7 +243,8 @@ publicExports.viewDepartment = function(req, res) {
 		04/17/2016 Tyler Yasaka
 */
 publicExports.searchPrograms = function(req, res) {
-	db.models.Program.find(function(err, categories) {
+	models = getModels(req.session);
+	models.Program.find(function(err, categories) {
 		var term = req.body.term ? req.body.term.toLowerCase() : '';
 		var programsArr = [];
 		for (var c in categories) {
@@ -303,7 +310,8 @@ publicExports.searchPrograms = function(req, res) {
 	Modified: 04/19/2016 Tyler Yasaka
 */
 publicExports.viewProgramsInCategory = function(req, res) {
-	db.models.Program.findOne({_id: req.params.category}).select('name programs')
+	models = getModels(req.session);
+	models.Program.findOne({_id: req.params.category}).select('name programs')
 	.populate({
 		path: 'programs.requirements.items.courses',
 		populate: {
@@ -358,7 +366,8 @@ publicExports.viewProgramsInCategory = function(req, res) {
 	Modified:
 */
 publicExports.viewProgramsInDepartment = function(req, res) {
-	db.models.Program.findOne({_id: req.params.category}).select('name departments')
+	models = getModels(req.session);
+	models.Program.findOne({_id: req.params.category}).select('name departments')
 	.populate({
 		path: 'departments.programs.requirements.items.courses',
 		populate: {
@@ -413,7 +422,8 @@ publicExports.viewProgramsInDepartment = function(req, res) {
 		04/17/2016 Tyler Yasaka
 */
 publicExports.listCourses = function(req, res) {
-	db.models.Course.find().populate('subject').exec(function(err, results) {
+	models = getModels(req.session);
+	models.Course.find().populate('subject').exec(function(err, results) {
 		var success = err ? false : true;
 		res.send({
 			success: success,
@@ -444,7 +454,8 @@ publicExports.listCourses = function(req, res) {
 	Modified:
 */
 publicExports.viewCourses = function(req, res) {
-	db.models.Course.findOne({_id: req.params.id}).populate('subject').exec(function(err, result) {
+	models = getModels(req.session);
+	models.Course.findOne({_id: req.params.id}).populate('subject').exec(function(err, result) {
 		var success = err ? false : true;
 		res.send({
 			success: success,
@@ -472,7 +483,8 @@ publicExports.viewCourses = function(req, res) {
 		04/17/2016 Tyler Yasaka
 */
 publicExports.searchCourses = function(req, res) {
-	db.models.Course.find().populate('subject').exec(function(err, courses) {
+	models = getModels(req.session);
+	models.Course.find().populate('subject').exec(function(err, courses) {
 		var term = req.body.term ? req.body.term.toLowerCase() : '';
 		var courseArr = [];
 		for (var c in courses) {
@@ -519,7 +531,8 @@ publicExports.searchCourses = function(req, res) {
 	Modified:
 */
 publicExports.listSubjects = function(req, res) {
-	db.models.Subject.find().exec(function(err, results) {
+	models = getModels(req.session);
+	models.Subject.find().exec(function(err, results) {
 		var sorted = definitions.sortAlphabeticallyByProperty(results, 'abbreviation');
 		var success = err ? false : true;
 		res.send({
@@ -553,7 +566,8 @@ publicExports.listSubjects = function(req, res) {
 	Modified:
 */
 publicExports.listCoursesForSubject = function(req, res) {
-	db.models.Subject.findOne({_id: req.params.id}).exec(function(subjectErr, subject) {
+	models = getModels(req.session);
+	models.Subject.findOne({_id: req.params.id}).exec(function(subjectErr, subject) {
 		db.models.Course.find({subject: req.params.id}).exec(function(coursesErr, courses) {
 			var success = (subjectErr || coursesErr) ? false : true;
 			res.send({
@@ -573,7 +587,8 @@ publicExports.listCoursesForSubject = function(req, res) {
 	Modified:
 */
 publicExports.getFacultyAndStaff = function(req, res) {
-	db.models.FacultyAndStaff.findOne().exec(function(err, result) {
+	models = getModels(req.session);
+	models.FacultyAndStaff.findOne().exec(function(err, result) {
 		var success = err ? false : true;
 		res.send({
 			success: success,
@@ -600,7 +615,7 @@ publicExports.getFacultyAndStaff = function(req, res) {
 	Modified:
 */
 publicExports.listArchivedPDFs = function(req, res) {
-	db.models.CatalogYear.find().exec(function(err, results) {
+	db.publicModels.CatalogYear.find().exec(function(err, results) {
 		var success = err ? false : true;
 		res.send({
 			success: success,
@@ -608,5 +623,13 @@ publicExports.listArchivedPDFs = function(req, res) {
 		});
 	});
 };
+
+var getModels = function(session) {
+	var models = db.publicModels;
+	if(session && session.privilege >= privilege.secondaryAdmin) {
+		models = db.models; // admin models
+	}
+	return models;
+}
 
 module.exports = publicExports;
