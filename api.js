@@ -34,8 +34,8 @@ var app = modules.express();
 
 // session definition
 var sessionStore = modules['connect-mongo'](modules['express-session']);
-//var sessionStoreInstance = new sessionStore({ url: 'mongodb://cyan:8029df8b@ds027835.mongolab.com:27835/sessions' });
-var sessionStoreInstance = new sessionStore({ url: 'mongodb://localhost:27017/sessions' });
+var sessionStoreInstance = new sessionStore({ url: 'mongodb://cyan:8029df8b@ds027835.mongolab.com:27835/sessions' });
+//var sessionStoreInstance = new sessionStore({ url: 'mongodb://localhost:27017/sessions' });
 
 app.use
 (

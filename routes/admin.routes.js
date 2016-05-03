@@ -21,8 +21,8 @@ var db = {};
 
 mongoClient.connect
 (
-	//'mongodb://cyan:8029df8b@ds035603.mongolab.com:35603/apps',
-	'mongodb://localhost:27017/apps',
+	'mongodb://cyan:8029df8b@ds035603.mongolab.com:35603/apps',
+	//'mongodb://localhost:27017/apps',
 	function(err, database)
 	{
 		if(!err)
