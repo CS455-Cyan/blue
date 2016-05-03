@@ -23,6 +23,9 @@
 </div>
 
 <p> </p>
-<a ng-repeat="program in department.programs" href="index.html#/catalog/programs/programs/{{category._id}}/{{department._id}}/{{program._id}}"><p>{{program.name}}</p></a>
+    <div ng-repeat="program in department.programs">
+    <a href="index.html#/catalog/programs/programs/{{category._id}}/{{department._id}}/{{program._id}}">{{program.name}}</a>
+    <div class="glyphicon glyphicon-trash btn btn-danger" ng-click="removeProgram(category._id, department._id, program._id)"></div>
+    </div>
 
 <a class="glyphicon glyphicon-plus btn btn-default" href="index.html#/catalog/programs/programs/{{category._id}}/{{department._id}}/new" ng-show="!addProgram"> Add new program</a>

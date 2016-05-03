@@ -279,11 +279,17 @@
                             });
                             $scope.$apply();
                         };
-                        $scope.createProgram = function(category, department, program){
-                            console.log("createProgram");
-                            
-                            
-                        };
+                        $scope.removeProgram = function (categoryID, departmentID, programID) {
+                        console.log("removeProgram");
+                        CatalogAPI.removeProgram(categoryID, departmentID, programID, function (success) {
+                            if (success) {
+                                $scope.refresh();
+                            } else {
+                                //send a flag
+                            }
+                            $scope.$apply();
+                        });
+                    };
 				}
 			]
             )
