@@ -278,6 +278,12 @@
                         $scope.programID = $routeParams.programID;
                         $scope.departmentID = $routeParams.departmentID;
                         $scope.categoryID = $routeParams.categoryID;
+                        $scope.editName = false;
+                        $scope.editDescription = false;
+                        $scope.addDepartment = false;
+                        $scope.addProgram = false;
+                        $scope.save = false;
+                        $scope.discard = false;
 
                         $scope.refresh = function () {
                             CatalogAPI.getProgram($scope.categoryID, $scope.departmentID, $scope.programID, function (category, department, program) {
@@ -286,6 +292,16 @@
                             });
                         }
 
+                        $scope.updateP = function(){
+                            $scope.updateProgram(null, function(success){
+                                if (success) {
+                                    $scope.refresh();
+                                } else {
+                                    //send a flag
+                                }
+                                $scope.$apply();
+                            });
+                        }
                         $scope.updateProgram = function (group, callback) {
                             CatalogAPI.updateProgram(
                                 $scope.categoryID
