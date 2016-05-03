@@ -398,7 +398,7 @@
 				, '$sanitize'
                 , 'CatalogAPI'
 				, function ($scope, $rootScope, $location, $sanitize, CatalogAPI) {
-                    
+                        $scope.data = {};
                         $scope.newTodo = {};
                         $scope.responseObj = {};
                         $scope.helloWorld = function () {
@@ -463,17 +463,19 @@
                         });
                         $scope.denyTodo = function (id, comment) {
                             comment = {"comment" : comment}
-                            CatalogAPI.putHTTP('/admin/changeRequests/deny/'+id, comment)
+                            CatalogAPI.putHTTP('/admin/changeRequests/deny/'+id, comment, function(){location.reload(true)})
                         }
 
 
                         $scope.acceptTodo = function (id, comment) {
                             comment = {"comment" : comment}
-                           CatalogAPI.putHTTP('/admin/changeRequests/approve/'+id, comment)
+                           CatalogAPI.putHTTP('/admin/changeRequests/approve/'+id, comment,function(){location.reload(true)})
                         }
-
+                        
                         $scope.pushRequest = function () {
                            $scope.responseObj = {};
+                            console.log($scope.data.term);
+                            console.log($scope.data.year);
                             $scope.responseObj = {
                                 "requestTypes": $scope.user.changes
                                 , "revisedFacultyCredentials": {
@@ -485,14 +487,15 @@
                                     , "content": $scope.changeCourseContent
                                 }
                                 , "effective": {
-                                    "semester": "Fall"
-                                    , "year": "2016"
+                                    "semester": $scope.data.term
+                                    , "year": $scope.data.year
                                 }
                                 , "courseFeeChange": $scope.newTodo.justification
                                 , "affectedDepartmentsPrograms": $scope.newTodo.affectedDepartments
                                 , "approvedBy": null
                                 , "description": $scope.newTodo.description
                             };
+                            console.log($scope.responseObj);
                             CatalogAPI.postHTTP("/admin/changeRequests/userRequests", $scope.responseObj, function(){location.reload(true);})
                         }
 				}
