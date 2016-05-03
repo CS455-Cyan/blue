@@ -22,8 +22,21 @@ async.waterfall([
       callback();
     });
   },
+  // clear any previous data
   function(callback) {
     db.models.CatalogYear.remove().exec(function() {
+      callback();
+    })
+  },
+  // clear any previous data
+  function(callback) {
+    db.models.Subject.remove().exec(function() {
+      callback();
+    })
+  },
+  // clear any previous data
+  function(callback) {
+    db.models.GeneralRequirement.remove().exec(function() {
       callback();
     })
   },
@@ -45,7 +58,6 @@ async.waterfall([
         },
         function(cb1) {
           new db.models.CatalogYear({beginYear: year, endYear: year+1}).save(function(err) {
-            console.log(err);
             cb1();
           });
         }], function() {
@@ -82,7 +94,38 @@ async.waterfall([
     ];
     async.each(subjects, function(subject, cb) {
       new db.models.Subject(subject).save(function(err) {
-        console.log(err);
+        cb();
+      });
+    }, function() {
+      callback();
+    });
+  },
+  // initialize general requirement areas
+  function(callback) {
+    areas = [
+      {
+        name: 'Written Composition',
+        area: 'I'
+      },
+      {
+        name: 'Humanities and Fine Arts',
+        area: 'II'
+      },
+      {
+        name: 'Natural Sciences and Mathematics',
+        area: 'III'
+      },
+      {
+        name: 'History, Social and Behavioral Sciences',
+        area: 'IV'
+      },
+      {
+        name: 'Additional Requirements',
+        area: 'V'
+      },
+    ];
+    async.each(areas, function(area, cb) {
+      new db.models.GeneralRequirement(area).save(function(err) {
         cb();
       });
     }, function() {
