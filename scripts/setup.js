@@ -4,6 +4,7 @@
   Authors:
       Tyler Yasaka
       Andrew Fisher
+      Kaitlin Snyder
 
 \***                                          ***/
 
@@ -86,11 +87,262 @@ async.waterfall([
         name: 'Business Education',
         abbreviation: 'BE'
       },
-      // fill in the rest!
       {
-        name: '',
-        abbreviation: ''
+        name: 'Biology',
+        abbreviation: 'BI'
       },
+      {
+        name: 'Business Law',
+        abbreviation: 'BL'
+      },
+      {
+        name: 'Chemistry',
+        abbreviation: 'CH'
+      },
+      {
+        name: 'Computer Information Systems',
+        abbreviation: 'CIS'
+      },
+      {
+        name: 'Criminal Justice',
+        abbreviation: 'CJ'
+      },
+      {
+        name: 'Culunary, Nutrition, and Hospitality Management',
+        abbreviation: 'CNH'
+      },
+      {
+        name: 'Communication',
+        abbreviation: 'COM'
+      },
+      {
+        name: 'Cooperative Education',
+        abbreviation: 'COOP'
+      },
+      {
+        name: 'Computer Science',
+        abbreviation: 'CS'
+      },
+      {
+        name: 'Economics',
+        abbreviation: 'EC'
+      },
+      {
+        name: 'Early Childhood Education',
+        abbreviation: 'ECE'
+      },
+      {
+        name: 'Education',
+        abbreviation: 'ED'
+      },
+      {
+        name: 'Elementary Education',
+        abbreviation: 'EED'
+      },
+      {
+        name: 'Special Education',
+        abbreviation: 'EEX'
+      },
+      {
+        name: 'Pre-Engineering',
+        abbreviation: 'EG'
+      },
+      {
+        name: 'English',
+        abbreviation: 'EN'
+      },
+      {
+        name: 'Entertainment Industry',
+        abbreviation: 'ENT'
+      },
+      {
+        name: 'Earth Science',
+        abbreviation: 'ES'
+      },
+      {
+        name: 'Engineering Technology',
+        abbreviation: 'ET'
+      },
+      {
+        name: 'Exit Examination',
+        abbreviation: 'EXIT'
+      },
+      {
+        name: 'Finance',
+        abbreviation: 'FI'
+      },
+      {
+        name: 'Foreign Languages',
+        abbreviation: 'FL'
+      },
+      {
+        name: 'French',
+        abbreviation: 'FR'
+      },
+      {
+        name: 'Family Studies',
+        abbreviation: 'FS'
+      },
+      {
+        name: 'First-Year Experience',
+        abbreviation: 'FYE'
+      },
+      {
+        name: 'Geography',
+        abbreviation: 'GE'
+      },
+      {
+        name: 'German',
+        abbreviation: 'GR'
+      },
+      {
+        name: 'Human Environmental Sciences',
+        abbreviation: 'HES'
+      },
+      {
+        name: 'History',
+        abbreviation: 'HI'
+      },
+      {
+        name: 'Honors',
+        abbreviation: 'HON'
+      },
+      {
+        name: 'Health and Physical Education',
+        abbreviation: 'HPE'
+      },
+      {
+        name: 'Intensive English Program',
+        abbreviation: 'IEP'
+      },
+      {
+        name: 'Intercultural Experience',
+        abbreviation: 'IE'
+      },
+      {
+        name: 'Interdisciplinary Studies',
+        abbreviation: 'IDS'
+      },
+      {
+        name: 'Industrial Hygiene',
+        abbreviation: 'IH'
+      },
+      {
+        name: 'Journalism',
+        abbreviation: 'JN'
+      },
+      {
+        name: 'Latin',
+        abbreviation: 'LT'
+      },
+      {
+        name: 'Learning Communities',
+        abbreviation: 'LC'
+      },
+      {
+        name: 'Mathematics',
+        abbreviation: 'MA'
+      },
+      {
+        name: 'Management',
+        abbreviation: 'MG'
+      },
+      {
+        name: 'Marketing',
+        abbreviation: 'MK'
+      },
+      {
+        name: 'Military Science',
+        abbreviation: 'MS'
+      },
+      {
+        name: 'Music',
+        abbreviation: 'MU'
+      },
+      {
+        name: 'Nursing',
+        abbreviation: 'NU'
+      },
+      {
+        name: 'Physics',
+        abbreviation: 'PH'
+      },
+      {
+        name: 'Philosophy',
+        abbreviation: 'PHL'
+      },
+      {
+        name: 'Public Relations',
+        abbreviation: 'PR'
+      },
+      {
+        name: 'Political Science',
+        abbreviation: 'PS'
+      },
+      {
+        name: 'Psychology',
+        abbreviation: 'PY'
+      },
+      {
+        name: 'Quantitative Methods',
+        abbreviation: 'QM'
+      },
+      {
+        name: 'Religion',
+        abbreviation: 'RE'
+      },
+      {
+        name: 'Radio-Television-Film',
+        abbreviation: 'RTF'
+      },
+      {
+        name: 'Robotics and Technology Park',
+        abbreviation: 'RTP'
+      },
+      {
+        name: 'Study Abroad',
+        abbreviation: 'SA'
+      },
+      {
+        name: 'Science Education',
+        abbreviation: 'SCED'
+      },
+      {
+        name: 'Security and Emergency Management',
+        abbreviation: 'SEM'
+      },
+      {
+        name: 'Service Learning',
+        abbreviation: 'SL'
+      },
+      {
+        name: 'Sociology',
+        abbreviation: 'SO'
+      },
+      {
+        name: 'Spanish',
+        abbreviation: 'SP'
+      },
+      {
+        name: 'Sport and Recreation Management',
+        abbreviation: 'SRM'
+      },
+      {
+        name: 'Social Work',
+        abbreviation: 'SW'
+      },
+      {
+        name: 'Theatre',
+        abbreviation: 'TH'
+      },
+      {
+        name: 'University Experience',
+        abbreviation: 'UNA'
+      },
+      {
+        name: 'Women\'s Studies,
+        abbreviation: 'WS'
+      }
     ];
     async.each(subjects, function(subject, cb) {
       new db.models.Subject(subject).save(function(err) {
