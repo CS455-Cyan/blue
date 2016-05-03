@@ -90,6 +90,13 @@
 						}
 					).when
 					(
+						'/courses/search',
+						{
+							templateUrl: 'views/courses/search.html',
+							controller: 'CoursesSearchCtrl'
+						}
+					).when
+					(
 						'/courses/course/:course',
 						{
 							templateUrl: 'views/courses/course.html',

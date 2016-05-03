@@ -152,6 +152,11 @@
 						$rootScope.programSearchKey = term;
 						$location.url('/programs/search');
 					}
+					
+					$rootScope.searchCourses = function(term) {
+						$rootScope.courseSearchKey = term;
+						$location.url('/courses/search');
+					}
 				}
 			]
 		).service(

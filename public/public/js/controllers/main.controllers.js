@@ -179,6 +179,27 @@ angular.module('Catalog')
 	]
 ).controller
 (
+	'CoursesSearchCtrl',
+	[
+		'$scope',
+		'$rootScope',
+		'$routeParams',
+		'CatalogAPI',
+        '$sanitize',
+		function($scope, $rootScope, $routeParams, CatalogAPI, $sanitize)
+		{
+			CatalogAPI.postHTTP(
+				'/catalog/courses/search',
+				{term: $rootScope.courseSearchKey},
+				function(res) {
+					$scope.results = res.data;
+					$scope.$apply();
+				}
+			);
+		}
+	]
+).controller
+(
 	'SubjectCtrl',
 	[
 		'$scope',

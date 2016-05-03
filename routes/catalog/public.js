@@ -473,7 +473,7 @@ publicExports.viewCourses = function(req, res) {
 */
 publicExports.searchCourses = function(req, res) {
 	db.models.Course.find().populate('subject').exec(function(err, courses) {
-		var term = req.body.term.toLowerCase();
+		var term = req.body.term ? req.body.term.toLowerCase() : '';
 		var courseArr = [];
 		for (var c in courses) {
 			var match = false;
