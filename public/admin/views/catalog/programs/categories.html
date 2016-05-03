@@ -18,8 +18,10 @@
         </a>
             <a class="glyphicon glyphicon-edit btn" ng-click="editName = !editName" ng-show="!editName"></a>
             <textarea ng-model="category.name"  ng-show="editName==true"></textarea>
-            <a class="glyphicon glyphicon-ok btn btn-success" ng-click="editName=!editName; updateCategory(category)" ng-show="editName"></a>
-            <a class="glyphicon glyphicon-remove btn btn-danger" ng-click="editName=!editName; refresh()" ng-show="editName"></a>
+            <div class="glyphicon glyphicon-ok btn btn-success" ng-click="editName=!editName; updateCategory(category)" ng-show="editName"></div>
+            <div class="glyphicon glyphicon-remove btn btn-danger" ng-click="editName=!editName; refresh()" ng-show="editName"></div>
+            
+            <div class="glyphicon glyphicon-trash btn btn-danger"> Remove Category</div>
       </h4>
     </div>
       
