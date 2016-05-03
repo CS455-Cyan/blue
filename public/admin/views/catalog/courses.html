@@ -2,7 +2,7 @@
 <ul class="list-group">
     <li class="list-group-item " ng-repeat="course in courses">
         {{course.title}}
-        <button class="btn btn-success btn-sm pull-right" ng-click="Edit(course)" ng-model="form_fieldname">
+        <button class="btn btn-success btn-sm pull-right" ng-click="adding = true; Edit(course)" ng-model="form_fieldname">
             <span class="glyphicon glyphicon-pencil"></span>
         </button>
         <button class="btn btn-danger btn-sm pull-right">
@@ -13,13 +13,13 @@
 
 <ul></ul>
 
-<button class="btn btn-warning  " ng-click="Addcourse()">
-    <span class="glyphicon glyphicon-plus"></span><b> Add Course</b>
+<button class="btn btn-warning  " ng-hide="editing || adding"  ng-click="Addcourse(); adding = true">
+    <span class="glyphicon glyphicon-plus" ></span><b> Add Course</b>
 </button>
 
 <ul></ul>
 
-<div ng-show="Addform">
+<div ng-show="adding || editing">
     
     <div class="form-group">
         <label for="subject">Subject:</label>
@@ -83,6 +83,6 @@
     
     <div class="form-group">
     <button class="btn btn-success form-control" ng-click="submitForm()">Save</button><br/><p></p>
-     <button class="btn btn-danger form-control">Cancel</button>
+     <button class="btn btn-danger form-control" ng-click="close(); Addform = false; $scope.adding = false; $scope.editing = false">Cancel</button>
         </div>
 </div>
