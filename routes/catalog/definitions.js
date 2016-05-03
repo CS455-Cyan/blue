@@ -520,6 +520,7 @@ definitionExports.programsToHTML = function(programs) {
 		formatted html (String)
 	Created: Tyler Yasaka 04/29/2016
 	Modified:
+			Andrew Fisher 05/03/2016
 */
 definitionExports.requirementsToHTML = function(requirements) {
 	var html = '';
