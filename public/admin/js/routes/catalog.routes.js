@@ -57,14 +57,14 @@
 					).when
 					(
 						'/catalog/programs/programs/:categoryID/:programID',
-						{
+						{ // :programID could be 'new' to indicate new program 
 							templateUrl: 'views/catalog/programs/programs.html',
 							controller: 'Catalog-ProgramsCtrl'
 						}
 					).when
 					(
 						'/catalog/programs/programs/:categoryID/:departmentID/:programID',
-						{
+						{ // :programID could be 'new' to indicate new program
 							templateUrl: 'views/catalog/programs/programs.html',
 							controller: 'Catalog-ProgramsCtrl'
 						}
