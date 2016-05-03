@@ -338,18 +338,30 @@
                             $scope.courses = data;
                             $scope.$apply();
                         });
-
+						
+						$scope.adding = false;
+						$scope.editing = false;
                         $scope.Addform = false
                         $scope.add_offering = false
                         $scope.Edit = function (course) {
-                            $scope.Addform = true;
+                            $scope.editing = true;
+							$scope.adding = false;
+							$scope.editId = course._id;
                             $scope.form = course
                             $scope.formTitle = "Edit"
                         }
                         $scope.Addcourse = function () {
                             $scope.Addform = true;
+							$scope.adding = true;
+							$scope.editing = false;
                             $scope.form = {}
                         }
+						
+						$scope.close = function(){
+							$scope.adding = false;
+							$scope.editing = false;
+							$scope.Addform = false;
+						}
                         
                         $scope.submitForm = function (){
                             
